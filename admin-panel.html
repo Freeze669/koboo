@@ -979,123 +979,93 @@
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-header">
-                    <div class="metric-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="metric-title">Visiteurs Actifs</div>
+                    <i class="fas fa-users"></i>
+                    <h4>Visiteurs</h4>
                 </div>
                 <div class="metric-value" id="visitorsCount">0</div>
-                <div class="metric-description">Visiteurs uniques aujourd'hui</div>
-                <div class="metric-trend trend-up">
-                    <i class="fas fa-arrow-up"></i>
-                    <span id="visitorsTrend">+0%</span>
-                </div>
+                <div class="metric-trend" id="visitorsTrend">+0%</div>
             </div>
-
+            
             <div class="metric-card">
                 <div class="metric-header">
-                    <div class="metric-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <div class="metric-title">Vues de Page</div>
+                    <i class="fas fa-eye"></i>
+                    <h4>Vues de Page</h4>
                 </div>
                 <div class="metric-value" id="pageViewsCount">0</div>
-                <div class="metric-description">Pages consultées</div>
-                <div class="metric-trend trend-up">
-                    <i class="fas fa-arrow-up"></i>
-                    <span id="pageViewsTrend">+0%</span>
-                </div>
+                <div class="metric-trend" id="pageViewsTrend">+0%</div>
             </div>
-
+            
             <div class="metric-card">
                 <div class="metric-header">
-                    <div class="metric-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="metric-title">Temps de Fonctionnement</div>
+                    <i class="fas fa-clock"></i>
+                    <h4>Temps de Fonctionnement</h4>
                 </div>
                 <div class="metric-value" id="uptimeValue">00:00:00</div>
-                <div class="metric-description">Depuis le démarrage</div>
-                <div class="metric-trend">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>En temps réel</span>
-                </div>
+                <div class="metric-trend">Stable</div>
             </div>
-
+            
             <div class="metric-card">
                 <div class="metric-header">
-                    <div class="metric-icon">
-                        <i class="fas fa-memory"></i>
-                    </div>
-                    <div class="metric-title">Utilisation Mémoire</div>
+                    <i class="fas fa-memory"></i>
+                    <h4>Utilisation Mémoire</h4>
                 </div>
                 <div class="metric-value" id="memoryUsage">0 MB</div>
-                <div class="metric-description">Mémoire JavaScript</div>
-                <div class="metric-trend">
-                    <i class="fas fa-chart-line"></i>
-                    <span id="memoryTrend">Stable</span>
-                </div>
+                <div class="metric-trend" id="memoryTrend">Stable</div>
             </div>
-
+            
             <div class="metric-card">
                 <div class="metric-header">
-                    <div class="metric-icon">
-                        <i class="fas fa-tachometer-alt"></i>
-                    </div>
-                    <div class="metric-title">Performance</div>
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Score Performance</h4>
                 </div>
                 <div class="metric-value" id="performanceScore">0</div>
-                <div class="metric-description">Score de performance</div>
-                <div class="metric-trend">
-                    <i class="fas fa-rocket"></i>
-                    <span id="performanceTrend">Optimisé</span>
-                </div>
+                <div class="metric-trend" id="performanceTrend">Optimisé</div>
             </div>
-
+            
             <div class="metric-card">
                 <div class="metric-header">
-                    <div class="metric-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="metric-title">Erreurs</div>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Erreurs</h4>
                 </div>
                 <div class="metric-value" id="errorsCount">0</div>
-                <div class="metric-description">Erreurs détectées</div>
-                <div class="metric-trend">
-                    <i class="fas fa-shield-alt"></i>
-                    <span id="errorsTrend">Système stable</span>
-                </div>
+                <div class="metric-trend" id="errorsTrend">Système stable</div>
             </div>
             
             <div class="metric-card">
                 <div class="metric-header">
-                    <div class="metric-icon">
-                        <i class="fas fa-gamepad"></i>
-                    </div>
-                    <div class="metric-title">FPS & Performance</div>
+                    <i class="fas fa-gamepad"></i>
+                    <h4>FPS</h4>
                 </div>
                 <div class="metric-value" id="fpsValue">0</div>
-                <div class="metric-description">Frames par seconde</div>
-                <div class="metric-trend">
-                    <i class="fas fa-chart-line"></i>
-                    <span id="fpsTrend">Optimisé</span>
-                </div>
+                <div class="metric-trend" id="fpsTrend">Optimisé</div>
             </div>
             
             <div class="metric-card">
                 <div class="metric-header">
-                    <div class="metric-icon">
-                        <i class="fas fa-magic"></i>
-                    </div>
-                    <div class="metric-title">Optimisation Animations</div>
+                    <i class="fas fa-magic"></i>
+                    <h4>Qualité Animations</h4>
                 </div>
-                <div class="metric-value" id="animationQuality">100%</div>
-                <div class="metric-description">Qualité des animations</div>
-                <div class="metric-trend">
-                    <i class="fas fa-star"></i>
-                    <span id="animationTrend">Fluide</span>
+                <div class="metric-value" id="animationQuality">0%</div>
+                <div class="metric-trend" id="animationTrend">Fluide</div>
+            </div>
+        </div>
+        
+        <!-- Graphiques de Performance -->
+        <div class="charts-section">
+            <h3>Graphiques de Performance</h3>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h4>Évolution FPS</h4>
+                    <canvas id="fpsChart"></canvas>
                 </div>
-                <div class="optimization-status none" id="optimizationStatus">Optimisation: Aucune</div>
+                <div class="chart-container">
+                    <h4>Utilisation Mémoire</h4>
+                    <canvas id="memoryChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h4>Score Performance</h4>
+                    <canvas id="performanceChart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -1150,29 +1120,24 @@
         
         <!-- Statut d'Optimisation des Animations -->
         <div class="optimization-section">
-            <div class="section-title">
-                <i class="fas fa-magic"></i>
-                Statut d'Optimisation des Animations
+            <h3>Optimisation Automatique</h3>
+            <div class="optimization-status" id="optimizationStatus">
+                <i class="fas fa-info-circle"></i>
+                <span>Analyse en cours...</span>
             </div>
-            <div class="optimization-status" id="animationStatus">
-                <!-- Le statut sera mis à jour dynamiquement -->
+            
+            <div class="optimization-list" id="optimizationList">
+                <!-- Les optimisations seront ajoutées ici dynamiquement -->
             </div>
+            
             <div class="optimization-controls">
-                <button class="control-btn" onclick="setTargetFPS(90)">
-                    <i class="fas fa-gamepad"></i>
-                    FPS Cible: 90
-                </button>
-                <button class="control-btn" onclick="setAnimationQuality(1.0)">
-                    <i class="fas fa-star"></i>
-                    Qualité Max
-                </button>
-                <button class="control-btn" onclick="toggleSmoothAnimations()">
-                    <i class="fas fa-sync-alt"></i>
-                    Animations Fluides
-                </button>
-                <button class="control-btn" onclick="restartOptimizer()">
+                <button class="admin-btn" onclick="restartOptimizer()">
                     <i class="fas fa-redo"></i>
-                    Redémarrer
+                    Redémarrer l'optimiseur
+                </button>
+                <button class="admin-btn" onclick="toggleSmoothAnimations()">
+                    <i class="fas fa-magic"></i>
+                    Animations fluides
                 </button>
             </div>
         </div>
@@ -1293,46 +1258,24 @@
          */
         function updateMetrics() {
             try {
-                // Priorité au moniteur de performance pour des métriques stables
-                if (window.performanceMonitor) {
-                    const perfStats = window.performanceMonitor.getAdminStats();
-                    const activityStats = window.activityMonitor ? window.activityMonitor.getStats() : {};
-                    
-                    // Combiner les données de performance et d'activité
-                    const combinedStats = {
-                        ...perfStats,
-                        ...activityStats,
-                        timestamp: Date.now()
-                    };
-                    
-                    // Stabiliser les métriques pour éviter qu'elles bougent
-                    stabilizeMetrics(combinedStats);
-                    
-                    updateMetricDisplay(combinedStats);
-                    
-                    // Mettre à jour les graphiques de performance
-                    updatePerformanceCharts(perfStats);
-                    
-                    // Mettre à jour le statut d'optimisation des animations
-                    updateAnimationStatus();
-                    
-                    // Optimisation automatique basée sur les performances
-                    autoOptimizeBasedOnPerformance(perfStats);
-                    
-                } else if (window.siteMonitor) {
-                    const stats = window.siteMonitor.getRealTimeStats();
-                    stabilizeMetrics(stats);
-                    updateMetricDisplay(stats);
-                } else if (window.adminUtils) {
-                    const stats = window.adminUtils.getRealTimeStats();
-                    stabilizeMetrics(stats);
-                    updateMetricDisplay(stats);
-                } else {
-                    // Données de démonstration si les moniteurs ne sont pas disponibles
-                    const demoStats = getDemoStats();
-                    stabilizeMetrics(demoStats);
-                    updateMetricDisplay(demoStats);
-                }
+                // Collecter les données de tous les moniteurs disponibles
+                const allStats = collectAllMonitorData();
+                
+                // Stabiliser les métriques pour éviter qu'elles bougent
+                stabilizeMetrics(allStats);
+                
+                // Mettre à jour l'affichage avec les vraies données
+                updateMetricDisplay(allStats);
+                
+                // Mettre à jour les graphiques de performance
+                updatePerformanceCharts(allStats);
+                
+                // Mettre à jour le statut d'optimisation des animations
+                updateAnimationStatus();
+                
+                // Optimisation automatique basée sur les performances
+                autoOptimizeBasedOnPerformance(allStats);
+                
             } catch (error) {
                 console.warn('⚠️ Erreur mise à jour métriques:', error);
                 // Ne pas afficher d'erreur à l'utilisateur
@@ -1340,38 +1283,199 @@
         }
 
         /**
-         * Stabiliser les métriques pour éviter qu'elles bougent
+         * Collecter les données de tous les moniteurs
+         */
+        function collectAllMonitorData() {
+            const stats = {
+                timestamp: Date.now(),
+                visitors: 0,
+                pageViews: 0,
+                uptime: '00:00:00',
+                memory: { used: '0 MB', total: '0 MB', percentage: 0 },
+                loadTime: 0,
+                errors: 0,
+                fps: 0,
+                frameTime: 0,
+                animationQuality: 1.0,
+                performanceScore: 0,
+                activities: 0,
+                sessions: 0,
+                trends: {},
+                alerts: []
+            };
+
+            // Données du moniteur de site
+            if (window.siteMonitor && window.siteMonitor.getRealTimeStats) {
+                try {
+                    const siteStats = window.siteMonitor.getRealTimeStats();
+                    stats.visitors = siteStats.visitors || 0;
+                    stats.pageViews = siteStats.pageViews || 0;
+                    stats.uptime = siteStats.uptime || '00:00:00';
+                    stats.errors = siteStats.errors || 0;
+                    stats.activities = siteStats.activities || 0;
+                    stats.sessions = siteStats.sessions || 0;
+                } catch (e) {
+                    console.warn('⚠️ Erreur siteMonitor:', e);
+                }
+            }
+
+            // Données du moniteur de performance
+            if (window.performanceMonitor && window.performanceMonitor.getAdminStats) {
+                try {
+                    const perfStats = window.performanceMonitor.getAdminStats();
+                    stats.fps = perfStats.current?.fps || 0;
+                    stats.frameTime = perfStats.current?.frameTime || 0;
+                    stats.loadTime = perfStats.current?.loadTime || 0;
+                    stats.performanceScore = perfStats.current?.score || 0;
+                    stats.trends = perfStats.trends || {};
+                    stats.alerts = perfStats.alerts || [];
+                } catch (e) {
+                    console.warn('⚠️ Erreur performanceMonitor:', e);
+                }
+            }
+
+            // Données du moniteur d'activité
+            if (window.activityMonitor && window.activityMonitor.getStats) {
+                try {
+                    const activityStats = window.activityMonitor.getStats();
+                    stats.activities = activityStats.totalActivities || 0;
+                    stats.errors = Math.max(stats.errors, activityStats.errorCount || 0);
+                } catch (e) {
+                    console.warn('⚠️ Erreur activityMonitor:', e);
+                }
+            }
+
+            // Données de mémoire système
+            if (performance.memory) {
+                try {
+                    const memoryInfo = performance.memory;
+                    const usedMB = Math.round(memoryInfo.usedJSHeapSize / (1024 * 1024));
+                    const totalMB = Math.round(memoryInfo.totalJSHeapSize / (1024 * 1024));
+                    const percentage = Math.round((usedMB / totalMB) * 100);
+                    
+                    stats.memory = {
+                        used: `${usedMB} MB`,
+                        total: `${totalMB} MB`,
+                        percentage: percentage
+                    };
+                } catch (e) {
+                    console.warn('⚠️ Erreur mémoire système:', e);
+                }
+            }
+
+            // Calculer la qualité des animations basée sur les FPS
+            if (stats.fps > 0) {
+                if (stats.fps >= 80) {
+                    stats.animationQuality = 1.0;
+                } else if (stats.fps >= 60) {
+                    stats.animationQuality = 0.8;
+                } else if (stats.fps >= 45) {
+                    stats.animationQuality = 0.6;
+                } else if (stats.fps >= 30) {
+                    stats.animationQuality = 0.4;
+                } else {
+                    stats.animationQuality = 0.2;
+                }
+            }
+
+            return stats;
+        }
+
+        /**
+         * Stabiliser les métriques pour éviter les changements brusques
          */
         function stabilizeMetrics(stats) {
-            // Stocker les valeurs précédentes pour éviter les changements brusques
+            // Initialiser les métriques précédentes si elles n'existent pas
             if (!window.previousMetrics) {
                 window.previousMetrics = {};
             }
             
-            // Appliquer une moyenne mobile pour lisser les changements
-            const smoothingFactor = 0.7; // 70% de la valeur précédente, 30% de la nouvelle
-            
-            Object.keys(stats).forEach(key => {
-                if (typeof stats[key] === 'number' && stats[key] !== 0) {
-                    if (window.previousMetrics[key] !== undefined) {
-                        // Appliquer le lissage
-                        stats[key] = (window.previousMetrics[key] * smoothingFactor) + (stats[key] * (1 - smoothingFactor));
-                    }
-                    // Stocker la valeur actuelle
-                    window.previousMetrics[key] = stats[key];
-                }
-            });
-            
-            // Stabiliser les valeurs de chaînes pour éviter les changements fréquents
-            if (stats.uptime && window.previousMetrics.uptime) {
-                // Ne mettre à jour l'uptime que toutes les 5 secondes
-                const now = Date.now();
-                if (!window.lastUptimeUpdate || (now - window.lastUptimeUpdate) > 5000) {
-                    window.lastUptimeUpdate = now;
-                } else {
-                    stats.uptime = window.previousMetrics.uptime;
-                }
+            // Initialiser l'historique des métriques si il n'existe pas
+            if (!window.metricsHistory) {
+                window.metricsHistory = {};
             }
+            
+            // Fonction pour stabiliser une métrique avec moyenne mobile
+            const stabilizeMetric = (key, currentValue, historyKey) => {
+                // Ajouter la valeur actuelle à l'historique
+                if (!window.metricsHistory[historyKey]) {
+                    window.metricsHistory[historyKey] = [];
+                }
+                
+                window.metricsHistory[historyKey].push(currentValue);
+                
+                // Garder seulement les 10 dernières valeurs
+                if (window.metricsHistory[historyKey].length > 10) {
+                    window.metricsHistory[historyKey].shift();
+                }
+                
+                // Calculer la moyenne mobile
+                const average = window.metricsHistory[historyKey].reduce((sum, val) => sum + val, 0) / window.metricsHistory[historyKey].length;
+                
+                // Appliquer une pondération pour lisser les changements
+                const previousValue = window.previousMetrics[key] || currentValue;
+                const smoothingFactor = 0.7; // Plus le facteur est élevé, plus c'est lisse
+                const smoothedValue = (smoothingFactor * previousValue) + ((1 - smoothingFactor) * average);
+                
+                // Stocker la valeur actuelle pour la prochaine itération
+                window.previousMetrics[key] = smoothedValue;
+                
+                return smoothedValue;
+            };
+            
+            // Stabiliser chaque métrique
+            const stabilizedStats = { ...stats };
+            
+            // Visiteurs avec stabilisation
+            if (typeof stats.visitors === 'number') {
+                stabilizedStats.visitors = Math.round(stabilizeMetric('visitors', stats.visitors, 'visitorsHistory'));
+            }
+            
+            // Vues de page avec stabilisation
+            if (typeof stats.pageViews === 'number') {
+                stabilizedStats.pageViews = Math.round(stabilizeMetric('pageViews', stats.pageViews, 'pageViewsHistory'));
+            }
+            
+            // FPS avec stabilisation
+            if (typeof stats.fps === 'number') {
+                stabilizedStats.fps = Math.round(stabilizeMetric('fps', stats.fps, 'fpsHistory'));
+            }
+            
+            // Mémoire avec stabilisation
+            if (stats.memory && typeof stats.memory.percentage === 'number') {
+                const stabilizedPercentage = Math.round(stabilizeMetric('memoryPercentage', stats.memory.percentage, 'memoryHistory'));
+                stabilizedStats.memory.percentage = stabilizedPercentage;
+                stabilizedStats.memory.used = `${Math.round((stabilizedPercentage / 100) * (parseInt(stats.memory.total) || 100))} MB`;
+            }
+            
+            // Score de performance avec stabilisation
+            if (typeof stats.performanceScore === 'number') {
+                stabilizedStats.performanceScore = Math.round(stabilizeMetric('performanceScore', stats.performanceScore, 'performanceHistory'));
+            }
+            
+            // Erreurs avec stabilisation (moins de lissage pour les alertes)
+            if (typeof stats.errors === 'number') {
+                const smoothingFactor = 0.3; // Moins de lissage pour les erreurs
+                const previousErrors = window.previousMetrics.errors || stats.errors;
+                const smoothedErrors = (smoothingFactor * previousErrors) + ((1 - smoothingFactor) * stats.errors);
+                window.previousMetrics.errors = smoothedErrors;
+                stabilizedStats.errors = Math.round(smoothedErrors);
+            }
+            
+            // Qualité des animations avec stabilisation
+            if (typeof stats.animationQuality === 'number') {
+                stabilizedStats.animationQuality = stabilizeMetric('animationQuality', stats.animationQuality, 'animationHistory');
+            }
+            
+            // Temps de chargement avec stabilisation
+            if (typeof stats.loadTime === 'number') {
+                stabilizedStats.loadTime = Math.round(stabilizeMetric('loadTime', stats.loadTime, 'loadTimeHistory'));
+            }
+            
+            // Stocker les métriques stabilisées
+            window.previousMetrics = { ...stabilizedStats };
+            
+            return stabilizedStats;
         }
 
         /**
@@ -1403,94 +1507,265 @@
                 }
             };
             
-            // Visiteurs
+            // Visiteurs avec tendance réelle
             updateMetricWithTransition('visitorsCount', stats.visitors || 0, window.previousMetrics?.visitors);
+            updateVisitorTrend(stats.visitors, window.previousMetrics?.visitors);
             
-            // Vues de page
+            // Vues de page avec tendance réelle
             updateMetricWithTransition('pageViewsCount', stats.pageViews || 0, window.previousMetrics?.pageViews);
+            updatePageViewsTrend(stats.pageViews, window.previousMetrics?.pageViews);
             
             // Temps de fonctionnement
             updateMetricWithTransition('uptimeValue', stats.uptime || '00:00:00', window.previousMetrics?.uptime);
             
-            // Utilisation mémoire
-            if (stats.memory) {
-                updateMetricWithTransition('memoryUsage', stats.memory.used || '0 MB', window.previousMetrics?.memoryUsed);
+            // Utilisation mémoire avec pourcentage
+            if (stats.memory && stats.memory.used) {
+                const memoryDisplay = `${stats.memory.used} (${stats.memory.percentage}%)`;
+                updateMetricWithTransition('memoryUsage', memoryDisplay, window.previousMetrics?.memoryDisplay);
+                updateMemoryTrend(stats.memory.percentage, window.previousMetrics?.memoryPercentage);
             }
             
-            // Performance
-            updateMetricWithTransition('performanceScore', stats.loadTime || 0, window.previousMetrics?.loadTime);
+            // Performance avec score réel
+            if (stats.performanceScore > 0) {
+                updateMetricWithTransition('performanceScore', Math.round(stats.performanceScore), window.previousMetrics?.performanceScore);
+                updatePerformanceTrend(stats.performanceScore, window.previousMetrics?.performanceScore);
+            }
             
-            // Erreurs
+            // Erreurs avec tendance
             updateMetricWithTransition('errorsCount', stats.errors || 0, window.previousMetrics?.errors);
+            updateErrorsTrend(stats.errors, window.previousMetrics?.errors);
             
-            // FPS & Performance
+            // FPS & Performance avec tendance réelle
             if (stats.fps !== undefined) {
                 updateMetricWithTransition('fpsValue', Math.round(stats.fps), window.previousMetrics?.fps);
-                
-                // Mettre à jour la tendance FPS avec transition douce
-                const fpsTrendElement = document.getElementById('fpsTrend');
-                if (fpsTrendElement) {
-                    let trendText, trendClass;
-                    if (stats.fps >= 80) {
-                        trendText = 'Excellent';
-                        trendClass = 'metric-trend trend-up';
-                    } else if (stats.fps >= 60) {
-                        trendText = 'Bon';
-                        trendClass = 'metric-trend';
-                    } else if (stats.fps >= 30) {
-                        trendText = 'Moyen';
-                        trendClass = 'metric-trend trend-down';
-                    } else {
-                        trendText = 'Faible';
-                        trendClass = 'metric-trend trend-down';
-                    }
-                    
-                    // Transition douce pour la tendance
-                    if (fpsTrendElement.textContent !== trendText) {
-                        fpsTrendElement.style.opacity = '0.7';
-                        fpsTrendElement.textContent = trendText;
-                        fpsTrendElement.className = trendClass;
-                        setTimeout(() => {
-                            fpsTrendElement.style.opacity = '1';
-                        }, 150);
-                    }
-                }
+                updateFPSTrend(stats.fps, window.previousMetrics?.fps);
             }
             
-            // Qualité des animations
+            // Qualité des animations avec tendance réelle
             if (stats.animationQuality !== undefined) {
                 const qualityPercent = Math.round(stats.animationQuality * 100);
                 updateMetricWithTransition('animationQuality', qualityPercent + '%', window.previousMetrics?.animationQualityPercent);
-                
-                // Mettre à jour la tendance animation avec transition douce
-                const animationTrendElement = document.getElementById('animationTrend');
-                if (animationTrendElement) {
-                    let trendText, trendClass;
-                    if (qualityPercent >= 80) {
-                        trendText = 'Fluide';
-                        trendClass = 'metric-trend trend-up';
-                    } else if (qualityPercent >= 60) {
-                        trendText = 'Correct';
-                        trendClass = 'metric-trend';
-                    } else if (qualityPercent >= 40) {
-                        trendText = 'Réduit';
-                        trendClass = 'metric-trend trend-down';
-                    } else {
-                        trendText = 'Minimal';
-                        trendClass = 'metric-trend trend-down';
-                    }
-                    
-                    // Transition douce pour la tendance
-                    if (animationTrendElement.textContent !== trendText) {
-                        animationTrendElement.style.opacity = '0.7';
-                        animationTrendElement.textContent = trendText;
-                        animationTrendElement.className = trendClass;
-                        setTimeout(() => {
-                            animationTrendElement.style.opacity = '1';
-                        }, 150);
-                    }
-                }
+                updateAnimationTrend(stats.animationQuality, window.previousMetrics?.animationQuality);
             }
+        }
+
+        /**
+         * Mettre à jour la tendance des visiteurs
+         */
+        function updateVisitorTrend(current, previous) {
+            const trendElement = document.getElementById('visitorsTrend');
+            if (!trendElement) return;
+            
+            if (previous === undefined || previous === 0) {
+                trendElement.textContent = '+0%';
+                trendElement.className = 'metric-trend';
+                return;
+            }
+            
+            const change = ((current - previous) / previous) * 100;
+            const trendText = change >= 0 ? `+${Math.round(change)}%` : `${Math.round(change)}%`;
+            const trendClass = change >= 0 ? 'metric-trend trend-up' : 'metric-trend trend-down';
+            
+            trendElement.textContent = trendText;
+            trendElement.className = trendClass;
+        }
+
+        /**
+         * Mettre à jour la tendance des vues de page
+         */
+        function updatePageViewsTrend(current, previous) {
+            const trendElement = document.getElementById('pageViewsTrend');
+            if (!trendElement) return;
+            
+            if (previous === undefined || previous === 0) {
+                trendElement.textContent = '+0%';
+                trendElement.className = 'metric-trend';
+                return;
+            }
+            
+            const change = ((current - previous) / previous) * 100;
+            const trendText = change >= 0 ? `+${Math.round(change)}%` : `${Math.round(change)}%`;
+            const trendClass = change >= 0 ? 'metric-trend trend-up' : 'metric-trend trend-down';
+            
+            trendElement.textContent = trendText;
+            trendElement.className = trendClass;
+        }
+
+        /**
+         * Mettre à jour la tendance de la mémoire
+         */
+        function updateMemoryTrend(current, previous) {
+            const trendElement = document.getElementById('memoryTrend');
+            if (!trendElement) return;
+            
+            if (previous === undefined) {
+                trendElement.textContent = 'Stable';
+                trendElement.className = 'metric-trend';
+                return;
+            }
+            
+            const change = current - previous;
+            let trendText, trendClass;
+            
+            if (Math.abs(change) < 5) {
+                trendText = 'Stable';
+                trendClass = 'metric-trend';
+            } else if (change > 0) {
+                trendText = `+${Math.round(change)}%`;
+                trendClass = 'metric-trend trend-down'; // Mémoire qui augmente = tendance négative
+            } else {
+                trendText = `${Math.round(change)}%`;
+                trendClass = 'metric-trend trend-up'; // Mémoire qui diminue = tendance positive
+            }
+            
+            trendElement.textContent = trendText;
+            trendElement.className = trendClass;
+        }
+
+        /**
+         * Mettre à jour la tendance de la performance
+         */
+        function updatePerformanceTrend(current, previous) {
+            const trendElement = document.getElementById('performanceTrend');
+            if (!trendElement) return;
+            
+            if (previous === undefined) {
+                trendElement.textContent = 'Optimisé';
+                trendElement.className = 'metric-trend';
+                return;
+            }
+            
+            const change = current - previous;
+            let trendText, trendClass;
+            
+            if (Math.abs(change) < 5) {
+                trendText = 'Stable';
+                trendClass = 'metric-trend';
+            } else if (change > 0) {
+                trendText = 'Amélioré';
+                trendClass = 'metric-trend trend-up';
+            } else {
+                trendText = 'Dégradé';
+                trendClass = 'metric-trend trend-down';
+            }
+            
+            trendElement.textContent = trendText;
+            trendElement.className = trendClass;
+        }
+
+        /**
+         * Mettre à jour la tendance des erreurs
+         */
+        function updateErrorsTrend(current, previous) {
+            const trendElement = document.getElementById('errorsTrend');
+            if (!trendElement) return;
+            
+            if (previous === undefined) {
+                trendElement.textContent = 'Système stable';
+                trendElement.className = 'metric-trend';
+                return;
+            }
+            
+            const change = current - previous;
+            let trendText, trendClass;
+            
+            if (change === 0) {
+                trendText = 'Système stable';
+                trendClass = 'metric-trend';
+            } else if (change > 0) {
+                trendText = `${change} nouvelle(s)`;
+                trendClass = 'metric-trend trend-down';
+            } else {
+                trendText = 'Erreurs résolues';
+                trendClass = 'metric-trend trend-up';
+            }
+            
+            trendElement.textContent = trendText;
+            trendElement.className = trendClass;
+        }
+
+        /**
+         * Mettre à jour la tendance FPS
+         */
+        function updateFPSTrend(current, previous) {
+            const trendElement = document.getElementById('fpsTrend');
+            if (!trendElement) return;
+            
+            if (previous === undefined) {
+                trendElement.textContent = 'Optimisé';
+                trendElement.className = 'metric-trend';
+                return;
+            }
+            
+            const change = current - previous;
+            let trendText, trendClass;
+            
+            if (Math.abs(change) < 5) {
+                if (current >= 80) {
+                    trendText = 'Excellent';
+                    trendClass = 'metric-trend trend-up';
+                } else if (current >= 60) {
+                    trendText = 'Bon';
+                    trendClass = 'metric-trend';
+                } else if (current >= 30) {
+                    trendText = 'Moyen';
+                    trendClass = 'metric-trend trend-down';
+                } else {
+                    trendText = 'Faible';
+                    trendClass = 'metric-trend trend-down';
+                }
+            } else if (change > 0) {
+                trendText = 'Amélioré';
+                trendClass = 'metric-trend trend-up';
+            } else {
+                trendText = 'Dégradé';
+                trendClass = 'metric-trend trend-down';
+            }
+            
+            trendElement.textContent = trendText;
+            trendElement.className = trendClass;
+        }
+
+        /**
+         * Mettre à jour la tendance des animations
+         */
+        function updateAnimationTrend(current, previous) {
+            const trendElement = document.getElementById('animationTrend');
+            if (!trendElement) return;
+            
+            if (previous === undefined) {
+                trendElement.textContent = 'Fluide';
+                trendElement.className = 'metric-trend';
+                return;
+            }
+            
+            const change = current - previous;
+            let trendText, trendClass;
+            
+            if (Math.abs(change) < 0.1) {
+                if (current >= 0.8) {
+                    trendText = 'Fluide';
+                    trendClass = 'metric-trend trend-up';
+                } else if (current >= 0.6) {
+                    trendText = 'Correct';
+                    trendClass = 'metric-trend';
+                } else if (current >= 0.4) {
+                    trendText = 'Réduit';
+                    trendClass = 'metric-trend trend-down';
+                } else {
+                    trendText = 'Minimal';
+                    trendClass = 'metric-trend trend-down';
+                }
+            } else if (change > 0) {
+                trendText = 'Amélioré';
+                trendClass = 'metric-trend trend-up';
+            } else {
+                trendText = 'Dégradé';
+                trendClass = 'metric-trend trend-down';
+            }
+            
+            trendElement.textContent = trendText;
+            trendElement.className = trendClass;
         }
 
         /**
@@ -1521,80 +1796,305 @@
         /**
          * Optimisation automatique basée sur les performances
          */
-        function autoOptimizeBasedOnPerformance(perfStats) {
-            if (!perfStats) return;
-            
-            // Seuils d'optimisation
-            const fpsThreshold = 30;
-            const memoryThreshold = 100; // MB
-            const loadTimeThreshold = 3000; // ms
-            
-            let optimizationLevel = 'none';
-            
-            // Vérifier FPS
-            if (perfStats.fps < fpsThreshold) {
-                optimizationLevel = 'high';
-                console.log('🚨 FPS bas détecté, optimisation d\'urgence activée');
+        function autoOptimizeBasedOnPerformance(stats) {
+            try {
+                // Vérifier les performances et appliquer des optimisations automatiques
+                const optimizations = [];
+                
+                // Optimisation basée sur les FPS
+                if (stats.fps < 30) {
+                    optimizations.push('FPS faible détecté - Réduction des animations');
+                    reduceAnimations();
+                } else if (stats.fps < 45) {
+                    optimizations.push('FPS moyen - Optimisation des particules');
+                    optimizeParticles();
+                } else if (stats.fps >= 80) {
+                    optimizations.push('FPS excellent - Activation des effets avancés');
+                    enableAdvancedEffects();
+                }
+                
+                // Optimisation basée sur la mémoire
+                if (stats.memory && stats.memory.percentage > 80) {
+                    optimizations.push('Mémoire élevée - Nettoyage automatique');
+                    cleanupMemory();
+                }
+                
+                // Optimisation basée sur les erreurs
+                if (stats.errors > 5) {
+                    optimizations.push('Erreurs détectées - Mode diagnostic activé');
+                    enableDiagnosticMode();
+                }
+                
+                // Optimisation basée sur le score de performance
+                if (stats.performanceScore < 50) {
+                    optimizations.push('Performance faible - Mode économie activé');
+                    enableEconomyMode();
+                }
+                
+                // Afficher les optimisations appliquées
+                if (optimizations.length > 0) {
+                    displayOptimizations(optimizations);
+                }
+                
+                // Mettre à jour le statut d'optimisation
+                updateOptimizationStatus(stats);
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur optimisation automatique:', error);
+            }
+        }
+
+        /**
+         * Réduire les animations pour améliorer les FPS
+         */
+        function reduceAnimations() {
+            try {
+                // Réduire la complexité des particules
+                if (window.createParticles) {
+                    const originalCreateParticles = window.createParticles;
+                    window.createParticles = function(x, y) {
+                        // Créer moins de particules
+                        const particleCount = Math.min(20, Math.floor(window.innerWidth / 30));
+                        return originalCreateParticles.call(this, x, y, particleCount);
+                    };
+                }
+                
+                // Réduire les animations CSS
+                document.documentElement.style.setProperty('--animation-duration', '0.3s');
+                document.documentElement.style.setProperty('--particle-count', '30');
                 
                 // Désactiver les animations non essentielles
-                if (window.animationOptimizer) {
-                    window.animationOptimizer.setAnimationQuality(0.3);
-                    window.animationOptimizer.setTargetFPS(30);
-                }
+                const nonEssentialElements = document.querySelectorAll('.service-card, .portfolio-item, .testimonial-card');
+                nonEssentialElements.forEach(element => {
+                    element.style.animation = 'none';
+                });
                 
-                // Réduire les effets visuels
-                document.body.style.setProperty('--animation-duration', '0.1s');
-                document.body.style.setProperty('--transition-duration', '0.1s');
-                
-            } else if (perfStats.fps < 50) {
-                optimizationLevel = 'medium';
-                console.log('⚠️ FPS moyen détecté, optimisation modérée activée');
-                
-                if (window.animationOptimizer) {
-                    window.animationOptimizer.setAnimationQuality(0.6);
-                    window.animationOptimizer.setTargetFPS(50);
-                }
+            } catch (error) {
+                console.warn('⚠️ Erreur réduction animations:', error);
             }
-            
-            // Vérifier la mémoire
-            if (perfStats.memory && perfStats.memory.used > memoryThreshold) {
-                console.log('🧹 Nettoyage mémoire automatique activé');
+        }
+
+        /**
+         * Optimiser les particules
+         */
+        function optimizeParticles() {
+            try {
+                // Optimiser la création des particules
+                if (window.createParticles) {
+                    const originalCreateParticles = window.createParticles;
+                    window.createParticles = function(x, y) {
+                        // Créer un nombre optimal de particules
+                        const particleCount = Math.min(40, Math.floor(window.innerWidth / 20));
+                        return originalCreateParticles.call(this, x, y, particleCount);
+                    };
+                }
                 
-                // Forcer le garbage collection si possible
+                // Optimiser les animations CSS
+                document.documentElement.style.setProperty('--animation-duration', '0.4s');
+                document.documentElement.style.setProperty('--particle-count', '50');
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur optimisation particules:', error);
+            }
+        }
+
+        /**
+         * Activer les effets avancés
+         */
+        function enableAdvancedEffects() {
+            try {
+                // Activer les animations avancées
+                document.documentElement.style.setProperty('--animation-duration', '0.6s');
+                document.documentElement.style.setProperty('--particle-count', '80');
+                
+                // Activer les effets de parallaxe
+                if (window.enableParallax) {
+                    window.enableParallax();
+                }
+                
+                // Activer les animations 3D
+                const cards = document.querySelectorAll('.service-card, .portfolio-item');
+                cards.forEach(card => {
+                    card.style.transformStyle = 'preserve-3d';
+                    card.style.transition = 'transform 0.3s ease';
+                });
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur activation effets avancés:', error);
+            }
+        }
+
+        /**
+         * Nettoyer la mémoire
+         */
+        function cleanupMemory() {
+            try {
+                // Forcer le garbage collection si disponible
                 if (window.gc) {
                     window.gc();
                 }
                 
-                // Nettoyer les caches
-                if (window.caches) {
-                    caches.keys().then(names => {
-                        names.forEach(name => caches.delete(name));
-                    });
-                }
-            }
-            
-            // Vérifier le temps de chargement
-            if (perfStats.loadTime > loadTimeThreshold) {
-                console.log('⚡ Optimisation du chargement activée');
-                
-                // Activer le lazy loading
-                const images = document.querySelectorAll('img[data-src]');
-                images.forEach(img => {
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
+                // Nettoyer les particules existantes
+                const particles = document.querySelectorAll('.particle');
+                particles.forEach(particle => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
                     }
                 });
+                
+                // Réduire la taille des images
+                const images = document.querySelectorAll('img');
+                images.forEach(img => {
+                    if (img.dataset.originalSrc) {
+                        img.src = img.dataset.originalSrc;
+                    }
+                });
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur nettoyage mémoire:', error);
             }
-            
-            // Afficher le niveau d'optimisation dans l'interface
-            const optimizationStatus = document.getElementById('optimizationStatus');
-            if (optimizationStatus) {
-                const statusText = optimizationLevel === 'none' ? 'Aucune' : 
-                                 optimizationLevel === 'medium' ? 'Modérée' : 'Élevée';
-                optimizationStatus.textContent = `Optimisation: ${statusText}`;
-                optimizationStatus.className = `optimization-status ${optimizationLevel}`;
+        }
+
+        /**
+         * Activer le mode diagnostic
+         */
+        function enableDiagnosticMode() {
+            try {
+                // Activer la surveillance détaillée
+                if (window.performanceMonitor) {
+                    window.performanceMonitor.setLogLevel('DEBUG');
+                }
+                
+                // Afficher les informations de débogage
+                const debugInfo = document.createElement('div');
+                debugInfo.id = 'debugInfo';
+                debugInfo.className = 'debug-info';
+                debugInfo.innerHTML = `
+                    <h4>Mode Diagnostic</h4>
+                    <p>Surveillance détaillée activée</p>
+                    <p>Erreurs: ${window.previousMetrics?.errors || 0}</p>
+                `;
+                
+                const adminContainer = document.querySelector('.admin-container');
+                if (adminContainer && !document.getElementById('debugInfo')) {
+                    adminContainer.appendChild(debugInfo);
+                }
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur mode diagnostic:', error);
             }
+        }
+
+        /**
+         * Activer le mode économie
+         */
+        function enableEconomyMode() {
+            try {
+                // Réduire drastiquement les animations
+                document.documentElement.style.setProperty('--animation-duration', '0.2s');
+                document.documentElement.style.setProperty('--particle-count', '15');
+                
+                // Désactiver les effets non essentiels
+                const effects = document.querySelectorAll('.particle, .floating-element');
+                effects.forEach(effect => {
+                    effect.style.display = 'none';
+                });
+                
+                // Optimiser les images
+                const images = document.querySelectorAll('img');
+                images.forEach(img => {
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                });
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur mode économie:', error);
+            }
+        }
+
+        /**
+         * Afficher les optimisations appliquées
+         */
+        function displayOptimizations(optimizations) {
+            try {
+                const optimizationList = document.getElementById('optimizationList');
+                if (!optimizationList) return;
+                
+                // Ajouter les nouvelles optimisations
+                optimizations.forEach(optimization => {
+                    const optimizationItem = document.createElement('div');
+                    optimizationItem.className = 'optimization-item';
+                    optimizationItem.innerHTML = `
+                        <i class="fas fa-cog"></i>
+                        <span>${optimization}</span>
+                        <small>${new Date().toLocaleTimeString()}</small>
+                    `;
+                    
+                    optimizationList.appendChild(optimizationItem);
+                    
+                    // Supprimer après 10 secondes
+                    setTimeout(() => {
+                        if (optimizationItem.parentNode) {
+                            optimizationItem.parentNode.removeChild(optimizationItem);
+                        }
+                    }, 10000);
+                });
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur affichage optimisations:', error);
+            }
+        }
+
+        /**
+         * Mettre à jour le statut d'optimisation
+         */
+        function updateOptimizationStatus(stats) {
+            try {
+                const optimizationStatus = document.getElementById('optimizationStatus');
+                if (!optimizationStatus) return;
+                
+                let status, statusClass, statusText;
+                
+                if (stats.fps >= 80 && stats.performanceScore >= 80) {
+                    status = 'excellent';
+                    statusClass = 'status-excellent';
+                    statusText = 'Performance Excellente';
+                } else if (stats.fps >= 60 && stats.performanceScore >= 60) {
+                    status = 'good';
+                    statusClass = 'status-good';
+                    statusText = 'Performance Bonne';
+                } else if (stats.fps >= 30 && stats.performanceScore >= 40) {
+                    status = 'fair';
+                    statusClass = 'status-fair';
+                    statusText = 'Performance Moyenne';
+                } else {
+                    status = 'poor';
+                    statusClass = 'status-poor';
+                    statusText = 'Performance Faible';
+                }
+                
+                optimizationStatus.className = `optimization-status ${statusClass}`;
+                optimizationStatus.innerHTML = `
+                    <i class="fas fa-${getStatusIcon(status)}"></i>
+                    <span>${statusText}</span>
+                `;
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur mise à jour statut optimisation:', error);
+            }
+        }
+
+        /**
+         * Obtenir l'icône du statut
+         */
+        function getStatusIcon(status) {
+            const icons = {
+                'excellent': 'star',
+                'good': 'check-circle',
+                'fair': 'exclamation-triangle',
+                'poor': 'times-circle'
+            };
+            return icons[status] || 'info-circle';
         }
 
         /**
@@ -1690,18 +2190,50 @@
                 const activityList = document.getElementById('activityList');
                 if (!activityList) return;
                 
-                // Obtenir les activités récentes
-                let activities = [];
-                if (window.siteMonitor) {
-                    activities = window.siteMonitor.data.userActivity.slice(-10).reverse();
-                } else if (window.adminUtils) {
-                    activities = window.adminUtils.data.userActivity.slice(-10).reverse();
-                } else {
-                    activities = getDemoActivities();
+                // Obtenir les activités récentes de tous les moniteurs
+                let allActivities = [];
+                
+                // Activités du moniteur de site
+                if (window.siteMonitor && window.siteMonitor.data && window.siteMonitor.data.userActivity) {
+                    const siteActivities = window.siteMonitor.data.userActivity.slice(-5).map(activity => ({
+                        ...activity,
+                        source: 'site'
+                    }));
+                    allActivities = allActivities.concat(siteActivities);
+                }
+                
+                // Activités du moniteur d'activité
+                if (window.activityMonitor && window.activityMonitor.activities) {
+                    const activityMonitorActivities = window.activityMonitor.activities.slice(-5).map(activity => ({
+                        ...activity,
+                        source: 'activity'
+                    }));
+                    allActivities = allActivities.concat(activityMonitorActivities);
+                }
+                
+                // Activités de performance
+                if (window.performanceMonitor && window.performanceMonitor.metrics) {
+                    const perfActivities = [{
+                        type: 'performance',
+                        target: 'SYSTEM',
+                        timestamp: Date.now(),
+                        source: 'performance',
+                        details: `FPS: ${window.performanceMonitor.metrics.fps}, Mémoire: ${Math.round(window.performanceMonitor.metrics.memoryUsage)} MB`
+                    }];
+                    allActivities = allActivities.concat(perfActivities);
+                }
+                
+                // Trier par timestamp et prendre les 10 plus récentes
+                allActivities.sort((a, b) => b.timestamp - a.timestamp);
+                allActivities = allActivities.slice(0, 10);
+                
+                // Si aucune activité réelle, utiliser des activités de démonstration
+                if (allActivities.length === 0) {
+                    allActivities = getDemoActivities();
                 }
                 
                 // Mettre à jour l'affichage
-                activityList.innerHTML = activities.map(activity => `
+                activityList.innerHTML = allActivities.map(activity => `
                     <div class="activity-item">
                         <div class="activity-icon ${getActivityIconClass(activity.type)}">
                             <i class="fas ${getActivityIcon(activity.type)}"></i>
@@ -1709,6 +2241,7 @@
                         <div class="activity-content">
                             <div class="activity-title">${getActivityTitle(activity.type)}</div>
                             <div class="activity-details">${getActivityDetails(activity)}</div>
+                            ${activity.source ? `<div class="activity-source">Source: ${getSourceName(activity.source)}</div>` : ''}
                         </div>
                         <div class="activity-time">${formatTime(activity.timestamp)}</div>
                     </div>
@@ -1716,7 +2249,36 @@
                 
             } catch (error) {
                 console.warn('⚠️ Erreur mise à jour activités:', error);
+                // Afficher des activités de démonstration en cas d'erreur
+                const activityList = document.getElementById('activityList');
+                if (activityList) {
+                    const demoActivities = getDemoActivities();
+                    activityList.innerHTML = demoActivities.map(activity => `
+                        <div class="activity-item">
+                            <div class="activity-icon ${getActivityIconClass(activity.type)}">
+                                <i class="fas ${getActivityIcon(activity.type)}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">${getActivityTitle(activity.type)}</div>
+                                <div class="activity-details">${getActivityDetails(activity)}</div>
+                            </div>
+                            <div class="activity-time">${formatTime(activity.timestamp)}</div>
+                        </div>
+                    `).join('');
+                }
             }
+        }
+
+        /**
+         * Obtenir le nom de la source d'activité
+         */
+        function getSourceName(source) {
+            const sourceNames = {
+                'site': 'Site Monitor',
+                'activity': 'Activity Monitor',
+                'performance': 'Performance Monitor'
+            };
+            return sourceNames[source] || source;
         }
 
         /**
@@ -2099,6 +2661,210 @@
         window.setAnimationQuality = setAnimationQuality;
         window.toggleSmoothAnimations = toggleSmoothAnimations;
         window.restartOptimizer = restartOptimizer;
+
+        /**
+         * Mettre à jour les graphiques de performance
+         */
+        function updatePerformanceCharts(stats) {
+            try {
+                // Mettre à jour les graphiques FPS si Chart.js est disponible
+                if (window.Chart && window.performanceMonitor) {
+                    updateFPSChart();
+                    updateMemoryChart();
+                    updatePerformanceScoreChart();
+                }
+            } catch (error) {
+                console.warn('⚠️ Erreur mise à jour graphiques:', error);
+            }
+        }
+
+        /**
+         * Mettre à jour le graphique FPS
+         */
+        function updateFPSChart() {
+            if (!window.performanceMonitor || !window.performanceMonitor.history) return;
+            
+            const fpsHistory = window.performanceMonitor.history.fps || [];
+            if (fpsHistory.length === 0) return;
+            
+            const ctx = document.getElementById('fpsChart');
+            if (!ctx) return;
+            
+            // Détruire le graphique existant s'il y en a un
+            if (window.fpsChart) {
+                window.fpsChart.destroy();
+            }
+            
+            const labels = fpsHistory.slice(-20).map((_, index) => `${index * 2}s`);
+            const data = fpsHistory.slice(-20).map(item => item.value || 0);
+            
+            window.fpsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'FPS',
+                        data: data,
+                        borderColor: '#60a5fa',
+                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 120,
+                            grid: {
+                                color: 'rgba(51, 65, 85, 0.3)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(51, 65, 85, 0.3)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Mettre à jour le graphique mémoire
+         */
+        function updateMemoryChart() {
+            if (!window.performanceMonitor || !window.performanceMonitor.history) return;
+            
+            const memoryHistory = window.performanceMonitor.history.memoryUsage || [];
+            if (memoryHistory.length === 0) return;
+            
+            const ctx = document.getElementById('memoryChart');
+            if (!ctx) return;
+            
+            // Détruire le graphique existant s'il y en a un
+            if (window.memoryChart) {
+                window.memoryChart.destroy();
+            }
+            
+            const labels = memoryHistory.slice(-20).map((_, index) => `${index * 2}s`);
+            const data = memoryHistory.slice(-20).map(item => item.value || 0);
+            
+            window.memoryChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Mémoire (MB)',
+                        data: data,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(51, 65, 85, 0.3)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(51, 65, 85, 0.3)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Mettre à jour le graphique score de performance
+         */
+        function updatePerformanceScoreChart() {
+            if (!window.performanceMonitor || !window.performanceMonitor.history) return;
+            
+            const ctx = document.getElementById('performanceChart');
+            if (!ctx) return;
+            
+            // Détruire le graphique existant s'il y en a un
+            if (window.performanceChart) {
+                window.performanceChart.destroy();
+            }
+            
+            // Créer des données de performance simulées basées sur les métriques actuelles
+            const currentFPS = window.performanceMonitor.metrics.fps || 60;
+            const currentMemory = window.performanceMonitor.metrics.memoryUsage || 50;
+            const currentLoadTime = window.performanceMonitor.metrics.loadTime || 1000;
+            
+            // Calculer un score de performance basé sur ces métriques
+            const fpsScore = Math.min(100, (currentFPS / 60) * 100);
+            const memoryScore = Math.max(0, 100 - (currentMemory / 200) * 100);
+            const loadScore = Math.max(0, 100 - (currentLoadTime / 5000) * 100);
+            
+            const overallScore = Math.round((fpsScore + memoryScore + loadScore) / 3);
+            
+            window.performanceChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['FPS', 'Mémoire', 'Chargement', 'Score Global'],
+                    datasets: [{
+                        data: [fpsScore, memoryScore, loadScore, overallScore],
+                        backgroundColor: [
+                            '#60a5fa', // FPS - Bleu
+                            '#10b981', // Mémoire - Vert
+                            '#f59e0b', // Chargement - Orange
+                            '#8b5cf6'  // Score Global - Violet
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#94a3b8',
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
