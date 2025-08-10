@@ -312,7 +312,7 @@ class DiscordLogger {
      */
     async sendDiscordMessage(payload) {
         if (!this.webhookUrl) {
-            console.warn('⚠️ URL webhook Discord non configurée');
+            // URL webhook non configurée - pas de message dans le webhook
             return;
         }
         
@@ -332,7 +332,7 @@ class DiscordLogger {
             console.log('✅ Message Discord envoyé avec succès');
             
         } catch (error) {
-            console.error('❌ Erreur envoi Discord:', error);
+            // Erreur silencieuse - pas de message dans le webhook
             
             // Retry logic
             if (this.retryCount < this.maxRetries) {
@@ -378,7 +378,7 @@ class DiscordLogger {
                     await new Promise(resolve => setTimeout(resolve, 500));
                     
                 } catch (error) {
-                    console.error('❌ Erreur traitement queue:', error);
+                    // Erreur silencieuse - pas de message dans le webhook
                 }
             }
         }

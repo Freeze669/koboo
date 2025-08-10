@@ -8,6 +8,105 @@ AOS.init({
     offset: 100
 });
 
+// ===== NAVIGATION FLUIDE ET SECTIONS FIXES =====
+document.addEventListener('DOMContentLoaded', () => {
+    // Gestion de la navigation pour tous les liens sauf Accueil
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const targetId = link.getAttribute('href').substring(1);
+            
+            // Si c'est le lien Accueil, laisser le comportement par défaut
+            if (targetId === 'accueil') {
+                return;
+            }
+            
+            e.preventDefault();
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                // Défilement fluide vers la section cible
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Fermer le menu mobile si ouvert
+                const hamburger = document.querySelector('.hamburger');
+                const navMenu = document.querySelector('.nav-menu');
+                if (hamburger && navMenu) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    
+                    const spans = hamburger.querySelectorAll('span');
+                    spans.forEach(span => {
+                        span.style.transform = 'none';
+                        span.style.opacity = '1';
+                    });
+                }
+            }
+        });
+    });
+    
+    // Gestion de l'état actif des liens de navigation
+    function updateActiveNavLink() {
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        let currentSection = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            
+            if (window.scrollY >= (sectionTop - 200)) {
+                currentSection = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${currentSection}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    // Observer le scroll pour mettre à jour la navigation active
+    window.addEventListener('scroll', () => {
+        updateActiveNavLink();
+    });
+    
+    // Mise à jour initiale
+    updateActiveNavLink();
+    
+    // Fixer les sections du bas (Mentions et Footer)
+    const mentionsSection = document.getElementById('mentions');
+    const footerSection = document.querySelector('.footer');
+    
+    if (mentionsSection) {
+        mentionsSection.style.position = 'relative';
+        mentionsSection.style.zIndex = '10';
+    }
+    
+    if (footerSection) {
+        footerSection.style.position = 'relative';
+        footerSection.style.zIndex = '5';
+    }
+    
+    // Amélioration de l'expérience de navigation
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        // Ajouter une classe pour indiquer le scroll
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    }
+});
+
 // ===== LOADER PREMIUM =====
 document.addEventListener('DOMContentLoaded', () => {
     const loader = document.querySelector('.loader');
@@ -367,6 +466,362 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// ===== ANIMATIONS AU CLIC =====
+document.addEventListener('click', (e) => {
+    // Animation des boutons au clic
+    if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+        const button = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
+        
+        // Animation de scale
+        button.style.transform = 'scale(0.95)';
+        button.style.transition = 'transform 0.1s ease';
+        
+        setTimeout(() => {
+            button.style.transform = 'scale(1)';
+        }, 100);
+        
+        // Créer des particules au clic
+        createClickParticles(e.clientX, e.clientY);
+    }
+    
+    // Animation du texte au clic
+    if (e.target.tagName === 'A' || e.target.closest('a')) {
+        const link = e.target.tagName === 'A' ? e.target : e.target.closest('a');
+        
+        // Effet de brillance
+        link.style.filter = 'brightness(1.2)';
+        link.style.transition = 'filter 0.3s ease';
+        
+        setTimeout(() => {
+            link.style.filter = 'brightness(1)';
+        }, 300);
+        
+        // Créer des particules au clic
+        createClickParticles(e.clientX, e.clientY);
+    }
+    
+    // Animation des cartes au clic
+    if (e.target.closest('.service-card, .portfolio-item, .testimonial-card')) {
+        const card = e.target.closest('.service-card, .portfolio-item, .testimonial-card');
+        
+        // Effet de pulse
+        card.style.transform = 'scale(1.02)';
+        card.style.transition = 'transform 0.2s ease';
+        
+        setTimeout(() => {
+            card.style.transform = 'scale(1)';
+        }, 200);
+        
+        // Créer des particules au clic
+        createClickParticles(e.clientX, e.clientY);
+    }
+    
+    // Animation des filtres au clic
+    if (e.target.closest('.filter-btn')) {
+        const filterBtn = e.target.closest('.filter-btn');
+        
+        // Effet de bounce
+        filterBtn.style.transform = 'scale(1.1) rotate(5deg)';
+        filterBtn.style.transition = 'transform 0.3s ease';
+        
+        setTimeout(() => {
+            filterBtn.style.transform = 'scale(1) rotate(0deg)';
+        }, 300);
+        
+        // Créer des particules au clic
+        createClickParticles(e.clientX, e.clientY);
+    }
+    
+    // Animation des éléments admin au clic
+    if (e.target.closest('.admin-btn, .discord-btn, .action-btn')) {
+        const adminBtn = e.target.closest('.admin-btn, .discord-btn, .action-btn');
+        
+        // Effet de pulse avec rotation
+        adminBtn.style.transform = 'scale(1.05) rotate(2deg)';
+        adminBtn.style.transition = 'transform 0.2s ease';
+        
+        setTimeout(() => {
+            adminBtn.style.transform = 'scale(1) rotate(0deg)';
+        }, 200);
+        
+        // Créer des particules au clic
+        createClickParticles(e.clientX, e.clientY);
+    }
+    
+    // Animation des métriques au clic
+    if (e.target.closest('.metric-card')) {
+        const metricCard = e.target.closest('.metric-card');
+        
+        // Effet de bounce
+        metricCard.style.transform = 'scale(1.03) translateY(-5px)';
+        metricCard.style.transition = 'transform 0.3s ease';
+        
+        setTimeout(() => {
+            metricCard.style.transform = 'scale(1) translateY(0)';
+        }, 300);
+        
+        // Créer des particules au clic
+        createClickParticles(e.clientX, e.clientY);
+    }
+    
+    // Animation du texte au clic
+    if (e.target.tagName === 'H1' || e.target.tagName === 'H2' || e.target.tagName === 'H3' || e.target.tagName === 'H4' || e.target.tagName === 'H5' || e.target.tagName === 'H6') {
+        const heading = e.target;
+        
+        // Effet de wave
+        heading.style.transform = 'scale(1.05)';
+        heading.style.transition = 'transform 0.3s ease';
+        
+        setTimeout(() => {
+            heading.style.transform = 'scale(1)';
+        }, 300);
+        
+        // Créer des particules au clic
+        createClickParticles(e.clientX, e.clientY);
+    }
+});
+
+// ===== ANIMATIONS DES FORMULAIRES =====
+document.addEventListener('focusin', (e) => {
+    // Animation des champs de formulaire au focus
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        const input = e.target;
+        
+        // Effet de lift
+        input.style.transform = 'translateY(-3px)';
+        input.style.transition = 'transform 0.3s ease';
+        
+        // Créer des particules d'info
+        const rect = input.getBoundingClientRect();
+        createInfoParticles(rect.left + rect.width / 2, rect.top);
+    }
+});
+
+document.addEventListener('focusout', (e) => {
+    // Reset des animations des champs de formulaire
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        const input = e.target;
+        
+        input.style.transform = 'translateY(0)';
+        input.style.transition = 'transform 0.3s ease';
+    }
+});
+
+// ===== ANIMATIONS DES NOTIFICATIONS =====
+function animateNotification(notification) {
+    // Animation d'entrée
+    notification.style.transform = 'translateY(-20px) scale(0.9)';
+    notification.style.opacity = '0';
+    notification.style.transition = 'all 0.3s ease';
+    
+    setTimeout(() => {
+        notification.style.transform = 'translateY(0) scale(1)';
+        notification.style.opacity = '1';
+    }, 100);
+    
+    // Animation de sortie après 5 secondes
+    setTimeout(() => {
+        notification.style.transform = 'translateY(-20px) scale(0.9)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 5000);
+}
+
+// ===== ANIMATIONS AU SCROLL =====
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+    // Délai pour optimiser les performances
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+        const scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll('.parallax');
+        
+        parallaxElements.forEach(element => {
+            const speed = element.dataset.speed || 0.5;
+            const yPos = -(scrolled * speed);
+            element.style.transform = `translateY(${yPos}px)`;
+        });
+        
+        // Animation des éléments au scroll
+        const animatedElements = document.querySelectorAll('.animate-on-scroll');
+        animatedElements.forEach(element => {
+            const elementTop = element.offsetTop;
+            const elementHeight = element.offsetHeight;
+            const windowHeight = window.innerHeight;
+            
+            if (scrolled + windowHeight > elementTop && scrolled < elementTop + elementHeight) {
+                element.classList.add('animate-in');
+            }
+        });
+    }, 16); // ~60fps
+});
+
+// ===== ANIMATIONS DES ICÔNES =====
+function animateIcon(icon) {
+    // Animation de rotation et scale
+    icon.style.transform = 'rotate(360deg) scale(1.2)';
+    icon.style.transition = 'transform 0.6s ease';
+    
+    setTimeout(() => {
+        icon.style.transform = 'rotate(0deg) scale(1)';
+    }, 600);
+}
+
+// ===== ANIMATIONS DES CARTES =====
+function animateCard(card) {
+    // Animation de flip
+    card.style.transform = 'rotateY(10deg) scale(1.02)';
+    card.style.transition = 'transform 0.4s ease';
+    
+    setTimeout(() => {
+        card.style.transform = 'rotateY(0deg) scale(1)';
+    }, 400);
+}
+
+// ===== PARTICULES AU CLIC =====
+function createClickParticles(x, y) {
+    const particleCount = 8;
+    const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981'];
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'click-particle';
+        
+        // Générer des directions aléatoires pour chaque particule
+        const angle = (i / particleCount) * 2 * Math.PI;
+        const distance = 20 + Math.random() * 40;
+        const randomX = Math.cos(angle) * distance;
+        const randomY = Math.sin(angle) * distance;
+        
+        particle.style.cssText = `
+            position: fixed;
+            left: ${x}px;
+            top: ${y}px;
+            width: 4px;
+            height: 4px;
+            background: ${colors[i % colors.length]};
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            --random-x: ${randomX}px;
+            --random-y: ${randomY}px;
+            --random-x2: ${randomX * 2}px;
+            --random-y2: ${randomY * 2}px;
+            --random-x3: ${randomX * 3}px;
+            --random-y3: ${randomY * 3}px;
+            --random-x4: ${randomX * 4}px;
+            --random-y4: ${randomY * 4}px;
+            animation: clickParticleAnimation 0.8s ease-out forwards;
+        `;
+        
+        document.body.appendChild(particle);
+        
+        // Supprimer la particule après l'animation
+        setTimeout(() => {
+            if (particle.parentNode) {
+                particle.parentNode.removeChild(particle);
+            }
+        }, 800);
+    }
+}
+
+// ===== PARTICULES DE SUCCÈS =====
+function createSuccessParticles() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const particleCount = 12;
+    const colors = ['#10b981', '#059669', '#34d399', '#6ee7b7'];
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'success-particle';
+        
+        // Générer des directions en cercle pour un effet de célébration
+        const angle = (i / particleCount) * 2 * Math.PI;
+        const distance = 30 + Math.random() * 50;
+        const randomX = Math.cos(angle) * distance;
+        const randomY = Math.sin(angle) * distance;
+        
+        particle.style.cssText = `
+            position: fixed;
+            left: ${centerX}px;
+            top: ${centerY}px;
+            width: 6px;
+            height: 6px;
+            background: ${colors[i % colors.length]};
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            --random-x: ${randomX}px;
+            --random-y: ${randomY}px;
+            --random-x2: ${randomX * 2}px;
+            --random-y2: ${randomY * 2}px;
+            --random-x3: ${randomX * 3}px;
+            --random-y3: ${randomY * 3}px;
+            --random-x4: ${randomX * 4}px;
+            --random-y4: ${randomY * 4}px;
+            animation: successParticleAnimation 1.2s ease-out forwards;
+        `;
+        
+        document.body.appendChild(particle);
+        
+        // Supprimer la particule après l'animation
+        setTimeout(() => {
+            if (particle.parentNode) {
+                particle.parentNode.removeChild(particle);
+            }
+        }, 1200);
+    }
+}
+
+// ===== PARTICULES D'INFO =====
+function createInfoParticles(x, y) {
+    const particleCount = 6;
+    const colors = ['#3b82f6', '#1d4ed8', '#60a5fa'];
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'info-particle';
+        
+        // Générer des directions aléatoires
+        const angle = (i / particleCount) * 2 * Math.PI;
+        const distance = 15 + Math.random() * 25;
+        const randomX = Math.cos(angle) * distance;
+        const randomY = Math.sin(angle) * distance;
+        
+        particle.style.cssText = `
+            position: fixed;
+            left: ${x}px;
+            top: ${y}px;
+            width: 3px;
+            height: 3px;
+            background: ${colors[i % colors.length]};
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            --random-x: ${randomX}px;
+            --random-y: ${randomY}px;
+            --random-x2: ${randomX * 2}px;
+            --random-y2: ${randomY * 2}px;
+            animation: infoParticleAnimation 0.6s ease-out forwards;
+        `;
+        
+        document.body.appendChild(particle);
+        
+        // Supprimer la particule après l'animation
+        setTimeout(() => {
+            if (particle.parentNode) {
+                particle.parentNode.removeChild(particle);
+            }
+        }, 600);
+    }
+}
+
 // ===== ANIMATION DES CARTES =====
 const observerOptions = {
     threshold: 0.1,
@@ -408,25 +863,28 @@ if (contactForm) {
             submitBtn.querySelector('span').textContent = 'Envoi en cours...';
             submitBtn.style.pointerEvents = 'none';
             
-            try {
-                // Tracker la soumission du formulaire avec le système de monitoring
-                if (window.siteMonitor && typeof window.siteMonitor.trackUserActivity === 'function') {
-                    window.siteMonitor.trackUserActivity('form_submit', {
-                        formId: 'contactForm',
-                        formType: 'contact',
-                        formData: {
-                            name: data.name,
-                            email: data.email,
-                            projectType: data.projectType,
-                            details: data.details ? data.details.substring(0, 100) + '...' : '',
-                            deadline: data.deadline,
-                            budget: data.budget || 'Non spécifié'
-                        },
-                        timestamp: Date.now(),
-                        url: window.location.href,
-                        userAgent: navigator.userAgent
-                    });
-                }
+                    try {
+            // Créer des particules de succès
+            createSuccessParticles();
+            
+            // Tracker la soumission du formulaire avec le système de monitoring
+            if (window.siteMonitor && typeof window.siteMonitor.trackUserActivity === 'function') {
+                window.siteMonitor.trackUserActivity('form_submit', {
+                    formId: 'contactForm',
+                    formType: 'contact',
+                    formData: {
+                        name: data.name,
+                        email: data.email,
+                        projectType: data.projectType,
+                        details: data.details ? data.details.substring(0, 100) + '...' : '',
+                        deadline: data.deadline,
+                        budget: data.budget || 'Non spécifié'
+                    },
+                    timestamp: Date.now(),
+                    url: window.location.href,
+                    userAgent: navigator.userAgent
+                });
+            }
                 
                 // Envoyer directement au webhook Discord si le monitoring n'est pas disponible
                 if (!window.siteMonitor) {
@@ -527,6 +985,7 @@ async function sendFormToDiscord(formData) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                content: '', // Plus de ping @everyone
                 embeds: [embed]
             })
         });
@@ -538,7 +997,7 @@ async function sendFormToDiscord(formData) {
         console.log('✅ Formulaire envoyé au webhook Discord');
         
     } catch (error) {
-        console.error('❌ Erreur lors de l\'envoi au webhook Discord:', error);
+        // Erreur silencieuse - pas de message dans le webhook
         throw error;
     }
 }
@@ -766,6 +1225,7 @@ function showNotification(message, type = 'info') {
 
 // Effet de particules en arrière-plan
 function createParticles() {
+    // Toujours créer les particules pour un effet visuel optimal
     const particlesContainer = document.createElement('div');
     particlesContainer.className = 'particles-container';
     particlesContainer.style.cssText = `
@@ -779,13 +1239,15 @@ function createParticles() {
         overflow: hidden;
     `;
     
-    // Créer plus de particules avec différentes tailles et couleurs
-    for (let i = 0; i < 80; i++) {
+    // Nombre de particules adaptatif mais toujours visible
+    const particleCount = Math.min(60, Math.floor(window.innerWidth / 15));
+    
+    for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         
-        const size = Math.random() * 4 + 1;
-        const colors = ['var(--accent-color)', 'rgba(139, 92, 246, 0.6)', 'rgba(16, 185, 129, 0.6)', 'rgba(245, 158, 11, 0.6)'];
+        const size = Math.random() * 4 + 2; // Taille légèrement augmentée
+        const colors = ['var(--accent-color)', 'rgba(139, 92, 246, 0.6)', 'rgba(16, 185, 129, 0.6)', 'rgba(59, 130, 246, 0.5)'];
         const color = colors[Math.floor(Math.random() * colors.length)];
         
         particle.style.cssText = `
@@ -794,11 +1256,11 @@ function createParticles() {
             height: ${size}px;
             background: ${color};
             border-radius: 50%;
-            opacity: ${Math.random() * 0.5 + 0.2};
-            animation: float-particle ${Math.random() * 15 + 10}s linear infinite;
+            opacity: ${Math.random() * 0.4 + 0.2};
+            animation: float-particle ${Math.random() * 25 + 20}s linear infinite;
             left: ${Math.random() * 100}%;
             top: ${Math.random() * 100}%;
-            box-shadow: 0 0 ${size * 2}px ${color};
+            will-change: transform;
         `;
         particlesContainer.appendChild(particle);
     }
@@ -806,23 +1268,27 @@ function createParticles() {
     document.body.appendChild(particlesContainer);
 }
 
-// Animation des particules
+// Animation des particules optimisée pour les FPS
 const particleAnimation = `
 @keyframes float-particle {
     0% {
-        transform: translateY(100vh) rotate(0deg) scale(0);
+        transform: translateY(100vh) translateX(0px);
         opacity: 0;
     }
-    10% {
+    15% {
         opacity: 1;
-        transform: translateY(90vh) rotate(36deg) scale(1);
+        transform: translateY(85vh) translateX(10px);
     }
-    90% {
+    50% {
         opacity: 1;
-        transform: translateY(10vh) rotate(324deg) scale(1);
+        transform: translateY(50vh) translateX(-15px);
+    }
+    85% {
+        opacity: 1;
+        transform: translateY(15vh) translateX(20px);
     }
     100% {
-        transform: translateY(-100px) rotate(360deg) scale(0);
+        transform: translateY(-100px) translateX(0px);
         opacity: 0;
     }
 }
@@ -966,7 +1432,7 @@ document.querySelectorAll('img[data-src]').forEach(img => {
     imageObserver.observe(img);
 });
 
-// Debounce pour les événements de scroll
+// Debounce pour les événements de scroll optimisé
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -979,41 +1445,52 @@ function debounce(func, wait) {
     };
 }
 
-// Optimisation du scroll
+// Optimisation du scroll avec throttling pour améliorer les FPS
 const optimizedScrollHandler = debounce(() => {
-    // Code de scroll optimisé
-}, 16);
+    // Code de scroll optimisé - réduit pour améliorer les FPS
+    requestAnimationFrame(() => {
+        // Mise à jour minimale pour maintenir les FPS
+    });
+}, 32); // Augmenté à 32ms pour réduire la charge
 
-window.addEventListener('scroll', optimizedScrollHandler);
+window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
 
 // ===== INITIALISATION =====
 document.addEventListener('DOMContentLoaded', () => {
-    // Créer les particules
-    createParticles();
-    
-    // Initialiser les animations
-    initializeAnimations();
+    // Initialiser les animations avec délai pour améliorer les FPS
+    requestIdleCallback(() => {
+        createParticles();
+        initializeAnimations();
+    }, { timeout: 1000 });
     
     // Masquer le curseur sur mobile
     if (window.innerWidth <= 768) {
         document.body.style.cursor = 'auto';
-        cursor.style.display = 'none';
-        cursorFollower.style.display = 'none';
+        if (typeof cursor !== 'undefined') cursor.style.display = 'none';
+        if (typeof cursorFollower !== 'undefined') cursorFollower.style.display = 'none';
     }
 });
 
 function initializeAnimations() {
-    // Animation des éléments au chargement
+    // Animation des éléments au chargement optimisée pour les FPS
     const elements = document.querySelectorAll('.service-card, .portfolio-item, .testimonial-card');
-    elements.forEach((el, index) => {
+    
+    // Utiliser Intersection Observer pour les animations au lieu de setTimeout
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                observer.unobserve(entry.target); // Arrêter d'observer une fois animé
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    elements.forEach(el => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        
-        setTimeout(() => {
-            el.style.transition = 'all 0.6s ease';
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-        }, index * 100);
+        el.style.transform = 'translateY(20px)';
+        observer.observe(el);
     });
 }
 
@@ -1044,7 +1521,6 @@ document.addEventListener('mousedown', () => {
 
 // ===== ANALYTICS SIMULÉ =====
 function trackEvent(eventName, data = {}) {
-    console.log('Event tracked:', eventName, data);
     // Ici vous pourriez intégrer Google Analytics ou autre
 }
 
@@ -1059,6 +1535,4 @@ document.querySelectorAll('.btn, .cta-button').forEach(btn => {
 });
 
 // ===== FINALISATION =====
-console.log('🎨 Mayu & Jack Studio - Site Premium Loaded');
-console.log('✨ Animations et effets visuels activés');
-console.log('🚀 Performance optimisée'); 
+// Site optimisé et prêt 

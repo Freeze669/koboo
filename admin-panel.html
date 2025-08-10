@@ -22,6 +22,10 @@
     <script src="site-monitor.js"></script>
     <script src="admin-info-pages.js"></script>
     
+    <!-- Performance et Animation Optimization -->
+    <script src="performance-monitor.js"></script>
+    <script src="animation-optimizer.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -45,6 +49,8 @@
             border-radius: 15px;
             margin-bottom: 2rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1000;
         }
 
         .admin-header h2 {
@@ -108,19 +114,35 @@
             padding: 2rem;
         }
 
-        /* Grille des métriques */
+        /* Espacement uniforme entre toutes les sections pour un flux GUI optimal */
+        .admin-container > div {
+            margin-bottom: 2rem;
+        }
+
+        .admin-container > div:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Grille des métriques - FLUIDE pour un meilleur flux GUI */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(51, 65, 85, 0.5);
         }
 
         .metric-card {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 10px;
+            padding: 1rem;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
             position: relative;
@@ -138,9 +160,9 @@
         }
 
         .metric-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-2px);
             border-color: #60a5fa;
-            box-shadow: 0 10px 25px rgba(96, 165, 250, 0.2);
+            box-shadow: 0 5px 15px rgba(96, 165, 250, 0.2);
         }
 
         .metric-header {
@@ -151,24 +173,24 @@
         }
 
         .metric-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             background: linear-gradient(135deg, #60a5fa, #a78bfa);
         }
 
         .metric-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #f8fafc;
         }
 
         .metric-value {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: bold;
             color: #60a5fa;
             margin-bottom: 0.5rem;
@@ -195,12 +217,38 @@
             color: #ef4444;
         }
 
+        /* Indicateurs d'optimisation */
+        .optimization-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .optimization-status.none {
+            background: rgba(16, 185, 129, 0.8);
+        }
+
+        .optimization-status.medium {
+            background: rgba(245, 158, 11, 0.8);
+        }
+
+        .optimization-status.high {
+            background: rgba(239, 68, 68, 0.8);
+        }
+
         /* Actions rapides */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
+            position: relative;
+            z-index: 200;
         }
 
         .action-btn {
@@ -258,6 +306,9 @@
             border-radius: 12px;
             padding: 1.5rem;
             backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 150;
         }
 
         .section-title {
@@ -268,6 +319,8 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            position: relative;
+            z-index: 160;
         }
 
         .activity-list {
@@ -282,6 +335,8 @@
             padding: 1rem;
             border-bottom: 1px solid #334155;
             transition: background 0.3s ease;
+            position: relative;
+            z-index: 120;
         }
 
         .activity-item:hover {
@@ -300,6 +355,8 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
+            position: relative;
+            z-index: 130;
         }
 
         .activity-icon.click { background: #3b82f6; }
@@ -335,6 +392,8 @@
             padding: 1.5rem;
             backdrop-filter: blur(10px);
             margin-bottom: 2rem;
+            position: relative;
+            z-index: 150;
         }
 
         .discord-header {
@@ -396,6 +455,8 @@
             
             .metrics-grid {
                 grid-template-columns: 1fr;
+                position: relative;
+                padding: 0.75rem;
             }
             
             .quick-actions {
@@ -453,6 +514,20 @@
             padding: 1.5rem;
             backdrop-filter: blur(10px);
             margin-bottom: 2rem;
+            position: relative;
+            z-index: 150;
+        }
+
+        /* Section d'optimisation */
+        .optimization-section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 150;
         }
 
         .page-navigation {
@@ -540,6 +615,8 @@
             background: rgba(15, 23, 42, 0.6);
             border-radius: 8px;
             border: 1px solid #334155;
+            position: relative;
+            z-index: 110;
         }
 
         .count-number {
@@ -559,6 +636,8 @@
             background: rgba(15, 23, 42, 0.6);
             border-radius: 8px;
             overflow: hidden;
+            position: relative;
+            z-index: 100;
         }
 
         .user-header {
@@ -592,6 +671,8 @@
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin-bottom: 2rem;
+            position: relative;
+            z-index: 100;
         }
 
         .metric-item {
@@ -599,6 +680,8 @@
             border: 1px solid #334155;
             border-radius: 8px;
             padding: 1.5rem;
+            position: relative;
+            z-index: 110;
         }
 
         .metric-item h4 {
@@ -632,8 +715,10 @@
             display: flex;
             gap: 2rem;
             margin-bottom: 2rem;
-                justify-content: center;
-            }
+            justify-content: center;
+            position: relative;
+            z-index: 100;
+        }
 
         .count-item.error .count-number { color: #ef4444; }
         .count-item.warning .count-number { color: #f59e0b; }
@@ -825,6 +910,33 @@
         .btn-small:hover {
             background: rgba(59, 130, 246, 0.3);
         }
+
+        /* Boutons de contrôle d'optimisation */
+        .control-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #f8fafc;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            position: relative;
+            z-index: 200;
+        }
+
+        .control-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .optimization-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -954,6 +1066,37 @@
                     <span id="errorsTrend">Système stable</span>
                 </div>
             </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="metric-title">FPS & Performance</div>
+                </div>
+                <div class="metric-value" id="fpsValue">0</div>
+                <div class="metric-description">Frames par seconde</div>
+                <div class="metric-trend">
+                    <i class="fas fa-chart-line"></i>
+                    <span id="fpsTrend">Optimisé</span>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div class="metric-title">Optimisation Animations</div>
+                </div>
+                <div class="metric-value" id="animationQuality">100%</div>
+                <div class="metric-description">Qualité des animations</div>
+                <div class="metric-trend">
+                    <i class="fas fa-star"></i>
+                    <span id="animationTrend">Fluide</span>
+                </div>
+                <div class="optimization-status none" id="optimizationStatus">Optimisation: Aucune</div>
+            </div>
         </div>
 
         <!-- Actions Rapides -->
@@ -981,12 +1124,12 @@
             <div class="discord-header">
                 <div class="discord-icon">
                     <i class="fab fa-discord"></i>
-                        </div>
+                </div>
                 <div class="discord-info">
                     <h3>Statut Discord</h3>
                     <p>Webhook connecté et fonctionnel</p>
-                        </div>
-                        </div>
+                </div>
+            </div>
             <div class="discord-actions">
                 <button class="discord-btn" onclick="testDiscordConnection()">
                     <i class="fas fa-test-tube"></i>
@@ -1000,20 +1143,39 @@
                     <i class="fas fa-list"></i>
                     Voir Logs
                 </button>
-                        </div>
             </div>
+        </div>
 
-        <!-- Graphiques -->
-        <div class="charts-section">
-            <div class="chart-container">
-                <div class="chart-title">Activité Utilisateur</div>
-                <canvas id="userActivityChart"></canvas>
-                </div>
-            <div class="chart-container">
-                <div class="chart-title">Performance du Site</div>
-                <canvas id="performanceChart"></canvas>
-                </div>
-                </div>
+
+        
+        <!-- Statut d'Optimisation des Animations -->
+        <div class="optimization-section">
+            <div class="section-title">
+                <i class="fas fa-magic"></i>
+                Statut d'Optimisation des Animations
+            </div>
+            <div class="optimization-status" id="animationStatus">
+                <!-- Le statut sera mis à jour dynamiquement -->
+            </div>
+            <div class="optimization-controls">
+                <button class="control-btn" onclick="setTargetFPS(90)">
+                    <i class="fas fa-gamepad"></i>
+                    FPS Cible: 90
+                </button>
+                <button class="control-btn" onclick="setAnimationQuality(1.0)">
+                    <i class="fas fa-star"></i>
+                    Qualité Max
+                </button>
+                <button class="control-btn" onclick="toggleSmoothAnimations()">
+                    <i class="fas fa-sync-alt"></i>
+                    Animations Fluides
+                </button>
+                <button class="control-btn" onclick="restartOptimizer()">
+                    <i class="fas fa-redo"></i>
+                    Redémarrer
+                </button>
+            </div>
+        </div>
 
         <!-- Activités Récentes -->
         <div class="activities-section">
@@ -1031,14 +1193,12 @@
         // Variables globales
         let sessionStartTime = Date.now();
         let updateInterval;
-        let userActivityChart, performanceChart;
         let lastDataUpdate = 0;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             initializeAdminPanel();
             startRealTimeUpdates();
-            initializeCharts();
             initializeInfoPages(); // Initialiser les pages d'information
         });
 
@@ -1133,16 +1293,45 @@
          */
         function updateMetrics() {
             try {
-                // Obtenir les données du moniteur de site
-                if (window.siteMonitor) {
+                // Priorité au moniteur de performance pour des métriques stables
+                if (window.performanceMonitor) {
+                    const perfStats = window.performanceMonitor.getAdminStats();
+                    const activityStats = window.activityMonitor ? window.activityMonitor.getStats() : {};
+                    
+                    // Combiner les données de performance et d'activité
+                    const combinedStats = {
+                        ...perfStats,
+                        ...activityStats,
+                        timestamp: Date.now()
+                    };
+                    
+                    // Stabiliser les métriques pour éviter qu'elles bougent
+                    stabilizeMetrics(combinedStats);
+                    
+                    updateMetricDisplay(combinedStats);
+                    
+                    // Mettre à jour les graphiques de performance
+                    updatePerformanceCharts(perfStats);
+                    
+                    // Mettre à jour le statut d'optimisation des animations
+                    updateAnimationStatus();
+                    
+                    // Optimisation automatique basée sur les performances
+                    autoOptimizeBasedOnPerformance(perfStats);
+                    
+                } else if (window.siteMonitor) {
                     const stats = window.siteMonitor.getRealTimeStats();
+                    stabilizeMetrics(stats);
                     updateMetricDisplay(stats);
                 } else if (window.adminUtils) {
                     const stats = window.adminUtils.getRealTimeStats();
+                    stabilizeMetrics(stats);
                     updateMetricDisplay(stats);
                 } else {
                     // Données de démonstration si les moniteurs ne sont pas disponibles
-                    updateMetricDisplay(getDemoStats());
+                    const demoStats = getDemoStats();
+                    stabilizeMetrics(demoStats);
+                    updateMetricDisplay(demoStats);
                 }
             } catch (error) {
                 console.warn('⚠️ Erreur mise à jour métriques:', error);
@@ -1151,43 +1340,260 @@
         }
 
         /**
+         * Stabiliser les métriques pour éviter qu'elles bougent
+         */
+        function stabilizeMetrics(stats) {
+            // Stocker les valeurs précédentes pour éviter les changements brusques
+            if (!window.previousMetrics) {
+                window.previousMetrics = {};
+            }
+            
+            // Appliquer une moyenne mobile pour lisser les changements
+            const smoothingFactor = 0.7; // 70% de la valeur précédente, 30% de la nouvelle
+            
+            Object.keys(stats).forEach(key => {
+                if (typeof stats[key] === 'number' && stats[key] !== 0) {
+                    if (window.previousMetrics[key] !== undefined) {
+                        // Appliquer le lissage
+                        stats[key] = (window.previousMetrics[key] * smoothingFactor) + (stats[key] * (1 - smoothingFactor));
+                    }
+                    // Stocker la valeur actuelle
+                    window.previousMetrics[key] = stats[key];
+                }
+            });
+            
+            // Stabiliser les valeurs de chaînes pour éviter les changements fréquents
+            if (stats.uptime && window.previousMetrics.uptime) {
+                // Ne mettre à jour l'uptime que toutes les 5 secondes
+                const now = Date.now();
+                if (!window.lastUptimeUpdate || (now - window.lastUptimeUpdate) > 5000) {
+                    window.lastUptimeUpdate = now;
+                } else {
+                    stats.uptime = window.previousMetrics.uptime;
+                }
+            }
+        }
+
+        /**
          * Mettre à jour l'affichage des métriques
          */
         function updateMetricDisplay(stats) {
+            // Fonction pour mettre à jour une métrique avec transition douce
+            const updateMetricWithTransition = (elementId, newValue, oldValue) => {
+                const element = document.getElementById(elementId);
+                if (!element) return;
+                
+                // Si c'est la première fois, afficher directement
+                if (oldValue === undefined) {
+                    element.textContent = newValue;
+                    return;
+                }
+                
+                // Appliquer une transition douce
+                if (typeof newValue === 'number' && typeof oldValue === 'number') {
+                    // Animation de compteur pour les nombres
+                    animateCounter(element, oldValue, newValue, 500);
+                } else {
+                    // Transition simple pour les autres types
+                    element.style.opacity = '0.7';
+                    element.textContent = newValue;
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                    }, 150);
+                }
+            };
+            
             // Visiteurs
-            const visitorsElement = document.getElementById('visitorsCount');
-            if (visitorsElement) {
-                visitorsElement.textContent = stats.visitors || 0;
-            }
+            updateMetricWithTransition('visitorsCount', stats.visitors || 0, window.previousMetrics?.visitors);
             
             // Vues de page
-            const pageViewsElement = document.getElementById('pageViewsCount');
-            if (pageViewsElement) {
-                pageViewsElement.textContent = stats.pageViews || 0;
-            }
+            updateMetricWithTransition('pageViewsCount', stats.pageViews || 0, window.previousMetrics?.pageViews);
             
             // Temps de fonctionnement
-            const uptimeElement = document.getElementById('uptimeValue');
-            if (uptimeElement) {
-                uptimeElement.textContent = stats.uptime || '00:00:00';
-            }
+            updateMetricWithTransition('uptimeValue', stats.uptime || '00:00:00', window.previousMetrics?.uptime);
             
             // Utilisation mémoire
-            const memoryElement = document.getElementById('memoryUsage');
-            if (memoryElement && stats.memory) {
-                memoryElement.textContent = stats.memory.used || '0 MB';
+            if (stats.memory) {
+                updateMetricWithTransition('memoryUsage', stats.memory.used || '0 MB', window.previousMetrics?.memoryUsed);
             }
             
             // Performance
-            const performanceElement = document.getElementById('performanceScore');
-            if (performanceElement) {
-                performanceElement.textContent = stats.loadTime || 0;
-            }
+            updateMetricWithTransition('performanceScore', stats.loadTime || 0, window.previousMetrics?.loadTime);
             
             // Erreurs
-            const errorsElement = document.getElementById('errorsCount');
-            if (errorsElement) {
-                errorsElement.textContent = stats.errors || 0;
+            updateMetricWithTransition('errorsCount', stats.errors || 0, window.previousMetrics?.errors);
+            
+            // FPS & Performance
+            if (stats.fps !== undefined) {
+                updateMetricWithTransition('fpsValue', Math.round(stats.fps), window.previousMetrics?.fps);
+                
+                // Mettre à jour la tendance FPS avec transition douce
+                const fpsTrendElement = document.getElementById('fpsTrend');
+                if (fpsTrendElement) {
+                    let trendText, trendClass;
+                    if (stats.fps >= 80) {
+                        trendText = 'Excellent';
+                        trendClass = 'metric-trend trend-up';
+                    } else if (stats.fps >= 60) {
+                        trendText = 'Bon';
+                        trendClass = 'metric-trend';
+                    } else if (stats.fps >= 30) {
+                        trendText = 'Moyen';
+                        trendClass = 'metric-trend trend-down';
+                    } else {
+                        trendText = 'Faible';
+                        trendClass = 'metric-trend trend-down';
+                    }
+                    
+                    // Transition douce pour la tendance
+                    if (fpsTrendElement.textContent !== trendText) {
+                        fpsTrendElement.style.opacity = '0.7';
+                        fpsTrendElement.textContent = trendText;
+                        fpsTrendElement.className = trendClass;
+                        setTimeout(() => {
+                            fpsTrendElement.style.opacity = '1';
+                        }, 150);
+                    }
+                }
+            }
+            
+            // Qualité des animations
+            if (stats.animationQuality !== undefined) {
+                const qualityPercent = Math.round(stats.animationQuality * 100);
+                updateMetricWithTransition('animationQuality', qualityPercent + '%', window.previousMetrics?.animationQualityPercent);
+                
+                // Mettre à jour la tendance animation avec transition douce
+                const animationTrendElement = document.getElementById('animationTrend');
+                if (animationTrendElement) {
+                    let trendText, trendClass;
+                    if (qualityPercent >= 80) {
+                        trendText = 'Fluide';
+                        trendClass = 'metric-trend trend-up';
+                    } else if (qualityPercent >= 60) {
+                        trendText = 'Correct';
+                        trendClass = 'metric-trend';
+                    } else if (qualityPercent >= 40) {
+                        trendText = 'Réduit';
+                        trendClass = 'metric-trend trend-down';
+                    } else {
+                        trendText = 'Minimal';
+                        trendClass = 'metric-trend trend-down';
+                    }
+                    
+                    // Transition douce pour la tendance
+                    if (animationTrendElement.textContent !== trendText) {
+                        animationTrendElement.style.opacity = '0.7';
+                        animationTrendElement.textContent = trendText;
+                        animationTrendElement.className = trendClass;
+                        setTimeout(() => {
+                            animationTrendElement.style.opacity = '1';
+                        }, 150);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Animer un compteur de manière fluide
+         */
+        function animateCounter(element, startValue, endValue, duration) {
+            const startTime = performance.now();
+            const valueDiff = endValue - startValue;
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Fonction d'easing pour une animation plus naturelle
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = startValue + (valueDiff * easeOutQuart);
+                
+                element.textContent = Math.round(currentValue);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        /**
+         * Optimisation automatique basée sur les performances
+         */
+        function autoOptimizeBasedOnPerformance(perfStats) {
+            if (!perfStats) return;
+            
+            // Seuils d'optimisation
+            const fpsThreshold = 30;
+            const memoryThreshold = 100; // MB
+            const loadTimeThreshold = 3000; // ms
+            
+            let optimizationLevel = 'none';
+            
+            // Vérifier FPS
+            if (perfStats.fps < fpsThreshold) {
+                optimizationLevel = 'high';
+                console.log('🚨 FPS bas détecté, optimisation d\'urgence activée');
+                
+                // Désactiver les animations non essentielles
+                if (window.animationOptimizer) {
+                    window.animationOptimizer.setAnimationQuality(0.3);
+                    window.animationOptimizer.setTargetFPS(30);
+                }
+                
+                // Réduire les effets visuels
+                document.body.style.setProperty('--animation-duration', '0.1s');
+                document.body.style.setProperty('--transition-duration', '0.1s');
+                
+            } else if (perfStats.fps < 50) {
+                optimizationLevel = 'medium';
+                console.log('⚠️ FPS moyen détecté, optimisation modérée activée');
+                
+                if (window.animationOptimizer) {
+                    window.animationOptimizer.setAnimationQuality(0.6);
+                    window.animationOptimizer.setTargetFPS(50);
+                }
+            }
+            
+            // Vérifier la mémoire
+            if (perfStats.memory && perfStats.memory.used > memoryThreshold) {
+                console.log('🧹 Nettoyage mémoire automatique activé');
+                
+                // Forcer le garbage collection si possible
+                if (window.gc) {
+                    window.gc();
+                }
+                
+                // Nettoyer les caches
+                if (window.caches) {
+                    caches.keys().then(names => {
+                        names.forEach(name => caches.delete(name));
+                    });
+                }
+            }
+            
+            // Vérifier le temps de chargement
+            if (perfStats.loadTime > loadTimeThreshold) {
+                console.log('⚡ Optimisation du chargement activée');
+                
+                // Activer le lazy loading
+                const images = document.querySelectorAll('img[data-src]');
+                images.forEach(img => {
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                });
+            }
+            
+            // Afficher le niveau d'optimisation dans l'interface
+            const optimizationStatus = document.getElementById('optimizationStatus');
+            if (optimizationStatus) {
+                const statusText = optimizationLevel === 'none' ? 'Aucune' : 
+                                 optimizationLevel === 'medium' ? 'Modérée' : 'Élevée';
+                optimizationStatus.textContent = `Optimisation: ${statusText}`;
+                optimizationStatus.className = `optimization-status ${optimizationLevel}`;
             }
         }
 
@@ -1232,87 +1638,42 @@
             return `${hours.toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
         }
 
+        
         /**
-         * Initialiser les graphiques
+         * Mettre à jour le statut d'optimisation des animations
          */
-        function initializeCharts() {
-            // Graphique d'activité utilisateur
-            const userActivityCtx = document.getElementById('userActivityChart');
-            if (userActivityCtx) {
-                userActivityChart = new Chart(userActivityCtx, {
-                    type: 'line',
-                    data: {
-                        labels: [],
-                        datasets: [{
-                            label: 'Activité Utilisateur',
-                            data: [],
-                            borderColor: '#60a5fa',
-                            backgroundColor: 'rgba(96, 165, 250, 0.1)',
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: { color: '#f8fafc' }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                ticks: { color: '#94a3b8' },
-                                grid: { color: '#334155' }
-                            },
-                            y: {
-                                ticks: { color: '#94a3b8' },
-                                grid: { color: '#334155' }
-                            }
-                        }
-                    }
-                });
-            }
+        function updateAnimationStatus() {
+            if (!window.animationOptimizer) return;
             
-            // Graphique de performance
-            const performanceCtx = document.getElementById('performanceChart');
-            if (performanceCtx) {
-                performanceChart = new Chart(performanceCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['LCP', 'FID', 'CLS', 'Load Time'],
-                        datasets: [{
-                            label: 'Performance (ms)',
-                            data: [0, 0, 0, 0],
-                            backgroundColor: [
-                                '#10b981',
-                                '#3b82f6',
-                                '#f59e0b',
-                                '#8b5cf6'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: { color: '#f8fafc' }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                ticks: { color: '#94a3b8' },
-                                grid: { color: '#334155' }
-                            },
-                            y: {
-                                ticks: { color: '#94a3b8' },
-                                grid: { color: '#334155' }
-                            }
-                        }
-                    }
-                });
+            const status = window.animationOptimizer.getOptimizationStatus();
+            const statusElement = document.getElementById('animationStatus');
+            
+            if (statusElement) {
+                const qualityPercent = Math.round(status.animationQuality * 100);
+                const fpsStatus = status.currentFPS >= status.targetFPS ? '✅' : '⚠️';
+                
+                statusElement.innerHTML = `
+                    <div class="status-item">
+                        <span class="status-label">Niveau d'optimisation:</span>
+                        <span class="status-value ${status.optimizationLevel}">${status.optimizationLevel.toUpperCase()}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Qualité d'animation:</span>
+                        <span class="status-value">${qualityPercent}%</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">FPS actuel:</span>
+                        <span class="status-value ${fpsStatus}">${status.currentFPS} / ${status.targetFPS}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Animations fluides:</span>
+                        <span class="status-value">${status.smoothAnimations ? '✅ Activé' : '❌ Désactivé'}</span>
+                    </div>
+                `;
             }
         }
+
+
 
         /**
          * Initialiser la liste des activités
@@ -1694,6 +2055,50 @@
                 clearInterval(updateInterval);
             }
         });
+        
+        /**
+         * Fonctions de contrôle de l'optimisation des animations
+         */
+        function setTargetFPS(fps) {
+            if (window.animationOptimizer) {
+                window.animationOptimizer.setTargetFPS(fps);
+                console.log(`🎯 FPS cible défini à: ${fps}`);
+            } else {
+                console.warn('⚠️ Animation Optimizer non disponible');
+            }
+        }
+        
+        function setAnimationQuality(quality) {
+            if (window.animationOptimizer) {
+                window.animationOptimizer.setAnimationQuality(quality);
+                console.log(`🎨 Qualité d'animation définie à: ${Math.round(quality * 100)}%`);
+            } else {
+                console.warn('⚠️ Animation Optimizer non disponible');
+            }
+        }
+        
+        function toggleSmoothAnimations() {
+            if (window.animationOptimizer) {
+                window.animationOptimizer.toggleSmoothAnimations();
+            } else {
+                console.warn('⚠️ Animation Optimizer non disponible');
+            }
+        }
+        
+        function restartOptimizer() {
+            if (window.animationOptimizer) {
+                window.animationOptimizer.restart();
+                console.log('🔄 Animation Optimizer redémarré');
+            } else {
+                console.warn('⚠️ Animation Optimizer non disponible');
+            }
+        }
+        
+        // Exposer les fonctions globalement
+        window.setTargetFPS = setTargetFPS;
+        window.setAnimationQuality = setAnimationQuality;
+        window.toggleSmoothAnimations = toggleSmoothAnimations;
+        window.restartOptimizer = restartOptimizer;
     </script>
 </body>
 </html>
