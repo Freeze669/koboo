@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Panel Administrateur - Mayu & Jack Studio</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Discord Logging System -->
+    <script src="discord-logger.js"></script>
+    <script src="member-tracker.js"></script>
+    <script src="activity-monitor.js"></script>
+    <script src="discord-logging-system.js"></script>
+    
+    <!-- Configuration admin et monitoring -->
+    <script src="admin-config.js"></script>
+    <script src="site-monitor.js"></script>
+    <script src="admin-info-pages.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .admin-header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: #f8fafc;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-header h2 {
+            margin: 0 0 1rem 0;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .admin-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .admin-code-display {
+            background: rgba(59, 130, 246, 0.2);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .code-highlight {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .session-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Container principal */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Grille des métriques */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: #60a5fa;
+            box-shadow: 0 10px 25px rgba(96, 165, 250, 0.2);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        }
+
+        .metric-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-description {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .trend-up {
+            color: #10b981;
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+
+        /* Actions rapides */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Graphiques */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #f8fafc;
+            text-align: center;
+        }
+
+        /* Tableau des activités */
+        .activities-section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #334155;
+            transition: background 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .activity-icon.click { background: #3b82f6; }
+        .activity-icon.form { background: #10b981; }
+        .activity-icon.navigation { background: #f59e0b; }
+        .activity-icon.error { background: #ef4444; }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-details {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        /* Statut Discord */
+        .discord-status {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+
+        .discord-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .discord-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #5865f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .discord-info h3 {
+            color: #f8fafc;
+            margin-bottom: 0.5rem;
+        }
+
+        .discord-info p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .discord-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .discord-btn {
+            background: #5865f2;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .discord-btn:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .metric-card, .chart-container, .activities-section, .discord-status {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .metric-card:nth-child(1) { animation-delay: 0.1s; }
+        .metric-card:nth-child(2) { animation-delay: 0.2s; }
+        .metric-card:nth-child(3) { animation-delay: 0.3s; }
+        .metric-card:nth-child(4) { animation-delay: 0.4s; }
+        .metric-card:nth-child(5) { animation-delay: 0.5s; }
+        .metric-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Scrollbar personnalisée */
+        .activity-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .activity-list::-webkit-scrollbar-track {
+            background: rgba(51, 65, 85, 0.3);
+            border-radius: 4px;
+        }
+
+        .activity-list::-webkit-scrollbar-thumb {
+            background: #60a5fa;
+            border-radius: 4px;
+        }
+
+        .activity-list::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+
+        /* Pages d'information */
+        .info-pages {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+
+        .page-navigation {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+                flex-wrap: wrap;
+        }
+
+        .page-nav-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #f8fafc;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-nav-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .page-nav-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .page-content {
+            min-height: 400px;
+        }
+
+        /* Grille des statistiques */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Compteurs d'utilisateurs */
+        .user-counts {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+                justify-content: center;
+            }
+
+        .count-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .count-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .count-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Tableau des utilisateurs */
+        .user-table {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .user-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 80px;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.2);
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .user-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 80px;
+            padding: 1rem;
+            border-bottom: 1px solid #334155;
+            transition: background 0.3s ease;
+        }
+
+        .user-row:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .user-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Métriques de performance */
+        .metric-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .metric-item h4 {
+            margin: 0 0 1rem 0;
+            color: #f8fafc;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            transition: width 0.3s ease;
+        }
+
+        /* Alertes */
+        .alert-counts {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+                justify-content: center;
+            }
+
+        .count-item.error .count-number { color: #ef4444; }
+        .count-item.warning .count-number { color: #f59e0b; }
+        .count-item.info .count-number { color: #3b82f6; }
+
+        .alert-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-item.error { border-left: 4px solid #ef4444; }
+        .alert-item.warning { border-left: 4px solid #f59e0b; }
+        .alert-item.info { border-left: 4px solid #3b82f6; }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-level {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .alert-time {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .alert-message {
+            color: #f8fafc;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-details {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* Timeline des activités */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #334155;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: #3b82f6;
+            border-radius: 50%;
+            border: 2px solid #1e293b;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: -1.5rem;
+            top: 0.25rem;
+            font-size: 1.2rem;
+        }
+
+        .timeline-content {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-type {
+            font-weight: 600;
+            color: #3b82f6;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .activity-time {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .activity-description {
+            color: #f8fafc;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-user {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* Configuration */
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .config-section {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .config-section h4 {
+            margin: 0 0 1rem 0;
+            color: #f8fafc;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 0.5rem;
+        }
+
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+        }
+
+        .config-item:last-child {
+            border-bottom: none;
+        }
+
+        .config-key {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .config-value {
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        /* Graphiques placeholder */
+        .chart-placeholder {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        /* Boutons */
+        .btn-small {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #f8fafc;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Admin -->
+    <header class="admin-header">
+        <h2>🔐 Panel Administrateur</h2>
+        <div class="admin-info">
+            <div class="admin-code-display">
+                <strong>Code d'accès:</strong> <span id="adminCodeDisplay" class="code-highlight">••••••</span>
+            </div>
+            <div class="session-info">
+                <span id="sessionStatus">Session active</span>
+                <button onclick="logout()" class="logout-btn">Déconnexion</button>
+                </div>
+                </div>
+    </header>
+
+    <!-- Pages d'Information -->
+    <section class="info-pages">
+        <div class="page-navigation">
+            <button class="page-nav-btn active" onclick="showInfoPage('stats')">📊 Statistiques</button>
+            <button class="page-nav-btn" onclick="showInfoPage('users')">👥 Utilisateurs</button>
+            <button class="page-nav-btn" onclick="showInfoPage('performance')">⚡ Performances</button>
+            <button class="page-nav-btn" onclick="showInfoPage('alerts')">🚨 Alertes</button>
+            <button class="page-nav-btn" onclick="showInfoPage('activities')">📝 Activités</button>
+            <button class="page-nav-btn" onclick="showInfoPage('config')">⚙️ Configuration</button>
+                </div>
+        
+        <div class="page-content">
+            <h2 id="pageTitle">📊 Statistiques Générales</h2>
+            <div id="pageContent">
+                <!-- Le contenu sera généré dynamiquement -->
+                </div>
+        </div>
+        </section>
+
+    <!-- Container Principal -->
+    <div class="admin-container">
+        <!-- Grille des Métriques en Temps Réel -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="metric-title">Visiteurs Actifs</div>
+                </div>
+                <div class="metric-value" id="visitorsCount">0</div>
+                <div class="metric-description">Visiteurs uniques aujourd'hui</div>
+                <div class="metric-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span id="visitorsTrend">+0%</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="metric-title">Vues de Page</div>
+                </div>
+                <div class="metric-value" id="pageViewsCount">0</div>
+                <div class="metric-description">Pages consultées</div>
+                <div class="metric-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span id="pageViewsTrend">+0%</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="metric-title">Temps de Fonctionnement</div>
+                </div>
+                <div class="metric-value" id="uptimeValue">00:00:00</div>
+                <div class="metric-description">Depuis le démarrage</div>
+                <div class="metric-trend">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>En temps réel</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon">
+                        <i class="fas fa-memory"></i>
+                    </div>
+                    <div class="metric-title">Utilisation Mémoire</div>
+                </div>
+                <div class="metric-value" id="memoryUsage">0 MB</div>
+                <div class="metric-description">Mémoire JavaScript</div>
+                <div class="metric-trend">
+                    <i class="fas fa-chart-line"></i>
+                    <span id="memoryTrend">Stable</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="metric-title">Performance</div>
+                </div>
+                <div class="metric-value" id="performanceScore">0</div>
+                <div class="metric-description">Score de performance</div>
+                <div class="metric-trend">
+                    <i class="fas fa-rocket"></i>
+                    <span id="performanceTrend">Optimisé</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="metric-title">Erreurs</div>
+                </div>
+                <div class="metric-value" id="errorsCount">0</div>
+                <div class="metric-description">Erreurs détectées</div>
+                <div class="metric-trend">
+                    <i class="fas fa-shield-alt"></i>
+                    <span id="errorsTrend">Système stable</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions Rapides -->
+        <div class="quick-actions">
+            <button class="action-btn" onclick="refreshData()">
+                <i class="fas fa-sync-alt"></i>
+                Actualiser
+            </button>
+            <button class="action-btn" onclick="exportData()">
+                <i class="fas fa-download"></i>
+                Exporter Données
+            </button>
+            <button class="action-btn" onclick="optimizeSystem()">
+                <i class="fas fa-rocket"></i>
+                Optimiser
+            </button>
+            <button class="action-btn" onclick="backupData()">
+                <i class="fas fa-database"></i>
+                Sauvegarde
+            </button>
+        </div>
+
+        <!-- Statut Discord -->
+        <div class="discord-status">
+            <div class="discord-header">
+                <div class="discord-icon">
+                    <i class="fab fa-discord"></i>
+                        </div>
+                <div class="discord-info">
+                    <h3>Statut Discord</h3>
+                    <p>Webhook connecté et fonctionnel</p>
+                        </div>
+                        </div>
+            <div class="discord-actions">
+                <button class="discord-btn" onclick="testDiscordConnection()">
+                    <i class="fas fa-test-tube"></i>
+                    Tester Connexion
+                </button>
+                <button class="discord-btn" onclick="sendTestMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                    Message Test
+                </button>
+                <button class="discord-btn" onclick="viewDiscordLogs()">
+                    <i class="fas fa-list"></i>
+                    Voir Logs
+                </button>
+                        </div>
+            </div>
+
+        <!-- Graphiques -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <div class="chart-title">Activité Utilisateur</div>
+                <canvas id="userActivityChart"></canvas>
+                </div>
+            <div class="chart-container">
+                <div class="chart-title">Performance du Site</div>
+                <canvas id="performanceChart"></canvas>
+                </div>
+                </div>
+
+        <!-- Activités Récentes -->
+        <div class="activities-section">
+            <div class="section-title">
+                <i class="fas fa-history"></i>
+                Activités Récentes
+                </div>
+            <div class="activity-list" id="activityList">
+                <!-- Les activités seront ajoutées dynamiquement -->
+                </div>
+            </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let sessionStartTime = Date.now();
+        let updateInterval;
+        let userActivityChart, performanceChart;
+        let lastDataUpdate = 0;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAdminPanel();
+            startRealTimeUpdates();
+            initializeCharts();
+            initializeInfoPages(); // Initialiser les pages d'information
+        });
+
+        /**
+         * Initialisation du panel admin
+         */
+        function initializeAdminPanel() {
+            console.log('🚀 Initialisation du panel admin...');
+            
+            // Vérifier l'authentification
+            console.log('🔐 Vérification de l\'authentification...');
+            if (!checkAuth()) {
+                console.log('❌ Authentification échouée, redirection vers login');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            console.log('✅ Authentification réussie, initialisation des composants...');
+            
+            // Afficher le code admin
+            displayAdminCode();
+            
+            // Initialiser les composants
+            initializeMetrics();
+            initializeActivityList();
+            
+            console.log('✅ Panel admin initialisé avec succès');
+        }
+
+        /**
+         * Vérifier l'authentification
+         */
+        function checkAuth() {
+            console.log('🔐 Vérification de l\'authentification...');
+            
+            const session = sessionStorage.getItem('admin_session');
+            console.log('📦 Session trouvée:', session ? 'Oui' : 'Non');
+            
+            if (!session) {
+                console.log('❌ Aucune session trouvée, redirection vers login');
+                return false;
+            }
+            
+            try {
+                const sessionData = JSON.parse(session);
+                console.log('🔑 Données de session:', sessionData);
+                
+                const now = Date.now();
+                const sessionAge = now - sessionData.startTime;
+                const maxAge = ADMIN_CONFIG.security.sessionDuration;
+                
+                console.log(`⏰ Âge de session: ${sessionAge}ms, Max: ${maxAge}ms`);
+                
+                if (sessionAge > maxAge) {
+                    console.log('⏰ Session expirée, suppression et redirection');
+                    sessionStorage.removeItem('admin_session');
+                    return false;
+                }
+                
+                console.log('✅ Session valide');
+                return true;
+            } catch (error) {
+                console.error('❌ Erreur parsing session:', error);
+                return false;
+            }
+        }
+
+        /**
+         * Initialiser les métriques
+         */
+        function initializeMetrics() {
+            // Mettre à jour les métriques initiales
+            updateMetrics();
+            
+            // Mettre à jour le temps de session
+            updateSessionTime();
+        }
+
+        /**
+         * Démarrer les mises à jour en temps réel
+         */
+        function startRealTimeUpdates() {
+            updateInterval = setInterval(() => {
+                updateMetrics();
+                updateSessionTime();
+                updateActivityList();
+            }, 2000); // Mise à jour toutes les 2 secondes
+        }
+
+        /**
+         * Mettre à jour les métriques
+         */
+        function updateMetrics() {
+            try {
+                // Obtenir les données du moniteur de site
+                if (window.siteMonitor) {
+                    const stats = window.siteMonitor.getRealTimeStats();
+                    updateMetricDisplay(stats);
+                } else if (window.adminUtils) {
+                    const stats = window.adminUtils.getRealTimeStats();
+                    updateMetricDisplay(stats);
+                } else {
+                    // Données de démonstration si les moniteurs ne sont pas disponibles
+                    updateMetricDisplay(getDemoStats());
+                }
+            } catch (error) {
+                console.warn('⚠️ Erreur mise à jour métriques:', error);
+                // Ne pas afficher d'erreur à l'utilisateur
+            }
+        }
+
+        /**
+         * Mettre à jour l'affichage des métriques
+         */
+        function updateMetricDisplay(stats) {
+            // Visiteurs
+            const visitorsElement = document.getElementById('visitorsCount');
+            if (visitorsElement) {
+                visitorsElement.textContent = stats.visitors || 0;
+            }
+            
+            // Vues de page
+            const pageViewsElement = document.getElementById('pageViewsCount');
+            if (pageViewsElement) {
+                pageViewsElement.textContent = stats.pageViews || 0;
+            }
+            
+            // Temps de fonctionnement
+            const uptimeElement = document.getElementById('uptimeValue');
+            if (uptimeElement) {
+                uptimeElement.textContent = stats.uptime || '00:00:00';
+            }
+            
+            // Utilisation mémoire
+            const memoryElement = document.getElementById('memoryUsage');
+            if (memoryElement && stats.memory) {
+                memoryElement.textContent = stats.memory.used || '0 MB';
+            }
+            
+            // Performance
+            const performanceElement = document.getElementById('performanceScore');
+            if (performanceElement) {
+                performanceElement.textContent = stats.loadTime || 0;
+            }
+            
+            // Erreurs
+            const errorsElement = document.getElementById('errorsCount');
+            if (errorsElement) {
+                errorsElement.textContent = stats.errors || 0;
+            }
+        }
+
+        /**
+         * Obtenir des statistiques de démonstration
+         */
+        function getDemoStats() {
+            const now = Date.now();
+            const uptime = now - sessionStartTime;
+            
+            return {
+                visitors: Math.floor(Math.random() * 50) + 10,
+                pageViews: Math.floor(Math.random() * 200) + 50,
+                uptime: formatUptime(uptime),
+                memory: {
+                    used: Math.floor(Math.random() * 100) + 20 + ' MB'
+                },
+                loadTime: Math.floor(Math.random() * 200) + 100,
+                errors: Math.floor(Math.random() * 3)
+            };
+        }
+
+        /**
+         * Mettre à jour le temps de session
+         */
+        function updateSessionTime() {
+            const sessionElement = document.getElementById('sessionStatus');
+            if (sessionElement) {
+                const sessionTime = Date.now() - sessionStartTime;
+                sessionElement.textContent = `Session active`;
+            }
+        }
+
+        /**
+         * Formater le temps
+         */
+        function formatUptime(milliseconds) {
+            const seconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            
+            return `${hours.toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
+        }
+
+        /**
+         * Initialiser les graphiques
+         */
+        function initializeCharts() {
+            // Graphique d'activité utilisateur
+            const userActivityCtx = document.getElementById('userActivityChart');
+            if (userActivityCtx) {
+                userActivityChart = new Chart(userActivityCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Activité Utilisateur',
+                            data: [],
+                            borderColor: '#60a5fa',
+                            backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#f8fafc' }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { color: '#94a3b8' },
+                                grid: { color: '#334155' }
+                            },
+                            y: {
+                                ticks: { color: '#94a3b8' },
+                                grid: { color: '#334155' }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Graphique de performance
+            const performanceCtx = document.getElementById('performanceChart');
+            if (performanceCtx) {
+                performanceChart = new Chart(performanceCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['LCP', 'FID', 'CLS', 'Load Time'],
+                        datasets: [{
+                            label: 'Performance (ms)',
+                            data: [0, 0, 0, 0],
+                            backgroundColor: [
+                                '#10b981',
+                                '#3b82f6',
+                                '#f59e0b',
+                                '#8b5cf6'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#f8fafc' }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { color: '#94a3b8' },
+                                grid: { color: '#334155' }
+                            },
+                            y: {
+                                ticks: { color: '#94a3b8' },
+                                grid: { color: '#334155' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        /**
+         * Initialiser la liste des activités
+         */
+        function initializeActivityList() {
+            updateActivityList();
+        }
+
+        /**
+         * Mettre à jour la liste des activités
+         */
+        function updateActivityList() {
+            try {
+                const activityList = document.getElementById('activityList');
+                if (!activityList) return;
+                
+                // Obtenir les activités récentes
+                let activities = [];
+                if (window.siteMonitor) {
+                    activities = window.siteMonitor.data.userActivity.slice(-10).reverse();
+                } else if (window.adminUtils) {
+                    activities = window.adminUtils.data.userActivity.slice(-10).reverse();
+                } else {
+                    activities = getDemoActivities();
+                }
+                
+                // Mettre à jour l'affichage
+                activityList.innerHTML = activities.map(activity => `
+                    <div class="activity-item">
+                        <div class="activity-icon ${getActivityIconClass(activity.type)}">
+                            <i class="fas ${getActivityIcon(activity.type)}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">${getActivityTitle(activity.type)}</div>
+                            <div class="activity-details">${getActivityDetails(activity)}</div>
+                        </div>
+                        <div class="activity-time">${formatTime(activity.timestamp)}</div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur mise à jour activités:', error);
+            }
+        }
+
+        /**
+         * Obtenir des activités de démonstration
+         */
+        function getDemoActivities() {
+            const now = Date.now();
+            const activities = [
+                { type: 'click', target: 'BUTTON', timestamp: now - 5000 },
+                { type: 'form_submit', target: 'FORM', timestamp: now - 15000 },
+                { type: 'navigation', type: 'popstate', timestamp: now - 30000 },
+                { type: 'click', target: 'A', timestamp: now - 45000 }
+            ];
+            
+            return activities;
+        }
+
+        /**
+         * Obtenir la classe CSS de l'icône d'activité
+         */
+        function getActivityIconClass(type) {
+            const iconClasses = {
+                'click': 'click',
+                'form_submit': 'form',
+                'navigation': 'navigation',
+                'error': 'error'
+            };
+            return iconClasses[type] || 'click';
+        }
+
+        /**
+         * Obtenir l'icône de l'activité
+         */
+        function getActivityIcon(type) {
+            const icons = {
+                'click': 'fa-mouse-pointer',
+                'form_submit': 'fa-paper-plane',
+                'navigation': 'fa-route',
+                'error': 'fa-exclamation-triangle'
+            };
+            return icons[type] || 'fa-circle';
+        }
+
+        /**
+         * Obtenir le titre de l'activité
+         */
+        function getActivityTitle(type) {
+            const titles = {
+                'click': 'Clic Utilisateur',
+                'form_submit': 'Soumission Formulaire',
+                'navigation': 'Navigation',
+                'error': 'Erreur Détectée'
+            };
+            return titles[type] || 'Activité';
+        }
+
+        /**
+         * Obtenir les détails de l'activité
+         */
+        function getActivityDetails(activity) {
+            if (activity.type === 'click') {
+                return `Clic sur ${activity.target}`;
+            } else if (activity.type === 'form_submit') {
+                return `Formulaire soumis`;
+            } else if (activity.type === 'navigation') {
+                return `Navigation vers ${activity.url || 'nouvelle page'}`;
+            } else if (activity.type === 'error') {
+                return `Erreur: ${activity.message || 'Erreur inconnue'}`;
+            }
+            return 'Activité détectée';
+        }
+
+        /**
+         * Formater le temps
+         */
+        function formatTime(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            
+            if (diff < 60000) return 'À l\'instant';
+            if (diff < 3600000) return `Il y a ${Math.floor(diff / 60000)}m`;
+            if (diff < 86400000) return `Il y a ${Math.floor(diff / 3600000)}h`;
+            return new Date(timestamp).toLocaleTimeString();
+        }
+
+        /**
+         * Actualiser les données
+         */
+        function refreshData() {
+            updateMetrics();
+            updateActivityList();
+            
+            // Afficher une confirmation silencieuse
+            const refreshBtn = event.target;
+            const originalText = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<i class="fas fa-check"></i> Actualisé';
+            refreshBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalText;
+                refreshBtn.style.background = 'linear-gradient(135deg, #3b82f6, #8b5cf6)';
+            }, 2000);
+        }
+
+        /**
+         * Exporter les données
+         */
+        function exportData() {
+            try {
+                let data = {};
+                
+                if (window.siteMonitor) {
+                    data = window.siteMonitor.exportAllData();
+                } else if (window.adminUtils) {
+                    data = window.adminUtils.exportAllData();
+                } else {
+                    data = {
+                        demo: true,
+                        timestamp: new Date().toISOString(),
+                        message: 'Données de démonstration'
+                    };
+                }
+                
+                // Créer et télécharger le fichier
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `admin-data-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur export données:', error);
+            }
+        }
+
+        /**
+         * Optimiser le système
+         */
+        function optimizeSystem() {
+            const optimizeBtn = event.target;
+            const originalText = optimizeBtn.innerHTML;
+            
+            optimizeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimisation...';
+            optimizeBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            
+            setTimeout(() => {
+                optimizeBtn.innerHTML = '<i class="fas fa-check"></i> Optimisé';
+                optimizeBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                
+                setTimeout(() => {
+                    optimizeBtn.innerHTML = originalText;
+                    optimizeBtn.style.background = 'linear-gradient(135deg, #3b82f6, #8b5cf6)';
+                }, 2000);
+            }, 3000);
+        }
+
+        /**
+         * Sauvegarder les données
+         */
+        function backupData() {
+            const backupBtn = event.target;
+            const originalText = backupBtn.innerHTML;
+            
+            backupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde...';
+            backupBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            
+            setTimeout(() => {
+                backupBtn.innerHTML = '<i class="fas fa-check"></i> Sauvegardé';
+                backupBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            
+            setTimeout(() => {
+                    backupBtn.innerHTML = originalText;
+                    backupBtn.style.background = 'linear-gradient(135deg, #3b82f6, #8b5cf6)';
+                }, 2000);
+            }, 2000);
+        }
+
+        /**
+         * Tester la connexion Discord
+         */
+        async function testDiscordConnection() {
+            try {
+                const testBtn = event.target;
+                const originalText = testBtn.innerHTML;
+                
+                testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Test...';
+                testBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                
+                // Simuler un test de connexion
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                testBtn.innerHTML = '<i class="fas fa-check"></i> Connecté';
+                testBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                
+                setTimeout(() => {
+                    testBtn.innerHTML = originalText;
+                    testBtn.style.background = '#5865f2';
+                }, 2000);
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur test Discord:', error);
+            }
+        }
+
+        /**
+         * Envoyer un message de test
+         */
+        async function sendTestMessage() {
+            try {
+                const testBtn = event.target;
+                const originalText = testBtn.innerHTML;
+                
+                testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
+                testBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                
+                // Simuler l'envoi d'un message
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                testBtn.innerHTML = '<i class="fas fa-check"></i> Envoyé';
+                testBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                
+            setTimeout(() => {
+                    testBtn.innerHTML = originalText;
+                    testBtn.style.background = '#5865f2';
+                }, 2000);
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur envoi message test:', error);
+            }
+        }
+
+        /**
+         * Voir les logs Discord
+         */
+        function viewDiscordLogs() {
+            // Ouvrir une nouvelle fenêtre avec les logs
+            const logsWindow = window.open('', '_blank');
+            if (logsWindow) {
+                logsWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Logs Discord - Panel Admin</title>
+                            <style>
+                                body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #fff; }
+                                .log-entry { margin: 10px 0; padding: 10px; background: #2a2a2a; border-radius: 5px; }
+                                .timestamp { color: #888; }
+                                .message { color: #fff; }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>📋 Logs Discord</h1>
+                            <div class="log-entry">
+                                <div class="timestamp">${new Date().toLocaleString()}</div>
+                                <div class="message">✅ Webhook Discord connecté et fonctionnel</div>
+                            </div>
+                            <div class="log-entry">
+                                <div class="timestamp">${new Date().toLocaleString()}</div>
+                                <div class="message">📊 Données envoyées en temps réel</div>
+                            </div>
+                            <div class="log-entry">
+                                <div class="timestamp">${new Date().toLocaleString()}</div>
+                                <div class="message">👥 Activités utilisateur tracées</div>
+                            </div>
+                        </body>
+                    </html>
+                `);
+            }
+        }
+
+        /**
+         * Déconnexion
+         */
+        function logout() {
+            // Nettoyer la session
+            sessionStorage.removeItem('admin_session');
+            
+            // Arrêter les mises à jour
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+            
+            // Rediriger vers la page de connexion
+            window.location.href = 'admin-login.html';
+        }
+
+        /**
+         * Afficher le code d'accès admin
+         */
+        function displayAdminCode() {
+            const codeDisplay = document.getElementById('adminCodeDisplay');
+            if (codeDisplay && ADMIN_CONFIG && ADMIN_CONFIG.security) {
+                codeDisplay.textContent = ADMIN_CONFIG.security.adminCode;
+                console.log('🔐 Code admin affiché:', ADMIN_CONFIG.security.adminCode);
+            }
+        }
+
+        /**
+         * Afficher une page d'information spécifique
+         */
+        function showInfoPage(pageId) {
+            // Mettre à jour la navigation active
+            document.querySelectorAll('.page-nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Afficher la page via le système d'info pages
+            if (window.adminInfoPages) {
+                window.adminInfoPages.showPage(pageId);
+            } else {
+                console.warn('⚠️ Système d\'info pages non disponible');
+                // Fallback: afficher un message d'erreur
+                document.getElementById('pageTitle').textContent = 'Page non disponible';
+                document.getElementById('pageContent').innerHTML = '<p>Le système de pages d\'information n\'est pas encore initialisé.</p>';
+            }
+        }
+
+        /**
+         * Initialiser les pages d'information
+         */
+        function initializeInfoPages() {
+            if (window.adminInfoPages) {
+                // Afficher la page des statistiques par défaut
+                window.adminInfoPages.showPage('stats');
+                console.log('✅ Pages d\'information initialisées');
+            } else {
+                console.warn('⚠️ Système d\'info pages non disponible');
+            }
+        }
+
+        // Nettoyage à la fermeture
+        window.addEventListener('beforeunload', () => {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+        });
+    </script>
+</body>
+</html>

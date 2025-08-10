@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Admin</title>
+    <style>
+        body { font-family: monospace; margin: 20px; background: #000; color: #0f0; }
+        .debug { margin: 10px 0; padding: 10px; border: 1px solid #0f0; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+        .warning { color: #ff0; }
+        button { padding: 10px; margin: 5px; background: #333; color: #0f0; border: 1px solid #0f0; cursor: pointer; }
+        input { padding: 8px; background: #333; color: #0f0; border: 1px solid #0f0; width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>🐛 DEBUG ADMIN SYSTEM</h1>
+    
+    <div class="debug">
+        <h3>État des Variables Globales</h3>
+        <div id="globalStatus">Chargement...</div>
+    </div>
+    
+    <div class="debug">
+        <h3>Test de Connexion</h3>
+        <input type="text" id="testCode" value="DF505" placeholder="Code admin">
+        <button onclick="testConnection()">Tester Connexion</button>
+        <div id="connectionResult"></div>
+    </div>
+    
+    <div class="debug">
+        <h3>Console Logs</h3>
+        <div id="consoleOutput" style="height: 300px; overflow-y: scroll; background: #111; padding: 10px;"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="discord-logger.js"></script>
+    <script src="member-tracker.js"></script>
+    <script src="activity-monitor.js"></script>
+    <script src="discord-logging-system.js"></script>
+    <script src="admin-config.js"></script>
+    
+    <script>
+        // Intercepter tous les console.log
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        
+        function addToConsole(type, ...args) {
+            const output = document.getElementById('consoleOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            
+            const div = document.createElement('div');
+            div.innerHTML = `[${timestamp}] ${type}: ${message}`;
+            div.className = type.toLowerCase();
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        console.log = (...args) => {
+            originalLog(...args);
+            addToConsole('LOG', ...args);
+        };
+        
+        console.warn = (...args) => {
+            originalWarn(...args);
+            addToConsole('WARN', ...args);
+        };
+        
+        console.error = (...args) => {
+            originalError(...args);
+            addToConsole('ERROR', ...args);
+        };
+        
+        // Vérifier l'état des variables globales
+        function checkGlobalStatus() {
+            const statusDiv = document.getElementById('globalStatus');
+            let status = '';
+            
+            // Vérifier ADMIN_CONFIG
+            if (typeof ADMIN_CONFIG !== 'undefined') {
+                status += '<div class="success">✅ ADMIN_CONFIG: Défini</div>';
+                status += `<div class="success">Code admin: ${ADMIN_CONFIG.security.adminCode}</div>`;
+                status += `<div class="success">Webhook: ${ADMIN_CONFIG.discord.webhookUrl}</div>`;
+            } else {
+                status += '<div class="error">❌ ADMIN_CONFIG: Non défini</div>';
+            }
+            
+            // Vérifier adminUtils
+            if (typeof adminUtils !== 'undefined') {
+                status += '<div class="success">✅ adminUtils: Défini</div>';
+                if (adminUtils) {
+                    status += '<div class="success">Instance: Créée</div>';
+                    status += `<div class="success">Méthodes: ${Object.getOwnPropertyNames(Object.getPrototypeOf(adminUtils)).join(', ')}</div>`;
+                } else {
+                    status += '<div class="error">Instance: Non créée</div>';
+                }
+            } else {
+                status += '<div class="error">❌ adminUtils: Non défini</div>';
+            }
+            
+            // Vérifier DiscordLoggingSystem
+            if (typeof DiscordLoggingSystem !== 'undefined') {
+                status += '<div class="success">✅ DiscordLoggingSystem: Défini</div>';
+            } else {
+                status += '<div class="error">❌ DiscordLoggingSystem: Non défini</div>';
+            }
+            
+            statusDiv.innerHTML = status;
+        }
+        
+        // Tester la connexion
+        function testConnection() {
+            const code = document.getElementById('testCode').value;
+            const resultDiv = document.getElementById('connectionResult');
+            
+            console.log('🔍 Test de connexion avec le code:', code);
+            
+            try {
+                if (!adminUtils) {
+                    resultDiv.innerHTML = '<div class="error">❌ adminUtils non disponible</div>';
+                    return;
+                }
+                
+                console.log('🔍 adminUtils disponible, test de validateAdminCode...');
+                
+                if (typeof adminUtils.validateAdminCode === 'function') {
+                    console.log('🔍 Méthode validateAdminCode trouvée');
+                    const result = adminUtils.validateAdminCode(code);
+                    console.log('🔍 Résultat de validation:', result);
+                    
+                    if (result) {
+                        resultDiv.innerHTML = '<div class="success">✅ Code valide - Connexion réussie</div>';
+                        
+                        // Tester la création de session
+                        try {
+                            const sessionToken = adminUtils.startSession();
+                            resultDiv.innerHTML += `<div class="success">✅ Session créée: ${sessionToken}</div>`;
+                        } catch (sessionError) {
+                            resultDiv.innerHTML += `<div class="error">❌ Erreur session: ${sessionError.message}</div>`;
+                        }
+                    } else {
+                        resultDiv.innerHTML = '<div class="error">❌ Code invalide</div>';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ Méthode validateAdminCode non trouvée</div>';
+                    console.error('❌ Méthode validateAdminCode non trouvée dans adminUtils');
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Erreur: ${error.message}</div>`;
+                console.error('❌ Erreur lors du test:', error);
+            }
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🐛 Page de debug chargée');
+            
+            // Attendre que tout soit initialisé
+            setTimeout(() => {
+                checkGlobalStatus();
+            }, 1000);
+        });
+        
+        // Vérifier périodiquement
+        setInterval(checkGlobalStatus, 5000);
+    </script>
+</body>
+</html>

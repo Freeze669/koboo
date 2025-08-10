@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Config</title>
+</head>
+<body>
+    <h1>Test de la configuration admin</h1>
+    <div id="status">Chargement...</div>
+
+    <script>
+        console.log('Début du test...');
+        
+        // Vérifier si le fichier est chargé
+        try {
+            console.log('Tentative de chargement de admin-config.js...');
+        } catch (error) {
+            console.error('Erreur lors du chargement:', error);
+        }
+    </script>
+    
+    <script src="admin-config.js"></script>
+    
+    <script>
+        console.log('Après chargement de admin-config.js...');
+        
+        // Vérifier si les objets sont disponibles
+        if (typeof ADMIN_CONFIG !== 'undefined') {
+            console.log('✅ ADMIN_CONFIG chargé:', ADMIN_CONFIG);
+            document.getElementById('status').innerHTML = `
+                <h2>✅ Configuration chargée avec succès !</h2>
+                <p><strong>Code admin:</strong> ${ADMIN_CONFIG.security.adminCode}</p>
+                <p><strong>Tentatives max:</strong> ${ADMIN_CONFIG.security.maxLoginAttempts}</p>
+            `;
+            } else {
+            console.error('❌ ADMIN_CONFIG non défini');
+            document.getElementById('status').innerHTML = `
+                <h2>❌ Erreur: ADMIN_CONFIG non chargé</h2>
+                <p>Vérifiez que le fichier admin-config.js existe et est accessible.</p>
+            `;
+        }
+        
+        if (typeof AdminUtils !== 'undefined') {
+            console.log('✅ AdminUtils chargé:', AdminUtils);
+            } else {
+            console.error('❌ AdminUtils non défini');
+        }
+    </script>
+</body>
+</html>

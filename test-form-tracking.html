@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Tracking des Formulaires et Discord</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+        }
+        
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .test-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+        
+        .log-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(46, 204, 113, 0.3);
+            border: 1px solid #2ecc71;
+        }
+        
+        .status.error {
+            background: rgba(231, 76, 60, 0.3);
+            border: 1px solid #e74c3c;
+        }
+        
+        .status.info {
+            background: rgba(52, 152, 219, 0.3);
+            border: 1px solid #3498db;
+        }
+        
+        .form-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .form-preview h4 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        
+        .preview-field {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .preview-field strong {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test - Tracking des Formulaires et Discord</h1>
+        
+        <div class="test-section">
+            <h3>📝 Formulaire de Test</h3>
+            <form id="testForm">
+                <div class="form-group">
+                    <label for="name">Nom :</label>
+                    <input type="text" id="name" name="name" placeholder="Votre nom" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectType">Type de Projet :</label>
+                    <select id="projectType" name="projectType" required>
+                        <option value="">Sélectionnez un type</option>
+                        <option value="Site Web">Site Web</option>
+                        <option value="Application Mobile">Application Mobile</option>
+                        <option value="Logo/Design">Logo/Design</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="details">Description :</label>
+                    <textarea id="details" name="details" rows="4" placeholder="Décrivez votre projet..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="deadline">Deadline :</label>
+                    <input type="date" id="deadline" name="deadline" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="budget">Budget :</label>
+                    <input type="text" id="budget" name="budget" placeholder="Budget estimé">
+                </div>
+                
+                <button type="submit">🚀 Soumettre le Formulaire</button>
+            </form>
+            
+            <div class="form-preview" id="formPreview" style="display: none;">
+                <h4>📋 Aperçu des Données</h4>
+                <div id="previewContent"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Tests de Fonctionnalités</h3>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testSiteMonitor()">Test Site Monitor</button>
+                <button class="test-btn" onclick="testDiscordWebhook()">Test Webhook Discord</button>
+                <button class="test-btn" onclick="testFormTracking()">Test Tracking Formulaire</button>
+                <button class="test-btn" onclick="clearLogs()">Effacer les Logs</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Statut du Système</h3>
+            <div id="systemStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Logs et Activités</h3>
+            <div class="log-area" id="logArea">
+                <div class="status info">Système de test initialisé. Prêt pour les tests.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de monitoring -->
+    <script src="site-monitor.js"></script>
+    <script src="discord-logger.js"></script>
+    <script src="member-tracker.js"></script>
+    <script src="activity-monitor.js"></script>
+    <script src="discord-logging-system.js"></script>
+
+    <script>
+        let siteMonitor = null;
+        let formSubmissionCount = 0;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Initialisation du système de test...');
+            
+            // Initialiser le site monitor
+            if (typeof SiteMonitor !== 'undefined') {
+                siteMonitor = new SiteMonitor();
+                log('✅ SiteMonitor initialisé');
+            } else {
+                log('❌ SiteMonitor non disponible');
+            }
+            
+            // Configurer le formulaire
+            setupForm();
+            
+            // Afficher le statut du système
+            updateSystemStatus();
+            
+            log('✅ Système de test prêt');
+        });
+
+        // Configuration du formulaire
+        function setupForm() {
+            const form = document.getElementById('testForm');
+            
+            // Prévisualisation en temps réel
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', updateFormPreview);
+            });
+            
+            // Soumission du formulaire
+            form.addEventListener('submit', handleFormSubmit);
+        }
+
+        // Gestion de la soumission du formulaire
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            formSubmissionCount++;
+            log(`📝 Soumission du formulaire #${formSubmissionCount}...`);
+            
+            try {
+                // Tracker avec le système de monitoring
+                if (siteMonitor && typeof siteMonitor.trackUserActivity === 'function') {
+                    siteMonitor.trackUserActivity('form_submit', {
+                        formId: 'testForm',
+                        formType: 'test_contact',
+                        formData: data,
+                        timestamp: Date.now(),
+                        url: window.location.href,
+                        userAgent: navigator.userAgent,
+                        testSubmission: true
+                    });
+                    log('✅ Activité trackée avec SiteMonitor');
+                } else {
+                    log('⚠️ SiteMonitor non disponible, envoi direct au webhook');
+                    await sendFormToDiscord(data);
+                }
+                
+                // Afficher le succès
+                showStatus('Formulaire soumis avec succès !', 'success');
+                log('✅ Formulaire traité avec succès');
+                
+                // Réinitialiser le formulaire
+                e.target.reset();
+                document.getElementById('formPreview').style.display = 'none';
+                
+            } catch (error) {
+                log(`❌ Erreur lors du traitement: ${error.message}`);
+                showStatus('Erreur lors de la soumission', 'error');
+            }
+        }
+
+        // Mise à jour de la prévisualisation
+        function updateFormPreview() {
+            const form = document.getElementById('testForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            const preview = document.getElementById('formPreview');
+            const content = document.getElementById('previewContent');
+            
+            if (Object.values(data).some(value => value.trim() !== '')) {
+                preview.style.display = 'block';
+                content.innerHTML = Object.entries(data)
+                    .filter(([key, value]) => value.trim() !== '')
+                    .map(([key, value]) => `<div class="preview-field"><strong>${key}:</strong> ${value}</div>`)
+                    .join('');
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // Envoi direct au webhook Discord (fallback)
+        async function sendFormToDiscord(formData) {
+            const webhookUrl = "https://discord.com/api/webhooks/1404106149908709537/P13SLEmuSEh5xcPtH9WCYd0ANluBicjSal-Xt3ESqzU7jJZ9jG3i31ENiNyLlZGQWBp1";
+            
+            const embed = {
+                title: '🧪 Test - Formulaire Soumis',
+                description: 'Test du système de tracking des formulaires',
+                color: 0x9b59b6, // Violet
+                fields: [
+                    {
+                        name: '👤 Nom',
+                        value: formData.name || 'Non spécifié',
+                        inline: true
+                    },
+                    {
+                        name: '📧 Email',
+                        value: formData.email || 'Non spécifié',
+                        inline: true
+                    },
+                    {
+                        name: '🎯 Type de Projet',
+                        value: formData.projectType || 'Non spécifié',
+                        inline: true
+                    },
+                    {
+                        name: '📝 Description',
+                        value: formData.details ? (formData.details.length > 200 ? formData.details.substring(0, 200) + '...' : formData.details) : 'Non spécifiée',
+                        inline: false
+                    },
+                    {
+                        name: '📅 Deadline',
+                        value: formData.deadline || 'Non spécifiée',
+                        inline: true
+                    },
+                    {
+                        name: '💰 Budget',
+                        value: formData.budget || 'Non spécifié',
+                        inline: true
+                    },
+                    {
+                        name: '🧪 Type de Test',
+                        value: 'Test de tracking automatique',
+                        inline: false
+                    }
+                ],
+                timestamp: new Date().toISOString(),
+                footer: {
+                    text: 'Test - Mayu & Jack Studio'
+                }
+            };
+            
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        embeds: [embed]
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                log('✅ Formulaire envoyé au webhook Discord');
+                return true;
+                
+            } catch (error) {
+                log(`❌ Erreur lors de l'envoi au webhook Discord: ${error.message}`);
+                throw error;
+            }
+        }
+
+        // Tests de fonctionnalités
+        function testSiteMonitor() {
+            log('🧪 Test du SiteMonitor...');
+            
+            if (siteMonitor) {
+                log(`✅ SiteMonitor disponible: ${siteMonitor.constructor.name}`);
+                log(`📊 Données collectées: ${JSON.stringify(siteMonitor.data, null, 2)}`);
+            } else {
+                log('❌ SiteMonitor non disponible');
+            }
+        }
+
+        function testDiscordWebhook() {
+            log('🧪 Test du webhook Discord...');
+            
+            const testData = {
+                name: 'Test User',
+                email: 'test@example.com',
+                projectType: 'Test',
+                details: 'Ceci est un test du webhook Discord',
+                deadline: '2024-12-31',
+                budget: 'Test'
+            };
+            
+            sendFormToDiscord(testData)
+                .then(() => log('✅ Test du webhook réussi'))
+                .catch(error => log(`❌ Test du webhook échoué: ${error.message}`));
+        }
+
+        function testFormTracking() {
+            log('🧪 Test du tracking de formulaire...');
+            
+            if (siteMonitor && typeof siteMonitor.trackUserActivity === 'function') {
+                siteMonitor.trackUserActivity('test_activity', {
+                    test: true,
+                    message: 'Test du tracking',
+                    timestamp: Date.now()
+                });
+                log('✅ Test du tracking réussi');
+            } else {
+                log('❌ SiteMonitor non disponible pour le test');
+            }
+        }
+
+        // Utilitaires
+        function log(message) {
+            const logArea = document.getElementById('logArea');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span style="color: #ffd700;">[${timestamp}]</span> ${message}`;
+            logArea.appendChild(logEntry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            
+            const logArea = document.getElementById('logArea');
+            logArea.appendChild(statusDiv);
+            logArea.scrollTop = logArea.scrollHeight;
+            
+            // Supprimer après 5 secondes
+            setTimeout(() => {
+                if (statusDiv.parentNode) {
+                    statusDiv.remove();
+                }
+            }, 5000);
+        }
+
+        function updateSystemStatus() {
+            const statusDiv = document.getElementById('systemStatus');
+            
+            const status = {
+                siteMonitor: !!siteMonitor,
+                discordLogger: typeof DiscordLogger !== 'undefined',
+                memberTracker: typeof MemberTracker !== 'undefined',
+                activityMonitor: typeof ActivityMonitor !== 'undefined',
+                discordLoggingSystem: typeof DiscordLoggingSystem !== 'undefined'
+            };
+            
+            statusDiv.innerHTML = `
+                <div class="status ${status.siteMonitor ? 'success' : 'error'}">
+                    🚀 SiteMonitor: ${status.siteMonitor ? 'Actif' : 'Inactif'}
+                </div>
+                <div class="status ${status.discordLogger ? 'success' : 'error'}">
+                    📝 DiscordLogger: ${status.discordLogger ? 'Disponible' : 'Non disponible'}
+                </div>
+                <div class="status ${status.memberTracker ? 'success' : 'error'}">
+                    👥 MemberTracker: ${status.memberTracker ? 'Disponible' : 'Non disponible'}
+                </div>
+                <div class="status ${status.activityMonitor ? 'success' : 'error'}">
+                    📊 ActivityMonitor: ${status.activityMonitor ? 'Disponible' : 'Non disponible'}
+                </div>
+                <div class="status ${status.discordLoggingSystem ? 'success' : 'error'}">
+                    🔗 DiscordLoggingSystem: ${status.discordLoggingSystem ? 'Disponible' : 'Non disponible'}
+                </div>
+            `;
+        }
+
+        function clearLogs() {
+            const logArea = document.getElementById('logArea');
+            logArea.innerHTML = '<div class="status info">Logs effacés</div>';
+        }
+
+        // Mise à jour périodique du statut
+        setInterval(updateSystemStatus, 5000);
+    </script>
+</body>
+</html>

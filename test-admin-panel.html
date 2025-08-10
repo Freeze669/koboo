@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Panel Admin - Mayu & Jack Studio</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .test-button:hover {
+            background: #0056b3;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .metric {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 100px;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test du Panel Admin Amélioré</h1>
+    
+    <div class="test-section">
+        <h2>📊 Test des Composants</h2>
+        <button class="test-button" onclick="testAdminConfig()">Tester Admin Config</button>
+        <button class="test-button" onclick="testSiteMonitor()">Tester Site Monitor</button>
+        <button class="test-button" onclick="testDiscordSystem()">Tester Discord System</button>
+        <button class="test-button" onclick="testAllComponents()">Tester Tout</button>
+        
+        <div id="testResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📈 Métriques en Temps Réel</h2>
+        <div id="metricsDisplay">
+            <div class="metric">
+                <div class="metric-value" id="visitorsMetric">-</div>
+                <div class="metric-label">Visiteurs</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="pageViewsMetric">-</div>
+                <div class="metric-label">Vues</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="uptimeMetric">-</div>
+                <div class="metric-label">Uptime</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="memoryMetric">-</div>
+                <div class="metric-label">Mémoire</div>
+            </div>
+        </div>
+        
+        <button class="test-button" onclick="startMetricsUpdate()">Démarrer Mise à Jour</button>
+        <button class="test-button" onclick="stopMetricsUpdate()">Arrêter Mise à Jour</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔗 Test Discord Webhook</h2>
+        <button class="test-button" onclick="testDiscordWebhook()">Tester Webhook</button>
+        <button class="test-button" onclick="sendTestData()">Envoyer Données Test</button>
+        <button class="test-button" onclick="sendPerformanceData()">Envoyer Performance</button>
+        
+        <div id="discordResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📝 Logs de Test</h2>
+        <div class="log" id="testLogs">
+            Logs de test apparaîtront ici...
+        </div>
+        
+        <button class="test-button" onclick="clearLogs()">Effacer Logs</button>
+        <button class="test-button" onclick="exportLogs()">Exporter Logs</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>🚀 Navigation</h2>
+        <a href="admin-login.html" class="test-button" style="text-decoration: none; display: inline-block;">Page de Connexion</a>
+        <a href="admin-panel.html" class="test-button" style="text-decoration: none; display: inline-block;">Panel Admin</a>
+        <a href="index.html" class="test-button" style="text-decoration: none; display: inline-block;">Page Principale</a>
+    </div>
+
+    <script>
+        // Variables globales
+        let metricsInterval = null;
+        let testLogs = [];
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Page de test chargée');
+            log('📋 Test du panel admin amélioré avec monitoring en temps réel');
+        });
+        
+        /**
+         * Logger les messages de test
+         */
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            testLogs.push(logEntry);
+            
+            const logsElement = document.getElementById('testLogs');
+            if (logsElement) {
+                logsElement.innerHTML = testLogs.map(log => `<div>${log}</div>`).join('');
+                logsElement.scrollTop = logsElement.scrollHeight;
+            }
+            
+            console.log(logEntry);
+        }
+        
+        /**
+         * Afficher les résultats de test
+         */
+        function showTestResult(message, type = 'info') {
+            const resultsElement = document.getElementById('testResults');
+            if (resultsElement) {
+                const statusDiv = document.createElement('div');
+                statusDiv.className = `status ${type}`;
+                statusDiv.textContent = message;
+                resultsElement.appendChild(statusDiv);
+                
+                // Supprimer après 5 secondes
+                setTimeout(() => {
+                    if (statusDiv.parentNode) {
+                        statusDiv.parentNode.removeChild(statusDiv);
+                    }
+                }, 5000);
+            }
+        }
+        
+        /**
+         * Tester Admin Config
+         */
+        function testAdminConfig() {
+            try {
+                log('🧪 Test de Admin Config...');
+                
+                if (typeof ADMIN_CONFIG !== 'undefined') {
+                    log('✅ ADMIN_CONFIG chargé');
+                    log(`🔐 Code admin: ${ADMIN_CONFIG.security.adminCode}`);
+                    log(`📊 Intervalle mise à jour: ${ADMIN_CONFIG.data.realTimeUpdateInterval}ms`);
+                    log(`🔗 Discord activé: ${ADMIN_CONFIG.discord.enabled}`);
+                    
+                    showTestResult('✅ Admin Config fonctionne correctement', 'success');
+                } else {
+                    log('❌ ADMIN_CONFIG non trouvé');
+                    showTestResult('❌ Admin Config non disponible', 'error');
+                }
+            } catch (error) {
+                log(`❌ Erreur test Admin Config: ${error.message}`);
+                showTestResult(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Tester Site Monitor
+         */
+        function testSiteMonitor() {
+            try {
+                log('🧪 Test de Site Monitor...');
+                
+                if (typeof SiteMonitor !== 'undefined') {
+                    log('✅ Classe SiteMonitor disponible');
+                    
+                    if (window.siteMonitor) {
+                        log('✅ Instance siteMonitor créée');
+                        const stats = window.siteMonitor.getRealTimeStats();
+                        log(`📊 Stats: ${JSON.stringify(stats, null, 2)}`);
+                        
+                        showTestResult('✅ Site Monitor fonctionne correctement', 'success');
+                    } else {
+                        log('⚠️ Instance siteMonitor non créée');
+                        showTestResult('⚠️ Site Monitor non initialisé', 'info');
+                    }
+                } else {
+                    log('❌ Classe SiteMonitor non trouvée');
+                    showTestResult('❌ Site Monitor non disponible', 'error');
+                }
+            } catch (error) {
+                log(`❌ Erreur test Site Monitor: ${error.message}`);
+                showTestResult(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Tester Discord System
+         */
+        function testDiscordSystem() {
+            try {
+                log('🧪 Test de Discord System...');
+                
+                if (typeof DiscordLoggingSystem !== 'undefined') {
+                    log('✅ Classe DiscordLoggingSystem disponible');
+                    
+                    if (window.discordLoggingSystem) {
+                        log('✅ Instance discordLoggingSystem créée');
+                        showTestResult('✅ Discord System fonctionne correctement', 'success');
+                    } else {
+                        log('⚠️ Instance discordLoggingSystem non créée');
+                        showTestResult('⚠️ Discord System non initialisé', 'info');
+                    }
+                } else {
+                    log('❌ Classe DiscordLoggingSystem non trouvée');
+                    showTestResult('❌ Discord System non disponible', 'error');
+                }
+            } catch (error) {
+                log(`❌ Erreur test Discord System: ${error.message}`);
+                showTestResult(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Tester tous les composants
+         */
+        function testAllComponents() {
+            log('🧪 Test complet de tous les composants...');
+            
+            testAdminConfig();
+            setTimeout(() => testSiteMonitor(), 1000);
+            setTimeout(() => testDiscordSystem(), 2000);
+            
+            log('✅ Tests lancés pour tous les composants');
+        }
+        
+        /**
+         * Démarrer la mise à jour des métriques
+         */
+        function startMetricsUpdate() {
+            if (metricsInterval) {
+                log('⚠️ Mise à jour déjà en cours');
+                return;
+            }
+            
+            log('🚀 Démarrage de la mise à jour des métriques...');
+            
+            metricsInterval = setInterval(() => {
+                updateMetrics();
+            }, 2000);
+            
+            showTestResult('✅ Mise à jour des métriques démarrée', 'success');
+        }
+        
+        /**
+         * Arrêter la mise à jour des métriques
+         */
+        function stopMetricsUpdate() {
+            if (metricsInterval) {
+                clearInterval(metricsInterval);
+                metricsInterval = null;
+                log('⏹️ Mise à jour des métriques arrêtée');
+                showTestResult('⏹️ Mise à jour des métriques arrêtée', 'info');
+            }
+        }
+        
+        /**
+         * Mettre à jour les métriques affichées
+         */
+        function updateMetrics() {
+            try {
+                let stats = {};
+                
+                // Essayer d'obtenir les vraies stats
+                if (window.siteMonitor) {
+                    stats = window.siteMonitor.getRealTimeStats();
+                } else if (window.adminUtils) {
+                    stats = window.adminUtils.getRealTimeStats();
+                } else {
+                    // Stats de démonstration
+                    stats = {
+                        visitors: Math.floor(Math.random() * 50) + 10,
+                        pageViews: Math.floor(Math.random() * 200) + 50,
+                        uptime: formatUptime(Date.now()),
+                        memory: Math.floor(Math.random() * 100) + 20 + ' MB'
+                    };
+                }
+                
+                // Mettre à jour l'affichage
+                updateMetricDisplay(stats);
+                
+            } catch (error) {
+                log(`⚠️ Erreur mise à jour métriques: ${error.message}`);
+            }
+        }
+        
+        /**
+         * Mettre à jour l'affichage des métriques
+         */
+        function updateMetricDisplay(stats) {
+            const visitorsElement = document.getElementById('visitorsMetric');
+            const pageViewsElement = document.getElementById('pageViewsMetric');
+            const uptimeElement = document.getElementById('uptimeMetric');
+            const memoryElement = document.getElementById('memoryMetric');
+            
+            if (visitorsElement) visitorsElement.textContent = stats.visitors || 0;
+            if (pageViewsElement) pageViewsElement.textContent = stats.pageViews || 0;
+            if (uptimeElement) uptimeElement.textContent = stats.uptime || '00:00:00';
+            if (memoryElement) memoryElement.textContent = stats.memory || '0 MB';
+        }
+        
+        /**
+         * Formater le temps
+         */
+        function formatUptime(milliseconds) {
+            const seconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            
+            return `${hours.toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
+        }
+        
+        /**
+         * Tester le webhook Discord
+         */
+        async function testDiscordWebhook() {
+            try {
+                log('🔗 Test du webhook Discord...');
+                
+                const webhookUrl = "https://discord.com/api/webhooks/1404106149908709537/P13SLEmuSEh5xcPtH9WCYd0ANluBicjSal-Xt3ESqzU7jJZ9jG3i31ENiNyLlZGQWB1";
+                
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: '🧪 Test Webhook',
+                            description: 'Test de connexion au webhook Discord depuis le panel admin',
+                            color: 0x00ff00,
+                            timestamp: new Date().toISOString()
+                        }]
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ Webhook Discord testé avec succès');
+                    showTestResult('✅ Webhook Discord fonctionne', 'success');
+                } else {
+                    log(`⚠️ Réponse webhook: ${response.status} ${response.statusText}`);
+                    showTestResult(`⚠️ Réponse webhook: ${response.status}`, 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur test webhook: ${error.message}`);
+                showTestResult(`❌ Erreur webhook: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Envoyer des données de test
+         */
+        async function sendTestData() {
+            try {
+                log('📤 Envoi de données de test...');
+                
+                const webhookUrl = "https://discord.com/api/webhooks/1404106149908709537/P13SLEmuSEh5xcPtH9WCYd0ANluBicjSal-Xt3ESqzU7jJZ9jG3i31ENiNyLlZGQWB1";
+                
+                const testData = {
+                    visitors: Math.floor(Math.random() * 100),
+                    pageViews: Math.floor(Math.random() * 500),
+                    errors: Math.floor(Math.random() * 5),
+                    timestamp: new Date().toISOString()
+                };
+                
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: '📊 Données de Test',
+                            description: 'Données simulées du panel admin',
+                            color: 0x0099ff,
+                            fields: [
+                                {
+                                    name: '👥 Visiteurs',
+                                    value: testData.visitors.toString(),
+                                    inline: true
+                                },
+                                {
+                                    name: '👁️ Vues',
+                                    value: testData.pageViews.toString(),
+                                    inline: true
+                                },
+                                {
+                                    name: '❌ Erreurs',
+                                    value: testData.errors.toString(),
+                                    inline: true
+                                }
+                            ],
+                            timestamp: testData.timestamp
+                        }]
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ Données de test envoyées');
+                    showTestResult('✅ Données de test envoyées', 'success');
+                } else {
+                    log(`⚠️ Erreur envoi: ${response.status}`);
+                    showTestResult(`⚠️ Erreur envoi: ${response.status}`, 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur envoi données: ${error.message}`);
+                showTestResult(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Envoyer des données de performance
+         */
+        async function sendPerformanceData() {
+            try {
+                log('⚡ Envoi de données de performance...');
+                
+                const webhookUrl = "https://discord.com/api/webhooks/1404106149908709537/P13SLEmuSEh5xcPtH9WCYd0ANluBicjSal-Xt3ESqzU7jJZ9jG3i31ENiNyLlZGQWB1";
+                
+                const performanceData = {
+                    loadTime: Math.floor(Math.random() * 300) + 100,
+                    memory: Math.floor(Math.random() * 100) + 20,
+                    cpu: Math.floor(Math.random() * 30) + 10,
+                    timestamp: new Date().toISOString()
+                };
+                
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: '⚡ Métriques de Performance',
+                            description: 'Données de performance en temps réel',
+                            color: 0xffa500,
+                            fields: [
+                                {
+                                    name: '⏱️ Temps de chargement',
+                                    value: `${performanceData.loadTime}ms`,
+                                    inline: true
+                                },
+                                {
+                                    name: '💾 Mémoire',
+                                    value: `${performanceData.memory}MB`,
+                                    inline: true
+                                },
+                                {
+                                    name: '🖥️ CPU',
+                                    value: `${performanceData.cpu}%`,
+                                    inline: true
+                                }
+                            ],
+                            timestamp: performanceData.timestamp
+                        }]
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ Données de performance envoyées');
+                    showTestResult('✅ Données de performance envoyées', 'success');
+                } else {
+                    log(`⚠️ Erreur envoi performance: ${response.status}`);
+                    showTestResult(`⚠️ Erreur envoi: ${response.status}`, 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur envoi performance: ${error.message}`);
+                showTestResult(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Effacer les logs
+         */
+        function clearLogs() {
+            testLogs = [];
+            const logsElement = document.getElementById('testLogs');
+            if (logsElement) {
+                logsElement.innerHTML = 'Logs effacés...';
+            }
+            log('🧹 Logs effacés');
+        }
+        
+        /**
+         * Exporter les logs
+         */
+        function exportLogs() {
+            try {
+                const logData = {
+                    logs: testLogs,
+                    timestamp: new Date().toISOString(),
+                    url: window.location.href
+                };
+                
+                const blob = new Blob([JSON.stringify(logData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `test-logs-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                log('📥 Logs exportés');
+                showTestResult('✅ Logs exportés', 'success');
+                
+            } catch (error) {
+                log(`❌ Erreur export logs: ${error.message}`);
+                showTestResult(`❌ Erreur export: ${error.message}`, 'error');
+            }
+        }
+        
+        // Nettoyage à la fermeture
+        window.addEventListener('beforeunload', () => {
+            if (metricsInterval) {
+                clearInterval(metricsInterval);
+            }
+        });
+    </script>
+</body>
+</html>

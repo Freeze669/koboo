@@ -1,0 +1,32 @@
+# Backend Go
+*.exe
+*.go
+go.mod
+go.sum
+go_config.json
+
+# Backend Node.js
+admin_server.js
+package.json
+package-lock.json
+node_modules/
+
+# Fichiers de test
+test_api.html
+test-admin.html
+test-simple.html
+admin-config-simple.js
+test-github-pages.html
+
+# Fichiers temporaires
+*.tmp
+*.log
+*.bat
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de build
+dist/
+build/

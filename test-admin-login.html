@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Admin Login System</h1>
+    
+    <div class="test-section info">
+        <h3>Configuration Test</h3>
+        <div id="configStatus">Chargement...</div>
+    </div>
+    
+    <div class="test-section info">
+        <h3>Login Test</h3>
+        <input type="text" id="testCode" placeholder="Code d'accès (DF505)" value="DF505">
+        <button onclick="testLogin()">Tester la connexion</button>
+        <div id="loginResult"></div>
+    </div>
+    
+    <div class="test-section info">
+        <h3>Discord Logger Test</h3>
+        <button onclick="testDiscordLogger()">Tester Discord Logger</button>
+        <div id="discordResult"></div>
+    </div>
+    
+    <div class="test-section info">
+        <h3>Console Logs</h3>
+        <div id="consoleLogs" style="background: #000; color: #0f0; padding: 10px; height: 200px; overflow-y: scroll; font-family: monospace;"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="discord-logger.js"></script>
+    <script src="member-tracker.js"></script>
+    <script src="activity-monitor.js"></script>
+    <script src="discord-logging-system.js"></script>
+    <script src="admin-config.js"></script>
+    
+    <script>
+        // Intercepter les console.log pour les afficher
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        
+        function addToLogs(type, ...args) {
+            const logsDiv = document.getElementById('consoleLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            
+            logsDiv.innerHTML += `<div>[${timestamp}] ${type}: ${message}</div>`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        console.log = (...args) => {
+            originalLog(...args);
+            addToLogs('LOG', ...args);
+        };
+        
+        console.warn = (...args) => {
+            originalWarn(...args);
+            addToLogs('WARN', ...args);
+        };
+        
+        console.error = (...args) => {
+            originalError(...args);
+            addToLogs('ERROR', ...args);
+        };
+        
+        // Test de la configuration
+        function testConfiguration() {
+            const configDiv = document.getElementById('configStatus');
+            
+            try {
+                if (typeof ADMIN_CONFIG === 'undefined') {
+                    configDiv.innerHTML = '<span class="error">❌ ADMIN_CONFIG non défini</span>';
+                    return false;
+                }
+                
+                if (typeof AdminUtils === 'undefined') {
+                    configDiv.innerHTML = '<span class="error">❌ AdminUtils non défini</span>';
+                    return false;
+                }
+                
+                if (typeof DiscordLoggingSystem === 'undefined') {
+                    configDiv.innerHTML = '<span class="error">❌ DiscordLoggingSystem non défini</span>';
+                    return false;
+                }
+                
+                configDiv.innerHTML = `
+                    <span class="success">✅ Configuration chargée</span><br>
+                    <strong>Code admin:</strong> ${ADMIN_CONFIG.security.adminCode}<br>
+                    <strong>Webhook Discord:</strong> ${ADMIN_CONFIG.discord.webhookUrl ? '✅ Configuré' : '❌ Non configuré'}<br>
+                    <strong>AdminUtils:</strong> ${adminUtils ? '✅ Initialisé' : '❌ Non initialisé'}
+                `;
+                
+                return true;
+            } catch (error) {
+                configDiv.innerHTML = `<span class="error">❌ Erreur: ${error.message}</span>`;
+                return false;
+            }
+        }
+        
+        // Test de la connexion
+        function testLogin() {
+            const code = document.getElementById('testCode').value;
+            const resultDiv = document.getElementById('loginResult');
+            
+            try {
+                if (!adminUtils) {
+                    resultDiv.innerHTML = '<span class="error">❌ AdminUtils non initialisé</span>';
+                    return;
+                }
+                
+                if (adminUtils.validateAdminCode(code)) {
+                    resultDiv.innerHTML = '<span class="success">✅ Code valide - Connexion réussie</span>';
+                    
+                    // Tester la création de session
+                    try {
+                        const sessionToken = adminUtils.startSession();
+                        resultDiv.innerHTML += `<br><span class="success">✅ Session créée: ${sessionToken}</span>`;
+                    } catch (sessionError) {
+                        resultDiv.innerHTML += `<br><span class="error">❌ Erreur session: ${sessionError.message}</span>`;
+                    }
+                } else {
+                    resultDiv.innerHTML = '<span class="error">❌ Code invalide</span>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Erreur: ${error.message}</span>`;
+            }
+        }
+        
+        // Test du Discord Logger
+        function testDiscordLogger() {
+            const resultDiv = document.getElementById('discordResult');
+            
+            try {
+                if (typeof DiscordLoggingSystem === 'undefined') {
+                    resultDiv.innerHTML = '<span class="error">❌ DiscordLoggingSystem non disponible</span>';
+                    return;
+                }
+                
+                // Créer une instance de test
+                const testLogger = new DiscordLoggingSystem(ADMIN_CONFIG.discord.webhookUrl);
+                
+                resultDiv.innerHTML = '<span class="info">🔄 Test en cours...</span>';
+                
+                // Attendre l'initialisation
+                setTimeout(async () => {
+                    try {
+                        if (testLogger.isInitialized) {
+                            resultDiv.innerHTML = '<span class="success">✅ Discord Logger initialisé</span>';
+                            
+                            // Tester l'envoi d'un message
+                            try {
+                                await testLogger.log('INFO', 'Test de connexion Discord', { test: true });
+                                resultDiv.innerHTML += '<br><span class="success">✅ Message de test envoyé</span>';
+                            } catch (sendError) {
+                                resultDiv.innerHTML += `<br><span class="error">❌ Erreur envoi: ${sendError.message}</span>`;
+                            }
+                        } else {
+                            resultDiv.innerHTML = '<span class="error">❌ Discord Logger non initialisé</span>';
+                        }
+                    } catch (error) {
+                        resultDiv.innerHTML = `<span class="error">❌ Erreur: ${error.message}</span>`;
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Erreur: ${error.message}</span>`;
+            }
+        }
+        
+        // Initialisation au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Page de test chargée');
+            
+            // Attendre que tout soit initialisé
+            setTimeout(() => {
+                testConfiguration();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

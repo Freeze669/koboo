@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mayu & Jack | Studio Créatif Premium</title>
+    <meta name="description" content="Studio créatif premium spécialisé en graphisme et développement web. Créations sur mesure pour des projets d'exception.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <!-- Cursor personnalisé -->
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-follower"></div>
+    
+    <!-- Bouton d'accès admin discret -->
+    <div class="admin-access-trigger" id="adminTrigger">
+        <i class="fas fa-shield-alt"></i>
+    </div>
+
+    <!-- Bulle Admin Discrète -->
+    <div class="admin-bubble" id="adminMainButton" title="Panel Administration">
+        <div class="admin-bubble-icon">🔔</div>
+        <div class="admin-bubble-glow"></div>
+    </div>
+    
+    <!-- Modal de connexion admin -->
+    <div class="admin-modal" id="adminModal">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3><i class="fas fa-crown"></i> Accès Administration</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <form id="adminLoginForm" class="admin-login-form">
+                    <div class="admin-form-group">
+                        <label for="adminCodeInput">Code d'accès</label>
+                        <input type="password" id="adminCodeInput" placeholder="Entrez le code administrateur" required>
+                        <div class="input-indicator"></div>
+                    </div>
+                    <div class="admin-form-group">
+                        <button type="submit" class="admin-login-btn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Accéder au panel</span>
+                        </button>
+                    </div>
+                    <div id="adminErrorMsg" class="admin-error-message"></div>
+                </form>
+                <div class="admin-info">
+                    <p><i class="fas fa-info-circle"></i> Panel d'administration Mayu & Jack Studio</p>
+                    <p>Accès réservé aux administrateurs autorisés</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader premium -->
+    <div class="loader">
+        <div class="loader-background">
+            <div class="loader-particles"></div>
+            <div class="loader-gradient"></div>
+        </div>
+        <div class="loader-content">
+            <div class="loader-logo">
+                <div class="logo-animation">
+                    <span class="logo-text">M&J</span>
+                    <div class="logo-glow"></div>
+                </div>
+            </div>
+            <div class="loader-progress-container">
+                <div class="progress-text">
+                    <span class="loading-text">Chargement en cours</span>
+                    <span class="progress-percentage">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                        <div class="progress-glow"></div>
+                    </div>
+                </div>
+                <div class="loading-steps">
+                    <div class="step active" data-step="1">
+                        <span class="step-icon">🎨</span>
+                        <span class="step-text">Initialisation du design</span>
+                    </div>
+                    <div class="step" data-step="2">
+                        <span class="step-icon">💻</span>
+                        <span class="step-text">Chargement des animations</span>
+                    </div>
+                    <div class="step" data-step="3">
+                        <span class="step-icon">✨</span>
+                        <span class="step-text">Préparation de l'expérience</span>
+                    </div>
+                    <div class="step" data-step="4">
+                        <span class="step-icon">🚀</span>
+                        <span class="step-text">Lancement du site</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation premium -->
+    <nav class="navbar premium-nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="logo-wrapper">
+                    <span class="logo-text">Mayu & Jack</span>
+                    <div class="logo-line"></div>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#accueil" class="nav-link" data-text="Accueil">Accueil</a></li>
+                <li><a href="#services" class="nav-link" data-text="Services">Services</a></li>
+                <li><a href="#realisations" class="nav-link" data-text="Réalisations">Réalisations</a></li>
+                <li><a href="#avis" class="nav-link" data-text="Avis">Avis</a></li>
+                <li><a href="#commander" class="nav-link" data-text="Commander">Commander</a></li>
+                <li><a href="#mentions" class="nav-link" data-text="Mentions">Mentions</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="#commander" class="cta-button">
+                    <span>Démarrer un projet</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Section Hero Premium -->
+    <section id="accueil" class="hero premium-hero">
+        <div class="hero-background">
+            <div class="hero-particles"></div>
+            <div class="hero-gradient"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-text" data-aos="fade-up" data-aos-duration="1200">
+                <div class="hero-badge">
+                    <span>Nouveau Studio Créatif</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="title-line">Créons ensemble</span>
+                    <span class="title-line highlight">l'extraordinaire</span>
+                </h1>
+                <p class="hero-description">
+                    Duo créatif d'exception spécialisé dans la création d'expériences visuelles 
+                    et digitales qui transforment vos idées en réalités mémorables.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="50">0</span>
+                        <span class="stat-label">Projets Réalisés</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="100">0</span>
+                        <span class="stat-label">% Satisfaction</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="2">0</span>
+                        <span class="stat-label">Années d'Expérience</span>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <a href="#commander" class="btn btn-primary">
+                        <span>Démarrer un projet</span>
+                        <div class="btn-background"></div>
+                    </a>
+                    <a href="#realisations" class="btn btn-secondary">
+                        <span>Voir nos réalisations</span>
+                        <i class="fas fa-play"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="300">
+                <div class="duo-showcase">
+                    <div class="showcase-card mayu-card">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <div class="card-avatar">
+                                <div class="avatar-ring"></div>
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <h3>Mayu</h3>
+                            <p>Directeur Artistique</p>
+                            <div class="card-skills">
+                                <span>Branding</span>
+                                <span>UI/UX</span>
+                                <span>Motion</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="showcase-card jack-card">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <div class="card-avatar">
+                                <div class="avatar-ring"></div>
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3>Jack</h3>
+                            <p>Lead Développeur</p>
+                            <div class="card-skills">
+                                <span>Full-Stack</span>
+                                <span>API</span>
+                                <span>DevOps</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            <span>Découvrir</span>
+        </div>
+    </section>
+
+    <!-- Section Services Premium -->
+    <section id="services" class="services premium-services">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-badge">Nos Expertises</div>
+                <h2 class="section-title">Services Premium</h2>
+                <p class="section-subtitle">Des solutions créatives et techniques d'exception pour des projets d'envergure</p>
+            </div>
+            
+            <!-- Espace Mayu -->
+            <div class="service-section" data-aos="fade-up" data-aos-delay="200">
+                <div class="service-intro">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="service-info">
+                        <h3>Espace Mayu – Direction Artistique</h3>
+                        <p>Créations visuelles qui racontent votre histoire et captent l'attention de votre audience</p>
+                    </div>
+                </div>
+                <div class="services-grid">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-paint-brush"></i>
+                            </div>
+                            <h4>Logos & Identités visuelles</h4>
+                        </div>
+                        <p>Création de logos uniques, chartes graphiques complètes et identités de marque cohérentes</p>
+                        <ul class="service-features">
+                            <li>Logos vectoriels personnalisés</li>
+                            <li>Charte graphique complète</li>
+                            <li>Identité de marque cohérente</li>
+                        </ul>
+                    </div>
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h4>Affiches / Flyers / Menus / Cartes</h4>
+                        </div>
+                        <p>Supports de communication print et digital pour vos événements et promotions</p>
+                        <ul class="service-features">
+                            <li>Affiches événementielles</li>
+                            <li>Flyers promotionnels</li>
+                            <li>Menus et cartes de visite</li>
+                        </ul>
+                    </div>
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="500">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                            <h4>Habillages réseaux sociaux</h4>
+                        </div>
+                        <p>Bannières, stories, posts Instagram, Facebook, LinkedIn personnalisés</p>
+                        <ul class="service-features">
+                            <li>Bannières de profil</li>
+                            <li>Stories Instagram</li>
+                            <li>Posts réseaux sociaux</li>
+                        </ul>
+                    </div>
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="600">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h4>Templates RP</h4>
+                        </div>
+                        <p>Fiches de personnages, cartes d'entreprise, supports de jeu de rôle sur mesure</p>
+                        <ul class="service-features">
+                            <li>Fiches de personnages</li>
+                            <li>Cartes d'entreprise</li>
+                            <li>Supports de jeu de rôle</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Espace Jack -->
+            <div class="service-section" data-aos="fade-up" data-aos-delay="600">
+                <div class="service-intro">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="service-info">
+                        <h3>Espace Jack – Développement Avancé</h3>
+                        <p>Solutions techniques innovantes et architectures robustes pour des applications de pointe</p>
+                    </div>
+                </div>
+                <div class="services-grid">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="700">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fab fa-discord"></i>
+                            </div>
+                            <h4>Création de bots Discord</h4>
+                        </div>
+                        <p>Systèmes métiers, menus, tickets, shops et automatisations avancées pour vos communautés</p>
+                        <ul class="service-features">
+                            <li>Systèmes de tickets</li>
+                            <li>Menus interactifs</li>
+                            <li>Boutiques automatisées</li>
+                        </ul>
+                    </div>
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="800">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h4>Développement Web</h4>
+                        </div>
+                        <p>Sites web, applications et plateformes sur mesure avec technologies modernes</p>
+                        <ul class="service-features">
+                            <li>Sites vitrines & e-commerce</li>
+                            <li>Applications web dynamiques</li>
+                            <li>Plateformes personnalisées</li>
+                        </ul>
+                    </div>
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="900">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <h4>DevOps & Cloud</h4>
+                        </div>
+                        <p>Infrastructure cloud scalable et déploiements automatisés</p>
+                        <ul class="service-features">
+                            <li>CI/CD pipelines</li>
+                            <li>Monitoring avancé</li>
+                            <li>Scalabilité</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Portfolio Premium -->
+    <section id="realisations" class="portfolio premium-portfolio">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-badge">Nos Créations</div>
+                <h2 class="section-title">Portfolio d'Exception</h2>
+                <p class="section-subtitle">Découvrez nos réalisations qui transforment les idées en expériences mémorables</p>
+            </div>
+            
+            <div class="portfolio-filters" data-aos="fade-up" data-aos-delay="200">
+                <button class="filter-btn active" data-filter="all">
+                    <span>Tous les projets</span>
+                </button>
+                <button class="filter-btn" data-filter="graphisme">
+                    <span>Graphisme</span>
+                </button>
+                <button class="filter-btn" data-filter="developpement">
+                    <span>Développement</span>
+                </button>
+            </div>
+            
+            <div class="portfolio-grid">
+                <div class="portfolio-item" data-category="graphisme" data-aos="fade-up" data-aos-delay="300">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&h=600&fit=crop&q=80" alt="Logo & Identité Visuelle">
+                        <div class="portfolio-overlay">
+                            <div class="overlay-content">
+                                <h4>Logo & Identité Visuelle - TechCorp</h4>
+                                <p>Création complète de l'identité visuelle : logo, charte graphique, supports de communication</p>
+                                <div class="overlay-tags">
+                                    <span>Logo</span>
+                                    <span>Identité visuelle</span>
+                                    <span>Charte graphique</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="developpement" data-aos="fade-up" data-aos-delay="400">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&q=80" alt="Site Web E-commerce">
+                        <div class="portfolio-overlay">
+                            <div class="overlay-content">
+                                <h4>Site Web E-commerce - FashionBrand</h4>
+                                <p>Développement complet d'une plateforme e-commerce avec système de paiement et gestion des stocks</p>
+                                <div class="overlay-tags">
+                                    <span>Site web</span>
+                                    <span>E-commerce</span>
+                                    <span>Paiement sécurisé</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="graphisme" data-aos="fade-up" data-aos-delay="500">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop&q=80" alt="Habillage Réseaux Sociaux">
+                        <div class="portfolio-overlay">
+                            <div class="overlay-content">
+                                <h4>Habillage Réseaux Sociaux - GamingHub</h4>
+                                <p>Création complète de l'identité visuelle pour réseaux sociaux : bannières, stories, posts Instagram</p>
+                                <div class="overlay-tags">
+                                    <span>Réseaux sociaux</span>
+                                    <span>Instagram</span>
+                                    <span>Bannières</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="developpement" data-aos="fade-up" data-aos-delay="600">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop&q=80" alt="Bot Discord">
+                        <div class="portfolio-overlay">
+                            <div class="overlay-content">
+                                <h4>Bot Discord - GamingHub</h4>
+                                <p>Développement d'un bot Discord complet avec système de tickets, menus interactifs et boutique automatisée</p>
+                                <div class="overlay-tags">
+                                    <span>Bot Discord</span>
+                                    <span>Système de tickets</span>
+                                    <span>Boutique</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="graphisme" data-aos="fade-up" data-aos-delay="700">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop&q=80" alt="Templates RP">
+                        <div class="portfolio-overlay">
+                            <div class="overlay-content">
+                                <h4>Templates RP - RolePlay Studio</h4>
+                                <p>Création de templates pour jeu de rôle : fiches de personnages, cartes d'entreprise, supports de jeu</p>
+                                <div class="overlay-tags">
+                                    <span>Templates RP</span>
+                                    <span>Fiches personnages</span>
+                                    <span>Jeu de rôle</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="developpement" data-aos="fade-up" data-aos-delay="800">
+                    <div class="portfolio-image">
+                        <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop&q=80" alt="Dashboard Analytics">
+                        <div class="portfolio-overlay">
+                            <div class="overlay-content">
+                                <h4>Dashboard Analytics</h4>
+                                <p>Tableau de bord analytique avec visualisations avancées</p>
+                                <div class="overlay-tags">
+                                    <span>Dashboard</span>
+                                    <span>Analytics</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Contact Premium -->
+    <section id="commander" class="contact premium-contact">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-info" data-aos="fade-right">
+                    <div class="section-badge">Contact</div>
+                    <h2 class="section-title">Démarrons votre projet</h2>
+                    <p class="contact-description">
+                        Prêt à créer quelque chose d'extraordinaire ? Partagez-nous votre vision 
+                        et nous la transformerons en réalité avec notre expertise premium.
+                    </p>
+                    
+                    <div class="pricing-overview">
+                        <h3>Nos Tarifs</h3>
+                        <div class="pricing-cards">
+                            <div class="pricing-card">
+                                <h4>Graphisme</h4>
+                                <ul>
+                                    <li>Logo simple : 50€ - 150€</li>
+                                    <li>Logo complexe : 150€ - 300€</li>
+                                    <li>Affiche/Flyer : 30€ - 80€</li>
+                                    <li>Habillage réseaux sociaux : 100€ - 250€</li>
+                                    <li>Templates RP : 40€ - 120€</li>
+                                </ul>
+                            </div>
+                            <div class="pricing-card">
+                                <h4>Développement</h4>
+                                <ul>
+                                    <li>Site vitrine : 300€ - 800€</li>
+                                    <li>Site e-commerce : 800€ - 2000€</li>
+                                    <li>Bot Discord simple : 150€ - 400€</li>
+                                    <li>Bot Discord avancé : 400€ - 1000€</li>
+                                    <li>Application web : 1000€+</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <div class="method-icon">
+                                <i class="fab fa-discord"></i>
+                            </div>
+                            <div class="method-info">
+                                <h4>Discord</h4>
+                                <span>papy_jack / mamy_mayu</span>
+                                <a href="https://discord.gg/kobo" target="_blank" class="discord-link">Rejoindre le serveur</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <div class="method-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="method-info">
+                                <h4>Email</h4>
+                                <span>jackandmayu@gmail.com</span>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <div class="method-icon">
+                                <i class="fab fa-instagram"></i>
+                            </div>
+                            <div class="method-info">
+                                <h4>Instagram</h4>
+                                <span>@RideOrNine</span>
+                                <a href="https://instagram.com/RideOrNine" target="_blank" class="instagram-link">Voir le profil</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <div class="method-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="method-info">
+                                <h4>Réponse</h4>
+                                <span>Sous 24h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form-wrapper" data-aos="fade-left">
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Nom / Pseudo</label>
+                            <input type="text" id="name" name="name" required>
+                            <div class="input-line"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                            <div class="input-line"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="projectType">Type de projet</label>
+                            <select id="projectType" name="projectType" required>
+                                <option value="">Sélectionnez un type</option>
+                                <option value="graphisme">Graphisme</option>
+                                <option value="developpement">Développement</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                            <div class="input-line"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="details">Détails de la demande</label>
+                            <textarea id="details" name="details" rows="4" required placeholder="Décrivez votre projet, vos objectifs et vos attentes..."></textarea>
+                            <div class="input-line"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="deadline">Deadline souhaitée</label>
+                            <input type="date" id="deadline" name="deadline" required>
+                            <div class="input-line"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="budget">Budget estimé (optionnel)</label>
+                            <select id="budget" name="budget">
+                                <option value="">Sélectionnez un budget</option>
+                                <option value="100-300">100€ - 300€</option>
+                                <option value="300-500">300€ - 500€</option>
+                                <option value="500-1000">500€ - 1000€</option>
+                                <option value="1000+">1000€+</option>
+                            </select>
+                            <div class="input-line"></div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            <span>Envoyer la demande</span>
+                            <div class="btn-background"></div>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Mentions Légales -->
+    <section id="mentions" class="mentions premium-mentions">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-badge">Informations Légales</div>
+                <h2 class="section-title">Mentions Légales & Conditions</h2>
+                <p class="section-subtitle">Informations importantes concernant nos services et conditions d'utilisation</p>
+            </div>
+            
+            <div class="mentions-content">
+                <div class="mentions-section" data-aos="fade-up" data-aos-delay="200">
+                    <h3>Éditeur du site</h3>
+                    <p><strong>Mayu & Jack Studio</strong><br>
+                    Studio créatif spécialisé en graphisme et développement<br>
+                    Contact : jackandmayu@gmail.com<br>
+                    Discord : papy_jack / mamy_mayu<br>
+                    Instagram : @RideOrNine</p>
+                </div>
+                
+                <div class="mentions-section" data-aos="fade-up" data-aos-delay="300">
+                    <h3>Conditions de service</h3>
+                    <ul>
+                        <li>Devis gratuit et personnalisé pour chaque projet</li>
+                        <li>Paiement en plusieurs étapes (30% à la commande, 40% à mi-projet, 30% à la livraison)</li>
+                        <li>Délais de réalisation selon la complexité du projet</li>
+                        <li>Révisions incluses dans le devis initial</li>
+                        <li>Support post-livraison pendant 30 jours</li>
+                    </ul>
+                </div>
+                
+                <div class="mentions-section" data-aos="fade-up" data-aos-delay="400">
+                    <h3>Confidentialité</h3>
+                    <p>Nous nous engageons à protéger la confidentialité de vos données et projets. Toutes les informations partagées restent strictement confidentielles et ne seront jamais divulguées à des tiers.</p>
+                </div>
+                
+                <div class="mentions-section" data-aos="fade-up" data-aos-delay="500">
+                    <h3>Droits d'auteur</h3>
+                    <p>Les créations réalisées par Mayu & Jack Studio restent notre propriété jusqu'au paiement complet. Une fois le projet finalisé et payé, les droits d'utilisation sont transférés au client.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Premium -->
+    <footer class="footer premium-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="logo-text">Mayu & Jack</span>
+                        <div class="logo-line"></div>
+                    </div>
+                    <p>Studio créatif premium spécialisé dans la création d'expériences digitales d'exception.</p>
+                    <div class="social-links">
+                        <a href="https://discord.gg/kobo" target="_blank" class="social-link"><i class="fab fa-discord"></i></a>
+                        <a href="https://instagram.com/RideOrNine" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="mailto:jackandmayu@gmail.com" class="social-link"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="#services">Graphisme</a></li>
+                            <li><a href="#services">Développement</a></li>
+                            <li><a href="#services">Branding</a></li>
+                            <li><a href="#services">Motion Design</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>Entreprise</h4>
+                        <ul>
+                            <li><a href="#portfolio">Portfolio</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                            <li><a href="#mentions">Mentions</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Mayu & Jack. Tous droits réservés.</p>
+                <div class="footer-legal">
+                    <a href="#mentions">Mentions légales</a>
+                    <span class="separator">•</span>
+                    <a href="#privacy">Confidentialité</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="script.js"></script>
+    
+    <!-- Script Admin -->
+    <script>
+        // Système d'accès admin
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminTrigger = document.getElementById('adminTrigger');
+            const adminModal = document.getElementById('adminModal');
+            const closeModal = document.getElementById('closeModal');
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            const adminCodeInput = document.getElementById('adminCodeInput');
+            const adminErrorMsg = document.getElementById('adminErrorMsg');
+            const adminMainButton = document.getElementById('adminMainButton');
+            
+            let adminModalOpen = false;
+            
+            // Ouvrir la modal admin
+            if (adminTrigger) {
+                adminTrigger.addEventListener('click', function() {
+                    openAdminModal();
+                });
+            }
+            
+            // Gestion du bouton admin principal
+            if (adminMainButton) {
+                adminMainButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Animation de clic
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                    
+                    // Rediriger vers la page admin
+                    window.location.href = 'admin-panel.html';
+                });
+            }
+            
+            // Fermer la modal
+            if (closeModal) {
+                closeModal.addEventListener('click', function() {
+                    closeAdminModal();
+                });
+            }
+            
+            // Fermer en cliquant à l'extérieur
+            if (adminModal) {
+                adminModal.addEventListener('click', function(e) {
+                    if (e.target === adminModal) {
+                        closeAdminModal();
+                    }
+                });
+            }
+            
+            // Gestion du formulaire de connexion admin
+            if (adminLoginForm) {
+                adminLoginForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    await loginToAdmin();
+                });
+            }
+            
+            // Raccourci clavier secret (Ctrl + Shift + A)
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                    e.preventDefault();
+                    openAdminModal();
+                }
+            });
+            
+            // Fonctions de gestion de la modal
+            function openAdminModal() {
+                if (!adminModal) return;
+                adminModal.style.display = 'flex';
+                setTimeout(() => {
+                    adminModal.classList.add('show');
+                    if (adminCodeInput) adminCodeInput.focus();
+                }, 10);
+                adminModalOpen = true;
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeAdminModal() {
+                if (!adminModal) return;
+                adminModal.classList.remove('show');
+                setTimeout(() => {
+                    adminModal.style.display = 'none';
+                    if (adminCodeInput) adminCodeInput.value = '';
+                    hideAdminError();
+                }, 300);
+                adminModalOpen = false;
+                document.body.style.overflow = '';
+            }
+            
+            function showAdminError(message) {
+                if (!adminErrorMsg) return;
+                adminErrorMsg.textContent = message;
+                adminErrorMsg.style.display = 'block';
+                adminErrorMsg.className = 'admin-error-message';
+                
+                setTimeout(() => {
+                    hideAdminError();
+                }, 5000);
+            }
+            
+            function showAdminSuccess(message) {
+                if (!adminErrorMsg) return;
+                adminErrorMsg.textContent = message;
+                adminErrorMsg.style.display = 'block';
+                adminErrorMsg.className = 'admin-success-message';
+            }
+            
+            function hideAdminError() {
+                if (!adminErrorMsg) return;
+                adminErrorMsg.style.display = 'none';
+            }
+            
+            // Fonction de connexion à l'admin
+            async function loginToAdmin() {
+                if (!adminCodeInput) return;
+                const code = adminCodeInput.value.trim();
+                
+                if (!code) {
+                    showAdminError('⚠️ Veuillez entrer le code d\'accès');
+                    return;
+                }
+                
+                // Désactiver le bouton pendant la tentative
+                const submitBtn = adminLoginForm ? adminLoginForm.querySelector('button[type="submit"]') : null;
+                const originalContent = submitBtn ? submitBtn.innerHTML : '';
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<div class="admin-loading"></div> Connexion...';
+                }
+                
+                // Vérification du code d'accès
+                const validCodes = ['MAYU_JACK_2024', 'ADMIN123', 'STUDIO2024'];
+                
+                if (validCodes.includes(code.toUpperCase())) {
+                    // Succès - rediriger vers la page admin
+                    showAdminSuccess('✅ Connexion réussie ! Redirection...');
+                    
+                    // Stocker la session admin
+                    localStorage.setItem('admin_session', JSON.stringify({
+                        connected: true,
+                        timestamp: Date.now(),
+                        username: 'Administrateur'
+                    }));
+                    
+                    // Animation de la bulle admin
+                    const adminBubble = document.getElementById('adminMainButton');
+                    if (adminBubble) {
+                        adminBubble.classList.add('success-animation');
+                        adminBubble.classList.add('connected');
+                        setTimeout(() => {
+                            adminBubble.classList.remove('success-animation');
+                        }, 600);
+                    }
+                    
+                    // Rediriger vers la page admin après 1 seconde
+                    setTimeout(() => {
+                        closeAdminModal();
+                        window.location.href = 'admin-panel.html';
+                    }, 1000);
+                    
+                } else {
+                    // Échec de connexion
+                    showAdminError('❌ Code d\'accès incorrect');
+                    
+                    // Effacer le champ après échec
+                    setTimeout(() => {
+                        if (adminCodeInput) {
+                            adminCodeInput.value = '';
+                            adminCodeInput.focus();
+                        }
+                    }, 2000);
+                }
+                
+                // Réactiver le bouton
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalContent;
+                }
+            }
+            
+            // Accès admin via URL hash
+            if (window.location.hash === '#admin') {
+                setTimeout(() => {
+                    openAdminModal();
+                }, 1000);
+            }
+            
+            // Console interactive pour les développeurs
+            window.admin = {
+                open: () => openAdminModal(),
+                close: () => closeAdminModal(),
+                login: (code) => {
+                    if (adminCodeInput) {
+                        adminCodeInput.value = code;
+                        loginToAdmin();
+                    }
+                },
+                test: () => {
+                    console.log('🧪 Test du système admin...');
+                    console.log('✅ Modal admin:', !!adminModal);
+                    console.log('✅ Bouton principal:', !!adminMainButton);
+                    console.log('✅ Formulaire:', !!adminLoginForm);
+                    console.log('✅ Input code:', !!adminCodeInput);
+                    console.log('✅ Message erreur:', !!adminErrorMsg);
+                }
+            };
+            
+            console.log('🔐 Système admin initialisé avec succès !');
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,12 @@
+{
+  "max_workers": 8,
+  "cache_size": 209715200,
+  "compression_level": 6,
+  "enable_metrics": true,
+  "server_port": 8080,
+  "websocket_enabled": true,
+  "timeout_seconds": 30,
+  "max_file_size": 33554432,
+  "enable_logging": true,
+  "log_level": "info"
+}

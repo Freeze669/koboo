@@ -1,0 +1,731 @@
+/* ===== ANIMATIONS AVANCÉES - MAYU & JACK STUDIO ===== */
+
+/* Variables pour les animations avancées */
+:root {
+    --animation-duration: 0.6s;
+    --animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    --bounce-easing: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --elastic-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    /* Couleurs d'animation */
+    --glow-primary: rgba(59, 130, 246, 0.4);
+    --glow-secondary: rgba(139, 92, 246, 0.4);
+    --particle-color-1: #3b82f6;
+    --particle-color-2: #8b5cf6;
+    --particle-color-3: #10b981;
+    --particle-color-4: #f59e0b;
+}
+
+/* ===== ANIMATIONS DE TEXTE AVANCÉES ===== */
+
+/* Effet de machine à écrire amélioré */
+.typewriter-enhanced {
+    overflow: hidden;
+    border-right: 3px solid var(--accent-color);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: 
+        typing 3.5s steps(40, end),
+        blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: var(--accent-color); }
+}
+
+/* Effet de révélation par caractère */
+.reveal-text {
+    opacity: 0;
+    animation: revealChar 0.8s ease forwards;
+}
+
+.reveal-text.char-animation {
+    display: inline-block;
+}
+
+@keyframes revealChar {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) rotateX(90deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+    }
+}
+
+/* Effet de glow pulsant sur le texte */
+.glow-text {
+    animation: textGlow 2s ease-in-out infinite alternate;
+    text-shadow: 
+        0 0 5px var(--accent-color),
+        0 0 10px var(--accent-color),
+        0 0 15px var(--accent-color);
+}
+
+@keyframes textGlow {
+    from {
+        text-shadow: 
+            0 0 5px var(--accent-color),
+            0 0 10px var(--accent-color),
+            0 0 15px var(--accent-color);
+    }
+    to {
+        text-shadow: 
+            0 0 10px var(--accent-color),
+            0 0 20px var(--accent-color),
+            0 0 30px var(--accent-color),
+            0 0 40px var(--accent-color);
+    }
+}
+
+/* ===== ANIMATIONS DE PARTICULES AVANCÉES ===== */
+
+/* Système de particules flottantes */
+.particles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.particle-advanced {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatParticle 8s infinite linear;
+}
+
+.particle-advanced:nth-child(odd) {
+    animation-duration: 6s;
+    animation-direction: reverse;
+}
+
+.particle-advanced:nth-child(3n) {
+    animation-duration: 10s;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translateY(100vh) translateX(0) rotate(0deg) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(90vh) translateX(10px) rotate(36deg) scale(1);
+    }
+    50% {
+        transform: translateY(50vh) translateX(-20px) rotate(180deg) scale(1.2);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(10vh) translateX(30px) rotate(324deg) scale(0.8);
+    }
+    100% {
+        transform: translateY(-10vh) translateX(0) rotate(360deg) scale(0);
+        opacity: 0;
+    }
+}
+
+/* Particules interactives */
+.interactive-particle {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.interactive-particle:hover {
+    transform: scale(2) !important;
+    filter: brightness(1.5);
+    box-shadow: 0 0 20px var(--accent-color);
+}
+
+/* ===== ANIMATIONS DE CARTES COMPLEXES ===== */
+
+/* Effet de flip 3D */
+.card-flip-container {
+    perspective: 1000px;
+    width: 100%;
+    height: 100%;
+}
+
+.card-flip {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+
+.card-flip:hover {
+    transform: rotateY(180deg);
+}
+
+.card-flip-front,
+.card-flip-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 15px;
+}
+
+.card-flip-back {
+    transform: rotateY(180deg);
+    background: var(--accent-gradient);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* Effet de morphing sur hover */
+.morph-card {
+    transition: all 0.6s var(--elastic-easing);
+    position: relative;
+    overflow: hidden;
+}
+
+.morph-card:hover {
+    transform: scale(1.05) rotateX(5deg) rotateY(-5deg);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 30px var(--glow-primary);
+}
+
+.morph-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        transparent, 
+        var(--accent-color), 
+        transparent 30%
+    );
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    animation: rotate 4s linear infinite;
+}
+
+.morph-card:hover::before {
+    opacity: 0.1;
+}
+
+/* ===== ANIMATIONS DE LOADING AVANCÉES ===== */
+
+/* Loader avec ondes */
+.wave-loader {
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.wave-loader div {
+    position: absolute;
+    border: 2px solid var(--accent-color);
+    opacity: 1;
+    border-radius: 50%;
+    animation: ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.wave-loader div:nth-child(2) {
+    animation-delay: -0.5s;
+}
+
+@keyframes ripple {
+    0% {
+        top: 18px;
+        left: 18px;
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    100% {
+        top: 0px;
+        left: 0px;
+        width: 36px;
+        height: 36px;
+        opacity: 0;
+    }
+}
+
+/* Loader DNA */
+.dna-loader {
+    width: 60px;
+    height: 60px;
+    position: relative;
+}
+
+.dna-loader::before,
+.dna-loader::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    animation: dnaBounce 1.5s infinite ease-in-out;
+}
+
+.dna-loader::before {
+    left: 15px;
+    animation-delay: -0.32s;
+}
+
+.dna-loader::after {
+    left: 39px;
+    animation-delay: -0.16s;
+}
+
+@keyframes dnaBounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
+    }
+}
+
+/* ===== ANIMATIONS D'ARRIÈRE-PLAN ===== */
+
+/* Gradient animé */
+.animated-gradient {
+    background: linear-gradient(
+        45deg,
+        var(--primary-color),
+        var(--secondary-color),
+        var(--accent-color),
+        var(--primary-color)
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Effet de mesh avec animation */
+.mesh-background {
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+    animation: meshFloat 15s ease-in-out infinite;
+}
+
+@keyframes meshFloat {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        filter: hue-rotate(0deg);
+    }
+    25% {
+        transform: translateY(-20px) scale(1.05);
+        filter: hue-rotate(90deg);
+    }
+    50% {
+        transform: translateY(10px) scale(0.95);
+        filter: hue-rotate(180deg);
+    }
+    75% {
+        transform: translateY(-15px) scale(1.02);
+        filter: hue-rotate(270deg);
+    }
+}
+
+/* ===== ANIMATIONS D'INTERACTION ===== */
+
+/* Effet magnétique avancé */
+.magnetic-element {
+    transition: transform 0.2s ease-out;
+    cursor: pointer;
+}
+
+.magnetic-element:hover {
+    transform: translateZ(0);
+}
+
+/* Animation de click avec ondulation */
+.ripple-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-effect::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.ripple-effect:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* ===== ANIMATIONS DE SCROLL AVANCÉES ===== */
+
+/* Parallaxe en couches */
+.parallax-layer {
+    transform: translateZ(0);
+    transition: transform 0.1s ease-out;
+}
+
+.parallax-layer[data-speed="slow"] {
+    transform: translateY(var(--scroll-slow));
+}
+
+.parallax-layer[data-speed="medium"] {
+    transform: translateY(var(--scroll-medium));
+}
+
+.parallax-layer[data-speed="fast"] {
+    transform: translateY(var(--scroll-fast));
+}
+
+/* Révélation au scroll avec masque */
+.reveal-mask {
+    overflow: hidden;
+}
+
+.reveal-mask .reveal-content {
+    transform: translateY(100%);
+    transition: transform 0.8s var(--elastic-easing);
+}
+
+.reveal-mask.revealed .reveal-content {
+    transform: translateY(0);
+}
+
+/* ===== ANIMATIONS DE NAVIGATION ===== */
+
+/* Menu hamburger sophistiqué */
+.hamburger-advanced {
+    width: 30px;
+    height: 24px;
+    position: relative;
+    cursor: pointer;
+}
+
+.hamburger-advanced span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: var(--text-primary);
+    border-radius: 2px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: 0.25s ease-in-out;
+}
+
+.hamburger-advanced span:nth-child(1) {
+    top: 0px;
+    transform-origin: left center;
+}
+
+.hamburger-advanced span:nth-child(2) {
+    top: 10px;
+    transform-origin: left center;
+}
+
+.hamburger-advanced span:nth-child(3) {
+    top: 20px;
+    transform-origin: left center;
+}
+
+.hamburger-advanced.active span:nth-child(1) {
+    transform: rotate(45deg);
+    top: -1px;
+    left: 8px;
+}
+
+.hamburger-advanced.active span:nth-child(2) {
+    width: 0%;
+    opacity: 0;
+}
+
+.hamburger-advanced.active span:nth-child(3) {
+    transform: rotate(-45deg);
+    top: 21px;
+    left: 8px;
+}
+
+/* ===== ANIMATIONS DE FORMULAIRE ===== */
+
+/* Champs de saisie flottants */
+.floating-label {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.floating-label input,
+.floating-label textarea {
+    width: 100%;
+    padding: 1rem 0 0.5rem;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.floating-label label {
+    position: absolute;
+    top: 1rem;
+    left: 0;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.floating-label input:focus + label,
+.floating-label input:not(:placeholder-shown) + label,
+.floating-label textarea:focus + label,
+.floating-label textarea:not(:placeholder-shown) + label {
+    top: 0;
+    font-size: 0.8rem;
+    color: var(--accent-color);
+    transform: translateY(-100%);
+}
+
+.floating-label input:focus,
+.floating-label textarea:focus {
+    border-bottom-color: var(--accent-color);
+    outline: none;
+}
+
+/* ===== ANIMATIONS DE NOTIFICATION ===== */
+
+/* Toast avancé */
+.toast-advanced {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--accent-gradient);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+    animation: toastSlideIn 0.5s var(--bounce-easing) forwards;
+    z-index: 10000;
+}
+
+.toast-advanced.show {
+    animation: toastSlideIn 0.5s var(--bounce-easing) forwards;
+}
+
+.toast-advanced.hide {
+    animation: toastSlideOut 0.3s ease-in forwards;
+}
+
+@keyframes toastSlideIn {
+    0% {
+        transform: translateX(100%) scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    0% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%) scale(0.8);
+        opacity: 0;
+    }
+}
+
+/* ===== ANIMATIONS UTILITAIRES ===== */
+
+/* Rotation continue */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rotate-continuous {
+    animation: rotate 4s linear infinite;
+}
+
+/* Pulsation */
+@keyframes pulse-advanced {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+.pulse-advanced {
+    animation: pulse-advanced 2s ease-in-out infinite;
+}
+
+/* Rebond */
+@keyframes bounce-advanced {
+    0%, 20%, 53%, 80%, 100% {
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+        transform: translate3d(0, 0, 0);
+    }
+    40%, 43% {
+        animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+        transform: translate3d(0, -30px, 0);
+    }
+    70% {
+        animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+        transform: translate3d(0, -15px, 0);
+    }
+    90% {
+        transform: translate3d(0, -4px, 0);
+    }
+}
+
+.bounce-advanced {
+    animation: bounce-advanced 1s ease infinite;
+}
+
+/* ===== ANIMATIONS RESPONSIVES ===== */
+
+/* Réduction des animations sur mobile */
+@media (max-width: 768px) {
+    .particle-advanced {
+        display: none;
+    }
+    
+    .morph-card:hover {
+        transform: scale(1.02);
+    }
+    
+    .reveal-text {
+        animation-duration: 0.4s;
+    }
+    
+    .typewriter-enhanced {
+        animation-duration: 2s;
+    }
+}
+
+/* Respect des préférences d'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .particle-advanced,
+    .animated-gradient,
+    .mesh-background {
+        animation: none !important;
+    }
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* GPU Acceleration pour les animations critiques */
+.gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+}
+
+/* Will-change pour les éléments animés */
+.will-animate {
+    will-change: transform, opacity;
+}
+
+.will-animate:hover {
+    will-change: auto;
+}
+
+/* ===== ANIMATIONS CUSTOM POUR MAYU & JACK ===== */
+
+/* Animation signature pour le logo */
+.logo-signature {
+    animation: logoSignature 3s ease-in-out infinite;
+}
+
+@keyframes logoSignature {
+    0%, 100% {
+        filter: hue-rotate(0deg) brightness(1);
+        transform: scale(1);
+    }
+    25% {
+        filter: hue-rotate(90deg) brightness(1.1);
+        transform: scale(1.02);
+    }
+    50% {
+        filter: hue-rotate(180deg) brightness(1.2);
+        transform: scale(1.05);
+    }
+    75% {
+        filter: hue-rotate(270deg) brightness(1.1);
+        transform: scale(1.02);
+    }
+}
+
+/* Animation pour les compétences */
+.skill-showcase {
+    position: relative;
+    overflow: hidden;
+}
+
+.skill-showcase::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    animation: skillShine 3s ease-in-out infinite;
+}
+
+@keyframes skillShine {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}

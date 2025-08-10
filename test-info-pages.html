@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Info Pages System</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #0f172a;
+            color: #f8fafc;
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #334155; 
+            border-radius: 8px;
+            background: rgba(30, 41, 59, 0.8);
+        }
+        .success { background: rgba(16, 185, 129, 0.2); border-color: #10b981; }
+        .error { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+        .info { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; }
+        button { 
+            padding: 10px 15px; 
+            margin: 5px; 
+            cursor: pointer; 
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+        }
+        button:hover { background: #2563eb; }
+        .code-display {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .page-content {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Info Pages System</h1>
+
+    <div class="test-section info">
+        <h3>Configuration Test</h3>
+        <div id="configStatus">Chargement...</div>
+    </div>
+
+    <div class="test-section info">
+        <h3>Admin Code Display Test</h3>
+        <div id="adminCodeTest">
+            <strong>Code d'accès:</strong> 
+            <span id="adminCodeDisplay" class="code-display">••••••</span>
+        </div>
+        <button onclick="testAdminCodeDisplay()">Tester Affichage Code</button>
+    </div>
+
+    <div class="test-section info">
+        <h3>Info Pages System Test</h3>
+        <div class="page-navigation">
+            <button onclick="showTestPage('stats')">📊 Statistiques</button>
+            <button onclick="showTestPage('users')">👥 Utilisateurs</button>
+            <button onclick="showTestPage('performance')">⚡ Performances</button>
+            <button onclick="showTestPage('alerts')">🚨 Alertes</button>
+            <button onclick="showTestPage('activities')">📝 Activités</button>
+            <button onclick="showTestPage('config')">⚙️ Configuration</button>
+        </div>
+        
+        <div class="page-content">
+            <h2 id="pageTitle">📊 Statistiques Générales</h2>
+            <div id="pageContent">
+                <!-- Le contenu sera généré dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section info">
+        <h3>Console Logs</h3>
+        <div id="consoleLogs" style="background: #000; color: #0f0; padding: 10px; height: 200px; overflow-y: scroll; font-family: monospace;"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="discord-logger.js"></script>
+    <script src="member-tracker.js"></script>
+    <script src="activity-monitor.js"></script>
+    <script src="discord-logging-system.js"></script>
+    <script src="admin-config.js"></script>
+    <script src="admin-info-pages.js"></script>
+
+    <script>
+        // Intercepter les console.log pour les afficher
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+
+        function addToLogs(type, ...args) {
+            const logsDiv = document.getElementById('consoleLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg =>
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+
+            logsDiv.innerHTML += `<div>[${timestamp}] ${type}: ${message}</div>`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        console.log = (...args) => {
+            originalLog(...args);
+            addToLogs('LOG', ...args);
+        };
+
+        console.warn = (...args) => {
+            originalWarn(...args);
+            addToLogs('WARN', ...args);
+        };
+
+        console.error = (...args) => {
+            originalError(...args);
+            addToLogs('ERROR', ...args);
+        };
+
+        // Test de la configuration
+        function testConfiguration() {
+            const configDiv = document.getElementById('configStatus');
+
+            try {
+                if (typeof ADMIN_CONFIG === 'undefined') {
+                    configDiv.innerHTML = '<span class="error">❌ ADMIN_CONFIG non défini</span>';
+                    return false;
+                }
+
+                if (typeof AdminUtils === 'undefined') {
+                    configDiv.innerHTML = '<span class="error">❌ AdminUtils non défini</span>';
+                    return false;
+                }
+
+                if (typeof AdminInfoPages === 'undefined') {
+                    configDiv.innerHTML = '<span class="error">❌ AdminInfoPages non défini</span>';
+                    return false;
+                }
+
+                configDiv.innerHTML = `
+                    <span class="success">✅ Configuration chargée</span><br>
+                    <strong>Code admin:</strong> ${ADMIN_CONFIG.security.adminCode}<br>
+                    <strong>Webhook Discord:</strong> ${ADMIN_CONFIG.discord.webhookUrl ? '✅ Configuré' : '❌ Non configuré'}<br>
+                    <strong>AdminInfoPages:</strong> ${adminInfoPages ? '✅ Initialisé' : '❌ Non initialisé'}
+                `;
+
+                return true;
+            } catch (error) {
+                configDiv.innerHTML = `<span class="error">❌ Erreur: ${error.message}</span>`;
+                return false;
+            }
+        }
+
+        // Test de l'affichage du code admin
+        function testAdminCodeDisplay() {
+            const codeDisplay = document.getElementById('adminCodeDisplay');
+            
+            if (ADMIN_CONFIG && ADMIN_CONFIG.security) {
+                codeDisplay.textContent = ADMIN_CONFIG.security.adminCode;
+                console.log('🔐 Code admin affiché:', ADMIN_CONFIG.security.adminCode);
+            } else {
+                codeDisplay.textContent = 'ERREUR';
+                console.error('❌ Impossible d\'afficher le code admin');
+            }
+        }
+
+        // Test des pages d'information
+        function showTestPage(pageId) {
+            if (window.adminInfoPages) {
+                window.adminInfoPages.showPage(pageId);
+                console.log('📚 Page affichée:', pageId);
+            } else {
+                console.error('❌ Système d\'info pages non disponible');
+                document.getElementById('pageTitle').textContent = 'Page non disponible';
+                document.getElementById('pageContent').innerHTML = '<p>Le système de pages d\'information n\'est pas encore initialisé.</p>';
+            }
+        }
+
+        // Initialisation au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Page de test chargée');
+
+            // Attendre que tout soit initialisé
+            setTimeout(() => {
+                testConfiguration();
+                testAdminCodeDisplay();
+                
+                // Initialiser la première page
+                if (window.adminInfoPages) {
+                    window.adminInfoPages.showPage('stats');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

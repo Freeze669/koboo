@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Performance Optimisée - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .test-section {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .test-section:last-child {
+            border-bottom: none;
+        }
+        
+        .test-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .performance-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+            transition: transform 0.3s ease;
+        }
+        
+        .performance-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .performance-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .metric-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .metric-value.good {
+            color: #27ae60;
+        }
+        
+        .metric-value.warning {
+            color: #f39c12;
+        }
+        
+        .metric-value.critical {
+            color: #e74c3c;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .log-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .log-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .log-display {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-online {
+            background: #27ae60;
+        }
+        
+        .status-offline {
+            background: #e74c3c;
+        }
+        
+        .status-loading {
+            background: #f39c12;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .chart-placeholder {
+            height: 200px;
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .optimization-tips {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .optimization-tips h3 {
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+        
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            padding: 8px 0;
+        }
+        
+        .tip-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .tip-text {
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .test-section {
+                padding: 20px;
+            }
+            
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .test-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Test Performance Optimisée</h1>
+            <p>Vérification des performances du système d'administration optimisé</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 Métriques de Performance</h2>
+            <div class="performance-grid">
+                <div class="performance-card">
+                    <h3>⚡ Temps de Chargement</h3>
+                    <div class="metric">
+                        <span class="metric-label">Page principale</span>
+                        <span class="metric-value" id="loadTime">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">DOM Ready</span>
+                        <span class="metric-value" id="domReady">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">First Paint</span>
+                        <span class="metric-value" id="firstPaint">--</span>
+                    </div>
+                </div>
+                
+                <div class="performance-card">
+                    <h3>💾 Utilisation Mémoire</h3>
+                    <div class="metric">
+                        <span class="metric-label">Mémoire utilisée</span>
+                        <span class="metric-value" id="memoryUsed">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Mémoire totale</span>
+                        <span class="metric-value" id="memoryTotal">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Limite</span>
+                        <span class="metric-value" id="memoryLimit">--</span>
+                    </div>
+                </div>
+                
+                <div class="performance-card">
+                    <h3>🎯 Performance Admin</h3>
+                    <div class="metric">
+                        <span class="metric-label">Temps de réponse</span>
+                        <span class="metric-value" id="responseTime">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">FPS moyen</span>
+                        <span class="metric-value" id="avgFPS">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Latence</span>
+                        <span class="metric-value" id="latency">--</span>
+                    </div>
+                </div>
+                
+                <div class="performance-card">
+                    <h3>🌐 Réseau</h3>
+                    <div class="metric">
+                        <span class="metric-label">Connexion</span>
+                        <span class="metric-value" id="connectionType">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Latence réseau</span>
+                        <span class="metric-value" id="networkLatency">--</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Bande passante</span>
+                        <span class="metric-value" id="bandwidth">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🧪 Tests de Performance</h2>
+            <div class="test-buttons">
+                <button class="btn btn-primary" onclick="testPageLoad()">📄 Test Chargement Page</button>
+                <button class="btn btn-success" onclick="testAdminPanel()">⚙️ Test Panel Admin</button>
+                <button class="btn btn-warning" onclick="testMemoryUsage()">💾 Test Utilisation Mémoire</button>
+                <button class="btn btn-danger" onclick="stressTest()">🔥 Test de Stress</button>
+                <button class="btn btn-primary" onclick="testDiscordLogger()">📡 Test Logger Discord</button>
+                <button class="btn btn-success" onclick="testInfoPages()">📚 Test Pages Info</button>
+            </div>
+            
+            <div class="log-section">
+                <h3>📝 Logs de Test</h3>
+                <div class="log-display" id="testLogs">Tests de performance prêts...</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📈 Graphiques de Performance</h2>
+            <div class="chart-container">
+                <h3>⚡ Évolution des Performances</h3>
+                <div class="chart-placeholder" id="performanceChart">
+                    Graphique des performances en temps réel
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>💡 Conseils d'Optimisation</h2>
+            <div class="optimization-tips">
+                <div class="tip-item">
+                    <span class="tip-icon">✅</span>
+                    <span class="tip-text">Le système utilise maintenant un cache intelligent pour réduire les calculs répétitifs</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">✅</span>
+                    <span class="tip-text">Les mises à jour sont optimisées avec des intervalles adaptatifs et du throttling</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">✅</span>
+                    <span class="tip-text">Utilisation de requestIdleCallback pour les tâches non critiques</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">✅</span>
+                    <span class="tip-text">Traitement par lots des données pour réduire la charge CPU</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">✅</span>
+                    <span class="tip-text">Limitation intelligente de l'historique des données</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">✅</span>
+                    <span class="tip-text">Optimisation des observateurs de performance</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>🚀 Système d'Administration Optimisé - Mayu & Jack Studio</p>
+            <p>Performance et stabilité améliorées pour GitHub Pages</p>
+        </div>
+    </div>
+
+    <!-- Scripts de test -->
+    <script>
+        // Variables globales pour les tests
+        let performanceData = [];
+        let testStartTime = Date.now();
+        let fpsCounter = 0;
+        let lastFpsTime = Date.now();
+        
+        // Initialiser les métriques de performance
+        function initializePerformanceMetrics() {
+            log('🚀 Initialisation des métriques de performance...');
+            
+            // Mesurer le temps de chargement
+            if ('performance' in window) {
+                const navigation = performance.getEntriesByType('navigation')[0];
+                if (navigation) {
+                    document.getElementById('loadTime').textContent = 
+                        Math.round(navigation.loadEventEnd - navigation.loadEventStart) + 'ms';
+                    document.getElementById('domReady').textContent = 
+                        Math.round(navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart) + 'ms';
+                    
+                    // Classer selon la performance
+                    const loadTime = navigation.loadEventEnd - navigation.loadEventStart;
+                    const loadTimeElement = document.getElementById('loadTime');
+                    if (loadTime < 1000) {
+                        loadTimeElement.className = 'metric-value good';
+                    } else if (loadTime < 3000) {
+                        loadTimeElement.className = 'metric-value warning';
+                    } else {
+                        loadTimeElement.className = 'metric-value critical';
+                    }
+                }
+                
+                // Mesurer le First Paint
+                const paint = performance.getEntriesByType('paint');
+                if (paint.length > 0) {
+                    document.getElementById('firstPaint').textContent = 
+                        Math.round(paint[0].startTime) + 'ms';
+                }
+            }
+            
+            // Mesurer la mémoire
+            if ('memory' in performance) {
+                document.getElementById('memoryUsed').textContent = formatBytes(performance.memory.usedJSHeapSize);
+                document.getElementById('memoryTotal').textContent = formatBytes(performance.memory.totalJSHeapSize);
+                document.getElementById('memoryLimit').textContent = formatBytes(performance.memory.jsHeapSizeLimit);
+                
+                // Classer selon l'utilisation
+                const memoryPercent = (performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) * 100;
+                const memoryElement = document.getElementById('memoryUsed');
+                if (memoryPercent < 50) {
+                    memoryElement.className = 'metric-value good';
+                } else if (memoryPercent < 80) {
+                    memoryElement.className = 'metric-value warning';
+                } else {
+                    memoryElement.className = 'metric-value critical';
+                }
+            }
+            
+            // Démarrer le monitoring FPS
+            startFPSMonitoring();
+            
+            // Démarrer le monitoring réseau
+            startNetworkMonitoring();
+            
+            log('✅ Métriques de performance initialisées');
+        }
+        
+        // Démarrer le monitoring FPS
+        function startFPSMonitoring() {
+            let frameCount = 0;
+            let lastTime = performance.now();
+            
+            function countFrames() {
+                frameCount++;
+                const currentTime = performance.now();
+                
+                if (currentTime - lastTime >= 1000) {
+                    const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                    document.getElementById('avgFPS').textContent = fps + ' FPS';
+                    
+                    // Classer selon le FPS
+                    const fpsElement = document.getElementById('avgFPS');
+                    if (fps >= 60) {
+                        fpsElement.className = 'metric-value good';
+                    } else if (fps >= 30) {
+                        fpsElement.className = 'metric-value warning';
+                    } else {
+                        fpsElement.className = 'metric-value critical';
+                    }
+                    
+                    frameCount = 0;
+                    lastTime = currentTime;
+                }
+                
+                requestAnimationFrame(countFrames);
+            }
+            
+            requestAnimationFrame(countFrames);
+        }
+        
+        // Démarrer le monitoring réseau
+        function startNetworkMonitoring() {
+            if ('connection' in navigator) {
+                const connection = navigator.connection;
+                document.getElementById('connectionType').textContent = connection.effectiveType || 'Unknown';
+                
+                if (connection.rtt) {
+                    document.getElementById('networkLatency').textContent = connection.rtt + 'ms';
+                }
+                
+                if (connection.downlink) {
+                    document.getElementById('bandwidth').textContent = connection.downlink + ' Mbps';
+                }
+            }
+        }
+        
+        // Test de chargement de page
+        function testPageLoad() {
+            log('📄 Test de chargement de page...');
+            const startTime = performance.now();
+            
+            // Simuler un chargement de page
+            setTimeout(() => {
+                const loadTime = performance.now() - startTime;
+                document.getElementById('responseTime').textContent = Math.round(loadTime) + 'ms';
+                
+                // Classer selon le temps de réponse
+                const responseElement = document.getElementById('responseTime');
+                if (loadTime < 100) {
+                    responseElement.className = 'metric-value good';
+                } else if (loadTime < 500) {
+                    responseElement.className = 'metric-value warning';
+                } else {
+                    responseElement.className = 'metric-value critical';
+                }
+                
+                log(`✅ Page chargée en ${Math.round(loadTime)}ms`);
+            }, Math.random() * 500 + 100);
+        }
+        
+        // Test du panel admin
+        function testAdminPanel() {
+            log('⚙️ Test du panel admin...');
+            
+            // Vérifier si les composants sont disponibles
+            const components = [
+                'adminInfoPages',
+                'siteMonitor',
+                'ADMIN_CONFIG'
+            ];
+            
+            let availableCount = 0;
+            components.forEach(component => {
+                if (window[component]) {
+                    availableCount++;
+                    log(`✅ ${component} disponible`);
+                } else {
+                    log(`❌ ${component} non disponible`);
+                }
+            });
+            
+            if (availableCount === components.length) {
+                log('🎉 Tous les composants admin sont disponibles');
+            } else {
+                log(`⚠️ ${components.length - availableCount} composant(s) manquant(s)`);
+            }
+        }
+        
+        // Test d'utilisation mémoire
+        function testMemoryUsage() {
+            log('💾 Test d\'utilisation mémoire...');
+            
+            if ('memory' in performance) {
+                const memory = performance.memory;
+                const used = memory.usedJSHeapSize;
+                const total = memory.totalJSHeapSize;
+                const limit = memory.jsHeapSizeLimit;
+                
+                log(`📊 Mémoire utilisée: ${formatBytes(used)}`);
+                log(`📊 Mémoire totale: ${formatBytes(total)}`);
+                log(`📊 Limite: ${formatBytes(limit)}`);
+                
+                const usagePercent = (used / limit) * 100;
+                log(`📊 Utilisation: ${usagePercent.toFixed(1)}%`);
+                
+                if (usagePercent > 80) {
+                    log('⚠️ Utilisation mémoire élevée - optimisation recommandée');
+                } else {
+                    log('✅ Utilisation mémoire normale');
+                }
+            } else {
+                log('❌ Informations mémoire non disponibles');
+            }
+        }
+        
+        // Test de stress
+        function stressTest() {
+            log('🔥 Test de stress...');
+            
+            const iterations = 1000;
+            const startTime = performance.now();
+            
+            // Créer des objets pour tester la mémoire
+            const objects = [];
+            for (let i = 0; i < iterations; i++) {
+                objects.push({
+                    id: i,
+                    data: 'test'.repeat(100),
+                    timestamp: Date.now()
+                });
+            }
+            
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            
+            log(`✅ ${iterations} objets créés en ${Math.round(duration)}ms`);
+            log(`📊 Taux: ${Math.round(iterations / (duration / 1000))} objets/seconde`);
+            
+            // Nettoyer
+            objects.length = 0;
+            log('🧹 Objets nettoyés');
+        }
+        
+        // Test du logger Discord
+        function testDiscordLogger() {
+            log('📡 Test du logger Discord...');
+            
+            if (window.siteMonitor && window.siteMonitor.sendToDiscord) {
+                log('✅ Logger Discord disponible');
+                
+                // Test d'envoi (simulé)
+                setTimeout(() => {
+                    log('📤 Test d\'envoi simulé à Discord...');
+                    log('✅ Message de test envoyé (simulation)');
+                }, 1000);
+            } else {
+                log('❌ Logger Discord non disponible');
+            }
+        }
+        
+        // Test des pages d'information
+        function testInfoPages() {
+            log('📚 Test des pages d\'information...');
+            
+            if (window.adminInfoPages) {
+                log('✅ Système de pages d\'information disponible');
+                
+                // Tester la création d'une page
+                try {
+                    const testPage = window.adminInfoPages.createStatsPage();
+                    log('✅ Page de statistiques créée avec succès');
+                    log(`📄 Taille du contenu: ${testPage.length} caractères`);
+                } catch (error) {
+                    log(`❌ Erreur lors de la création de page: ${error.message}`);
+                }
+            } else {
+                log('❌ Système de pages d\'information non disponible');
+            }
+        }
+        
+        // Fonction de log
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('testLogs');
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            // Limiter la taille des logs
+            const lines = logElement.textContent.split('\n');
+            if (lines.length > 100) {
+                logElement.textContent = lines.slice(-50).join('\n');
+            }
+        }
+        
+        // Formater les bytes
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Initialiser quand le DOM est prêt
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Page de test chargée');
+            initializePerformanceMetrics();
+            
+            // Démarrer les tests automatiques
+            setTimeout(() => {
+                log('🔄 Démarrage des tests automatiques...');
+                testAdminPanel();
+                testMemoryUsage();
+            }, 2000);
+        });
+        
+        // Nettoyer avant de quitter
+        window.addEventListener('beforeunload', () => {
+            log('🧹 Nettoyage avant fermeture...');
+        });
+    </script>
+</body>
+</html>

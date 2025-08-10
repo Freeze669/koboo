@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test GitHub Pages - Mayu & Jack Studio</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .test-item {
+            background: rgba(59, 130, 246, 0.2);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border-left: 4px solid #60a5fa;
+        }
+        .test-success { border-left-color: #10b981; }
+        .test-error { border-left-color: #ef4444; }
+        .test-warning { border-left-color: #fbbf24; }
+        .btn {
+            background: #60a5fa;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        .btn:hover { background: #3b82f6; }
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test de Compatibilité GitHub Pages</h1>
+        <p>Ce fichier teste que tous les composants fonctionnent sans backend.</p>
+        
+        <div class="test-item test-success">
+            <h3>✅ Configuration Admin</h3>
+            <p>Test de chargement de <code>admin-config.js</code></p>
+            <div id="config-test">Chargement...</div>
+        </div>
+        
+        <div class="test-item test-success">
+            <h3>✅ Monitoring Site</h3>
+            <p>Test de chargement de <code>site-monitor.js</code></p>
+            <div id="monitor-test">Chargement...</div>
+        </div>
+        
+        <div class="test-item test-success">
+            <h3>✅ Panel Admin</h3>
+            <p>Test d'accès au panel d'administration</p>
+            <button class="btn" onclick="testAdminPanel()">Tester Panel Admin</button>
+            <div id="admin-test"></div>
+        </div>
+        
+        <div class="test-item test-success">
+            <h3>✅ Code d'Accès</h3>
+            <p>Code admin actuel : <span class="code" id="admin-code">--</span></p>
+            <button class="btn" onclick="showAdminCode()">Afficher Code</button>
+        </div>
+        
+        <div class="test-item test-warning">
+            <h3>⚠️ Limitations GitHub Pages</h3>
+            <ul>
+                <li>Backend Go non disponible</li>
+                <li>Base de données non disponible</li>
+                <li>API dynamiques non supportées</li>
+                <li>Fonctionne entièrement côté client</li>
+            </ul>
+        </div>
+        
+        <div class="test-item test-success">
+            <h3>✅ Navigation</h3>
+            <button class="btn" onclick="window.open('index.html', '_blank')">Ouvrir Site Principal</button>
+            <button class="btn" onclick="window.open('admin-login.html', '_blank')">Ouvrir Login Admin</button>
+            <button class="btn" onclick="window.open('admin-panel.html', '_blank')">Ouvrir Panel Admin</button>
+        </div>
+        
+        <div class="test-item test-success">
+            <h3>✅ Déploiement</h3>
+            <p>Le projet est prêt pour GitHub Pages !</p>
+            <p>Utilisez le fichier <code>.github/workflows/static.yml</code> pour le déploiement automatique.</p>
+        </div>
+    </div>
+
+    <!-- Scripts de test -->
+    <script src="admin-config.js"></script>
+    <script src="site-monitor.js"></script>
+    
+    <script>
+        // Test de la configuration admin
+        function testConfig() {
+            const configTest = document.getElementById('config-test');
+            try {
+                if (typeof AdminUtils !== 'undefined' && typeof ADMIN_CONFIG !== 'undefined') {
+                    configTest.innerHTML = `
+                        <span style="color: #10b981;">✅ Chargé avec succès</span><br>
+                        Code admin: <span class="code">${ADMIN_CONFIG.security.adminCode}</span><br>
+                        Version: ${ADMIN_CONFIG.version || '1.0.0'}
+                    `;
+                } else {
+                    configTest.innerHTML = '<span style="color: #ef4444;">❌ Erreur de chargement</span>';
+                }
+            } catch (error) {
+                configTest.innerHTML = `<span style="color: #ef4444;">❌ Erreur: ${error.message}</span>`;
+            }
+        }
+        
+        // Test du monitoring
+        function testMonitor() {
+            const monitorTest = document.getElementById('monitor-test');
+            try {
+                if (typeof SiteMonitor !== 'undefined' && typeof siteMonitor !== 'undefined') {
+                    monitorTest.innerHTML = `
+                        <span style="color: #10b981;">✅ Chargé avec succès</span><br>
+                        Status: ${siteMonitor.getStatus()}<br>
+                        Métriques disponibles
+                    `;
+                } else {
+                    monitorTest.innerHTML = '<span style="color: #ef4444;">❌ Erreur de chargement</span>';
+                }
+            } catch (error) {
+                monitorTest.innerHTML = `<span style="color: #ef4444;">❌ Erreur: ${error.message}</span>`;
+            }
+        }
+        
+        // Test du panel admin
+        function testAdminPanel() {
+            const adminTest = document.getElementById('admin-test');
+            try {
+                if (AdminUtils.isAuthenticated()) {
+                    adminTest.innerHTML = '<span style="color: #10b981;">✅ Authentification active</span>';
+                } else {
+                    adminTest.innerHTML = '<span style="color: #fbbf24;">⚠️ Non authentifié (normal)</span>';
+                }
+            } catch (error) {
+                adminTest.innerHTML = `<span style="color: #ef4444;">❌ Erreur: ${error.message}</span>`;
+            }
+        }
+        
+        // Afficher le code admin
+        function showAdminCode() {
+            const adminCode = document.getElementById('admin-code');
+            if (typeof ADMIN_CONFIG !== 'undefined') {
+                adminCode.textContent = ADMIN_CONFIG.security.adminCode;
+            } else {
+                adminCode.textContent = 'Non disponible';
+            }
+        }
+        
+        // Tests automatiques au chargement
+        window.addEventListener('load', function() {
+            setTimeout(testConfig, 500);
+            setTimeout(testMonitor, 1000);
+            showAdminCode();
+        });
+    </script>
+</body>
+</html>

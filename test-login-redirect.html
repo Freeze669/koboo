@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Login & Redirection - MAYU & JACK STUDIO</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .test-button {
+            background: #60a5fa;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+        }
+        .test-button:hover {
+            background: #3b82f6;
+        }
+        .status {
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+        .status.success { background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; }
+        .status.error { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; }
+        .status.warning { background: rgba(251, 191, 36, 0.2); border: 1px solid #fbbf24; }
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Login & Redirection</h1>
+    
+    <div class="test-section">
+        <h2>📋 Tests de Configuration</h2>
+        <button class="test-button" onclick="testConfig()">Tester la Configuration</button>
+        <button class="test-button" onclick="testAdminUtils()">Tester AdminUtils</button>
+        <button class="test-button" onclick="testAdminPanelAccess()">Tester Accès Panel</button>
+        <div id="configStatus"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔐 Test de Connexion</h2>
+        <input type="text" id="testCode" placeholder="Code admin (DF505)" value="DF505" style="padding: 0.5rem; margin: 0.5rem; border-radius: 5px; border: 1px solid #ccc; color: #000;">
+        <button class="test-button" onclick="testLogin()">Tester Connexion</button>
+        <div id="loginStatus"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🚀 Test de Redirection</h2>
+        <button class="test-button" onclick="testRedirect()">Tester Redirection</button>
+        <button class="test-button" onclick="testRedirectFallback()">Tester Redirection Fallback</button>
+        <div id="redirectStatus"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Logs de Test</h2>
+        <button class="test-button" onclick="clearLogs()">Effacer Logs</button>
+        <div id="testLogs" class="log"></div>
+    </div>
+
+    <script src="admin-config.js"></script>
+    <script>
+        let testLogs = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            testLogs.push(logEntry);
+            
+            const logsDiv = document.getElementById('testLogs');
+            logsDiv.innerHTML = testLogs.join('<br>');
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+            
+            console.log(logEntry);
+        }
+
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function testConfig() {
+            log('🧪 Test de configuration...');
+            
+            try {
+                if (typeof ADMIN_CONFIG === 'undefined') {
+                    showStatus('configStatus', '❌ ADMIN_CONFIG non défini', 'error');
+                    return;
+                }
+                
+                if (!ADMIN_CONFIG.security || !ADMIN_CONFIG.security.adminCode) {
+                    showStatus('configStatus', '❌ Configuration de sécurité invalide', 'error');
+                    return;
+                }
+                
+                showStatus('configStatus', `✅ Configuration OK - Code admin: ${ADMIN_CONFIG.security.adminCode}`, 'success');
+                log(`✅ Configuration chargée: ${ADMIN_CONFIG.security.adminCode}`);
+                
+            } catch (error) {
+                showStatus('configStatus', `❌ Erreur configuration: ${error.message}`, 'error');
+                log(`❌ Erreur: ${error.message}`);
+            }
+        }
+
+        function testAdminUtils() {
+            log('🧪 Test AdminUtils...');
+            
+            try {
+                if (typeof adminUtils === 'undefined') {
+                    showStatus('configStatus', '❌ adminUtils non défini', 'error');
+                    return;
+                }
+                
+                if (typeof adminUtils.validateAdminCode !== 'function') {
+                    showStatus('configStatus', '❌ Méthode validateAdminCode manquante', 'error');
+                    return;
+                }
+                
+                const testCode = 'DF505';
+                const isValid = adminUtils.validateAdminCode(testCode);
+                
+                if (isValid) {
+                    showStatus('configStatus', `✅ AdminUtils OK - Validation: ${testCode}`, 'success');
+                    log(`✅ AdminUtils fonctionnel - Code ${testCode} valide`);
+                } else {
+                    showStatus('configStatus', `❌ Validation échouée pour ${testCode}`, 'error');
+                    log(`❌ Validation échouée pour ${testCode}`);
+                }
+                
+            } catch (error) {
+                showStatus('configStatus', `❌ Erreur AdminUtils: ${error.message}`, 'error');
+                log(`❌ Erreur: ${error.message}`);
+            }
+        }
+
+        async function testAdminPanelAccess() {
+            log('🧪 Test accès panel admin...');
+            
+            try {
+                const response = await fetch('admin-panel.html', { method: 'HEAD' });
+                
+                if (response.ok) {
+                    showStatus('configStatus', '✅ Panel admin accessible', 'success');
+                    log('✅ Panel admin accessible');
+                } else {
+                    showStatus('configStatus', `❌ Panel admin non accessible: ${response.status}`, 'error');
+                    log(`❌ Panel admin non accessible: ${response.status}`);
+                }
+                
+            } catch (error) {
+                showStatus('configStatus', `❌ Erreur accès panel: ${error.message}`, 'error');
+                log(`❌ Erreur: ${error.message}`);
+            }
+        }
+
+        function testLogin() {
+            log('🧪 Test de connexion...');
+            
+            try {
+                const testCode = document.getElementById('testCode').value;
+                
+                if (!adminUtils) {
+                    showStatus('loginStatus', '❌ AdminUtils non disponible', 'error');
+                    return;
+                }
+                
+                const isValid = adminUtils.validateAdminCode(testCode);
+                
+                if (isValid) {
+                    showStatus('loginStatus', `✅ Connexion réussie avec ${testCode}`, 'success');
+                    log(`✅ Connexion réussie avec ${testCode}`);
+                    
+                    // Tester la création de session
+                    try {
+                        const sessionToken = adminUtils.startSession();
+                        log(`✅ Session créée: ${sessionToken}`);
+                    } catch (sessionError) {
+                        log(`❌ Erreur session: ${sessionError.message}`);
+                    }
+                    
+                } else {
+                    showStatus('loginStatus', `❌ Connexion échouée avec ${testCode}`, 'error');
+                    log(`❌ Connexion échouée avec ${testCode}`);
+                }
+                
+            } catch (error) {
+                showStatus('loginStatus', `❌ Erreur test connexion: ${error.message}`, 'error');
+                log(`❌ Erreur: ${error.message}`);
+            }
+        }
+
+        function testRedirect() {
+            log('🧪 Test redirection...');
+            
+            try {
+                showStatus('redirectStatus', '🚀 Test de redirection vers admin-panel.html...', 'warning');
+                
+                setTimeout(() => {
+                    try {
+                        log('📍 Tentative de redirection...');
+                        window.location.href = 'admin-panel.html';
+                    } catch (error) {
+                        log(`❌ Erreur redirection: ${error.message}`);
+                        showStatus('redirectStatus', `❌ Erreur redirection: ${error.message}`, 'error');
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                showStatus('redirectStatus', `❌ Erreur test redirection: ${error.message}`, 'error');
+                log(`❌ Erreur: ${error.message}`);
+            }
+        }
+
+        function testRedirectFallback() {
+            log('🧪 Test redirection fallback...');
+            
+            try {
+                showStatus('redirectStatus', '🚀 Test redirection fallback...', 'warning');
+                
+                setTimeout(() => {
+                    try {
+                        log('📍 Tentative redirection fallback...');
+                        window.location.replace('admin-panel.html');
+                    } catch (error) {
+                        log(`❌ Erreur redirection fallback: ${error.message}`);
+                        showStatus('redirectStatus', `❌ Erreur fallback: ${error.message}`, 'error');
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                showStatus('redirectStatus', `❌ Erreur test fallback: ${error.message}`, 'error');
+                log(`❌ Erreur: ${error.message}`);
+            }
+        }
+
+        function clearLogs() {
+            testLogs = [];
+            document.getElementById('testLogs').innerHTML = '';
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Page de test chargée');
+            log('📋 Prêt pour les tests');
+            
+            // Attendre un peu que AdminUtils soit initialisé
+            setTimeout(() => {
+                if (typeof adminUtils !== 'undefined') {
+                    log('✅ AdminUtils disponible');
+                } else {
+                    log('⚠️ AdminUtils pas encore disponible');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
