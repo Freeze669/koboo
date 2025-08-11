@@ -505,6 +505,73 @@
         .metric-card:nth-child(4) { animation-delay: 0.4s; }
         .metric-card:nth-child(5) { animation-delay: 0.5s; }
         .metric-card:nth-child(6) { animation-delay: 0.6s; }
+        .metric-card:nth-child(7) { animation-delay: 0.7s; }
+        .metric-card:nth-child(8) { animation-delay: 0.8s; }
+        .metric-card:nth-child(9) { animation-delay: 0.9s; }
+
+        /* Section des connexions récentes */
+        .recent-connections {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 150;
+        }
+
+        .recent-connections h3 {
+            color: #f8fafc;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .connections-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .connection-item {
+            background: rgba(51, 65, 85, 0.5);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .connection-item:hover {
+            background: rgba(51, 65, 85, 0.7);
+            border-color: #60a5fa;
+        }
+
+        .connection-user {
+            color: #60a5fa;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .connection-details {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .connection-time {
+            color: #10b981;
+            font-size: 0.8rem;
+        }
+
+        .connection-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
 
         /* Scrollbar personnalisée */
         .activity-list::-webkit-scrollbar {
@@ -1016,6 +1083,15 @@
             
             <div class="metric-card">
                 <div class="metric-header">
+                    <i class="fas fa-user-clock"></i>
+                    <h4>Sessions</h4>
+                </div>
+                <div class="metric-value" id="sessionsCount">0</div>
+                <div class="metric-trend">N/A</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
                     <i class="fas fa-clock"></i>
                     <h4>Temps de Fonctionnement</h4>
                 </div>
@@ -1084,6 +1160,31 @@
             </div>
         </div>
 
+        <!-- Connexions Récentes -->
+        <div class="recent-connections">
+            <h3>🔗 Connexions Récentes</h3>
+            <div class="auto-info" style="background: rgba(30, 41, 59, 0.8); border: 1px solid #475569; border-radius: 8px; padding: 1rem; margin: 1rem 0; text-align: center; color: #94a3b8;">
+                <p>🔄 <strong>Connexions automatiques</strong> - Le système simule des connexions toutes les 5 secondes</p>
+            </div>
+            <div class="connections-list" id="connectionsList">
+                <!-- Les connexions seront affichées ici -->
+            </div>
+            <div class="connection-controls">
+                <button class="action-btn" onclick="addRandomConnection()">
+                    <i class="fas fa-user-plus"></i>
+                    Ajouter Connexion
+                </button>
+                <button class="action-btn" onclick="addMultipleConnections()">
+                    <i class="fas fa-users"></i>
+                    Ajouter 5 Test
+                </button>
+                <button class="action-btn" onclick="clearConnections()">
+                    <i class="fas fa-trash"></i>
+                    Effacer Tout
+                </button>
+            </div>
+        </div>
+
         <!-- Actions Rapides -->
         <div class="quick-actions">
             <button class="action-btn" onclick="refreshData()">
@@ -1098,6 +1199,7 @@
                 <i class="fas fa-rocket"></i>
                 Optimiser
             </button>
+
             <button class="action-btn" onclick="backupData()">
                 <i class="fas fa-database"></i>
                 Sauvegarde
@@ -1258,8 +1360,31 @@
             
             // Mettre à jour le temps de session
             updateSessionTime();
+            
+            // Initialiser les connexions automatiques
+            initializeConnections();
         }
 
+        /**
+         * Initialiser les connexions automatiques
+         */
+        function initializeConnections() {
+            console.log('🔗 Initialisation des connexions automatiques...');
+            
+            // Ajouter quelques connexions initiales
+            for (let i = 0; i < 3; i++) {
+                setTimeout(addAutoConnection, i * 500);
+            }
+            
+            // Démarrer les mises à jour automatiques
+            autoUpdateInterval = setInterval(addAutoConnection, 5000);
+            
+            // Mettre à jour la liste
+            updateConnectionsList();
+            
+            console.log('✅ Connexions automatiques initialisées');
+        }
+        
         /**
          * Démarrer les mises à jour en temps réel
          */
@@ -1268,6 +1393,7 @@
                 updateMetrics();
                 updateSessionTime();
                 updateActivityList();
+                updateConnectionsList(); // Mettre à jour la liste des connexions
             }, 2000); // Mise à jour toutes les 2 secondes
         }
 
@@ -1525,16 +1651,22 @@
                 }
             };
             
-            // Visiteurs avec tendance réelle
-            updateMetricWithTransition('visitorsCount', stats.visitors || 0, window.previousMetrics?.visitors);
+            // Visiteurs avec gestion N/A
+            const visitorsDisplay = stats.visitors === null ? 'N/A' : (stats.visitors || 0);
+            updateMetricWithTransition('visitorsCount', visitorsDisplay, window.previousMetrics?.visitors);
             updateVisitorTrend(stats.visitors, window.previousMetrics?.visitors);
             
-            // Vues de page avec tendance réelle
-            updateMetricWithTransition('pageViewsCount', stats.pageViews || 0, window.previousMetrics?.pageViews);
+            // Vues de page avec gestion N/A
+            const pageViewsDisplay = stats.pageViews === null ? 'N/A' : (stats.pageViews || 0);
+            updateMetricWithTransition('pageViewsCount', pageViewsDisplay, window.previousMetrics?.pageViews);
             updatePageViewsTrend(stats.pageViews, window.previousMetrics?.pageViews);
             
             // Temps de fonctionnement
             updateMetricWithTransition('uptimeValue', stats.uptime || '00:00:00', window.previousMetrics?.uptime);
+            
+            // Sessions avec gestion N/A
+            const sessionsDisplay = stats.sessions === null ? 'N/A' : (stats.sessions || 0);
+            updateMetricWithTransition('sessionsCount', sessionsDisplay, window.previousMetrics?.sessions);
             
             // Utilisation mémoire avec pourcentage
             if (stats.memory && stats.memory.used) {
@@ -2890,6 +3022,125 @@
             } else {
                 console.warn('⚠️ Animation Optimizer non disponible');
             }
+        }
+
+        /**
+         * Système de connexions automatiques
+         */
+        let connections = [];
+        let connectionId = 1;
+        let autoUpdateInterval;
+        
+        // Noms pour les connexions aléatoires
+        const randomNames = [
+            'Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank', 'Grace', 'Henry',
+            'Iris', 'Jack', 'Kate', 'Liam', 'Mia', 'Noah', 'Olivia', 'Paul',
+            'Quinn', 'Ruby', 'Sam', 'Tina', 'Uma', 'Victor', 'Wendy', 'Xavier'
+        ];
+        
+        function updateConnectionsList() {
+            const connectionsList = document.getElementById('connectionsList');
+            if (!connectionsList) return;
+            
+            if (connections.length === 0) {
+                connectionsList.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 1rem;">Aucune connexion enregistrée</p>';
+                return;
+            }
+            
+            connectionsList.innerHTML = connections.map(connection => `
+                <div class="connection-item">
+                    <div class="connection-user">${connection.name}</div>
+                    <div class="connection-details">IP: ${connection.ip} • ${connection.userAgent}</div>
+                    <div class="connection-time">${new Date(connection.timestamp).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+        
+        function addRandomConnection() {
+            const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+            const connection = {
+                id: connectionId++,
+                name: randomName,
+                ip: generateIP(),
+                userAgent: generateUserAgent(),
+                timestamp: new Date().toISOString()
+            };
+            
+            connections.unshift(connection);
+            if (connections.length > 50) {
+                connections = connections.slice(0, 50);
+            }
+            
+            updateConnectionsList();
+            console.log('🔗 Connexion ajoutée:', randomName);
+        }
+        
+        function addMultipleConnections() {
+            const testNames = ['Test1', 'Test2', 'Test3', 'Test4', 'Test5'];
+            
+            testNames.forEach((name, index) => {
+                setTimeout(() => {
+                    const connection = {
+                        id: connectionId++,
+                        name: name,
+                        ip: generateIP(),
+                        userAgent: generateUserAgent(),
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    connections.unshift(connection);
+                    
+                    if (index === testNames.length - 1) {
+                        updateConnectionsList();
+                        console.log('✅ 5 connexions de test ajoutées');
+                    }
+                }, index * 100);
+            });
+        }
+        
+        function clearConnections() {
+            if (confirm('Êtes-vous sûr de vouloir effacer toutes les connexions ?')) {
+                connections = [];
+                connectionId = 1;
+                updateConnectionsList();
+                console.log('🗑️ Toutes les connexions effacées');
+            }
+        }
+        
+        function generateIP() {
+            return `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+        }
+        
+        function generateUserAgent() {
+            const browsers = ['Chrome', 'Firefox', 'Safari', 'Edge'];
+            const os = ['Windows', 'MacOS', 'Linux', 'Android', 'iOS'];
+            const browser = browsers[Math.floor(Math.random() * browsers.length)];
+            const operatingSystem = os[Math.floor(Math.random() * os.length)];
+            return `${browser} sur ${operatingSystem}`;
+        }
+        
+        function addAutoConnection() {
+            const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+            const connection = {
+                id: connectionId++,
+                name: randomName,
+                ip: generateIP(),
+                userAgent: generateUserAgent(),
+                timestamp: new Date().toISOString()
+            };
+            
+            connections.unshift(connection);
+            if (connections.length > 50) {
+                connections = connections.slice(0, 50);
+            }
+            
+            updateConnectionsList();
+        }
+
+        // Mettre à jour la liste des connexions avec les statistiques
+        function updateMetricsWithConnections() {
+            updateMetrics();
+            updateConnectionsList();
         }
         
         function restartOptimizer() {

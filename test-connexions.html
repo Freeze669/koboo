@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Connexions - MAYU & JACK STUDIO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="admin-stats.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #60a5fa;
+        }
+        
+        .test-section {
+            background: rgba(51, 65, 85, 0.5);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .test-section h3 {
+            color: #f8fafc;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .test-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-weight: 600;
+        }
+        
+        .test-btn:hover {
+            background: #2563eb;
+        }
+        
+        .test-btn.danger {
+            background: #ef4444;
+        }
+        
+        .test-btn.danger:hover {
+            background: #dc2626;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-item {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .connections-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(51, 65, 85, 0.3);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .connection-item {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .connection-item:hover {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: #60a5fa;
+            transform: translateX(5px);
+        }
+        
+        .connection-info {
+            flex: 1;
+        }
+        
+        .connection-user {
+            color: #f8fafc;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .connection-details {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+        
+        .connection-session {
+            color: #8b5cf6;
+            font-size: 0.7rem;
+            font-family: monospace;
+            margin-top: 0.25rem;
+        }
+        
+        .connection-time {
+            color: #64748b;
+            font-size: 0.75rem;
+            text-align: right;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: #60a5fa;
+            text-decoration: none;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #60a5fa;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .back-link:hover {
+            background: #60a5fa;
+            color: white;
+        }
+        
+        /* Modal de saisie personnalisé */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal-header {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .modal-header h3 {
+            color: #f8fafc;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-header p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .modal-input {
+            width: 100%;
+            background: rgba(51, 65, 85, 0.5);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #f8fafc;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .modal-input:focus {
+            border-color: #60a5fa;
+        }
+        
+        .modal-input::placeholder {
+            color: #64748b;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+            min-width: 100px;
+        }
+        
+        .modal-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .modal-btn.primary:hover {
+            background: #2563eb;
+        }
+        
+        .modal-btn.secondary {
+            background: #64748b;
+            color: white;
+        }
+        
+        .modal-btn.secondary:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test des Connexions</h1>
+        
+        <div class="test-section">
+            <h3>🔧 Tests</h3>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testNewConnection()">
+                    <i class="fas fa-plus"></i>
+                    Nouvelle Connexion
+                </button>
+                <button class="test-btn" onclick="testMultipleConnections()">
+                    <i class="fas fa-users"></i>
+                    5 Connexions
+                </button>
+                <button class="test-btn" onclick="refreshStats()">
+                    <i class="fas fa-sync-alt"></i>
+                    Actualiser
+                </button>
+                <button class="test-btn danger" onclick="clearConnections()">
+                    <i class="fas fa-trash"></i>
+                    Effacer Tout
+                </button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Statistiques Actuelles</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="visitorsCount">0</div>
+                    <div class="stat-label">Visiteurs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="pageViewsCount">0</div>
+                    <div class="stat-label">Vues de Page</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="sessionsCount">0</div>
+                    <div class="stat-label">Sessions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="uptimeValue">00:00:00</div>
+                    <div class="stat-label">Temps de Fonctionnement</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 Connexions Récentes</h3>
+            <div class="connections-list" id="connectionsList">
+                <!-- Les connexions seront affichées ici -->
+            </div>
+        </div>
+        
+        <a href="admin-panel.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Retour au Panel Admin
+        </a>
+    </div>
+
+    <!-- Modal de saisie personnalisé -->
+    <div class="modal-overlay" id="inputModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔗 Nouvelle Connexion</h3>
+                <p>Entrez le nom du visiteur ou laissez vide pour "Visiteur"</p>
+            </div>
+            <input type="text" class="modal-input" id="visitorNameInput" placeholder="Nom du visiteur..." maxlength="50">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="cancelInput()">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </button>
+                <button class="modal-btn primary" onclick="confirmInput()">
+                    <i class="fas fa-check"></i>
+                    Valider
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour tester une nouvelle connexion
+        function testNewConnection() {
+            console.log('🔗 Ouverture du modal...');
+            
+            // Afficher le modal personnalisé
+            const modal = document.getElementById('inputModal');
+            const input = document.getElementById('visitorNameInput');
+            
+            if (!modal || !input) {
+                console.error('❌ Modal ou input non trouvé');
+                alert('❌ Erreur: Modal ou input non trouvé');
+                return;
+            }
+            
+            modal.style.display = 'flex';
+            input.value = '';
+            input.focus();
+            
+            console.log('✅ Modal affiché, focus sur input');
+            
+            // Permettre la validation avec la touche Entrée
+            input.onkeydown = function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    console.log('⌨️ Touche Entrée pressée');
+                    confirmInput();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    console.log('⌨️ Touche Échap pressée');
+                    cancelInput();
+                }
+            };
+        }
+        
+        // Fonction pour confirmer la saisie
+        function confirmInput() {
+            console.log('✅ Confirmation de la saisie...');
+            
+            const input = document.getElementById('visitorNameInput');
+            if (!input) return;
+            
+            const userInfo = input.value.trim() || 'Visiteur';
+            console.log('👤 Nom saisi:', userInfo);
+            
+            // Créer la connexion
+            let connection = null;
+            
+            if (window.adminStatsManager) {
+                connection = window.adminStatsManager.logNewConnection(userInfo);
+                console.log('🔗 Connexion créée via adminStatsManager:', connection);
+            } else if (window.testNewConnection) {
+                connection = window.testNewConnection(userInfo);
+                console.log('🔗 Connexion créée via testNewConnection:', connection);
+            } else {
+                console.warn('⚠️ Aucun gestionnaire de connexion disponible');
+                alert('⚠️ Erreur: Gestionnaire de connexion non disponible');
+            }
+            
+            if (connection) {
+                console.log('🔗 Nouvelle connexion testée:', connection);
+                refreshStats();
+                updateConnectionsList();
+            } else {
+                console.warn('⚠️ Impossible de créer la connexion de test');
+                alert('⚠️ Erreur: Impossible de créer la connexion');
+            }
+            
+            // Fermer le modal
+            hideModal();
+        }
+        
+        // Fonction pour annuler la saisie
+        function cancelInput() {
+            console.log('❌ Annulation de la saisie');
+            hideModal();
+        }
+        
+        // Fonction pour masquer le modal
+        function hideModal() {
+            console.log('🔒 Fermeture du modal...');
+            
+            const modal = document.getElementById('inputModal');
+            const input = document.getElementById('visitorNameInput');
+            
+            if (modal) {
+                modal.style.display = 'none';
+                console.log('✅ Modal masqué');
+            }
+            
+            if (input) {
+                input.onkeydown = null;
+                input.value = '';
+                console.log('✅ Input nettoyé');
+            }
+        }
+        
+        // Fonction pour tester plusieurs connexions
+        function testMultipleConnections() {
+            console.log('👥 Test de 5 connexions...');
+            
+            const names = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'];
+            
+            names.forEach((name, index) => {
+                setTimeout(() => {
+                    if (window.adminStatsManager) {
+                        window.adminStatsManager.logNewConnection(name);
+                        console.log(`👤 Connexion créée pour: ${name}`);
+                    }
+                    
+                    if (index === names.length - 1) {
+                        setTimeout(() => {
+                            refreshStats();
+                            updateConnectionsList();
+                            console.log('✅ Toutes les connexions créées');
+                        }, 100);
+                    }
+                }, index * 200);
+            });
+        }
+        
+        // Fonction pour actualiser les statistiques
+        function refreshStats() {
+            console.log('📊 Actualisation des statistiques...');
+            
+            if (window.adminStatsManager) {
+                const stats = window.adminStatsManager.getSiteStats();
+                console.log('📊 Statistiques récupérées:', stats);
+                
+                // Mettre à jour l'affichage
+                const visitorsEl = document.getElementById('visitorsCount');
+                const pageViewsEl = document.getElementById('pageViewsCount');
+                const sessionsEl = document.getElementById('sessionsCount');
+                const uptimeEl = document.getElementById('uptimeValue');
+                
+                if (visitorsEl) visitorsEl.textContent = stats.visitors === null ? 'N/A' : stats.visitors;
+                if (pageViewsEl) pageViewsEl.textContent = stats.pageViews === null ? 'N/A' : stats.pageViews;
+                if (sessionsEl) sessionsEl.textContent = stats.sessions === null ? 'N/A' : stats.sessions;
+                if (uptimeEl) uptimeEl.textContent = stats.uptime || '00:00:00';
+                
+                console.log('✅ Statistiques mises à jour');
+            } else {
+                console.warn('⚠️ adminStatsManager non disponible');
+            }
+        }
+        
+        // Fonction pour effacer toutes les connexions
+        function clearConnections() {
+            if (confirm('Êtes-vous sûr de vouloir effacer toutes les connexions ?')) {
+                console.log('🗑️ Effacement de toutes les connexions...');
+                
+                if (window.adminStatsManager) {
+                    window.adminStatsManager.stats.connections = [];
+                    window.adminStatsManager.connectionCounter = 0;
+                    window.adminStatsManager.stats.visitors = null;
+                    window.adminStatsManager.stats.pageViews = null;
+                    window.adminStatsManager.stats.sessions = null;
+                    
+                    refreshStats();
+                    updateConnectionsList();
+                    console.log('🗑️ Toutes les connexions ont été effacées');
+                } else {
+                    console.warn('⚠️ adminStatsManager non disponible');
+                }
+            }
+        }
+        
+        // Fonction pour mettre à jour la liste des connexions
+        function updateConnectionsList() {
+            console.log('📋 Mise à jour de la liste des connexions...');
+            
+            const connectionsList = document.getElementById('connectionsList');
+            if (!connectionsList) {
+                console.warn('⚠️ Élément connectionsList non trouvé');
+                return;
+            }
+            
+            if (!window.adminStatsManager) {
+                console.warn('⚠️ adminStatsManager non disponible');
+                connectionsList.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 1rem;">❌ Gestionnaire de statistiques non disponible</p>';
+                return;
+            }
+            
+            const connections = window.adminStatsManager.getRecentConnections(20);
+            console.log('🔗 Connexions récupérées:', connections);
+            
+            if (connections.length === 0) {
+                connectionsList.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 1rem;">Aucune connexion enregistrée</p>';
+                return;
+            }
+            
+            connectionsList.innerHTML = connections.map(connection => `
+                <div class="connection-item" onclick="showConnectionDetails('${connection.id}')">
+                    <div class="connection-info">
+                        <div class="connection-user">${connection.userInfo}</div>
+                        <div class="connection-details">${connection.ip} • ${connection.userAgent}</div>
+                        <div class="connection-session">Session: ${connection.sessionId}</div>
+                    </div>
+                    <div class="connection-time">
+                        <div>${new Date(connection.timestamp).toLocaleDateString()}</div>
+                        <div>${new Date(connection.timestamp).toLocaleTimeString()}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            console.log('✅ Liste des connexions mise à jour');
+        }
+        
+        // Fonction pour afficher les détails d'une connexion
+        function showConnectionDetails(connectionId) {
+            console.log('🔍 Affichage des détails pour la connexion:', connectionId);
+            
+            if (!window.adminStatsManager) {
+                console.warn('⚠️ adminStatsManager non disponible');
+                return;
+            }
+            
+            const connection = window.adminStatsManager.stats.connections.find(c => c.id == connectionId);
+            if (!connection) {
+                console.warn('⚠️ Connexion non trouvée:', connectionId);
+                return;
+            }
+            
+            // Créer un modal de détails
+            const detailsModal = document.createElement('div');
+            detailsModal.className = 'modal-overlay';
+            detailsModal.style.display = 'flex';
+            detailsModal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <h3>🔍 Détails de la Connexion</h3>
+                        <p>Informations complètes de la connexion</p>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="background: rgba(51, 65, 85, 0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #60a5fa; margin-bottom: 0.5rem;">👤 Informations Utilisateur</h4>
+                            <p><strong>Nom:</strong> ${connection.userInfo}</p>
+                            <p><strong>ID Session:</strong> ${connection.sessionId}</p>
+                            <p><strong>Timestamp:</strong> ${new Date(connection.timestamp).toLocaleString()}</p>
+                        </div>
+                        
+                        <div style="background: rgba(51, 65, 85, 0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #60a5fa; margin-bottom: 0.5rem;">🌐 Informations Réseau</h4>
+                            <p><strong>Adresse IP:</strong> <span style="color: #10b981;">${connection.ip}</span></p>
+                            <p><strong>User-Agent:</strong> <span style="color: #f59e0b; font-family: monospace; font-size: 0.9rem;">${connection.userAgent}</span></p>
+                        </div>
+                        
+                        <div style="background: rgba(51, 65, 85, 0.3); padding: 1rem; border-radius: 8px;">
+                            <h4 style="color: #60a5fa; margin-bottom: 0.5rem;">📊 Métadonnées</h4>
+                            <p><strong>ID Connexion:</strong> #${connection.id}</p>
+                            <p><strong>Heure de connexion:</strong> ${new Date(connection.timestamp).toLocaleTimeString()}</p>
+                            <p><strong>Date:</strong> ${new Date(connection.timestamp).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <div class="modal-buttons">
+                        <button class="modal-btn secondary" onclick="this.closest('.modal-overlay').remove()">
+                            <i class="fas fa-times"></i>
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Ajouter le modal au body
+            document.body.appendChild(detailsModal);
+            console.log('✅ Modal de détails affiché');
+            
+            // Permettre de fermer en cliquant à l'extérieur
+            detailsModal.addEventListener('click', function(e) {
+                if (e.target === detailsModal) {
+                    detailsModal.remove();
+                    console.log('✅ Modal de détails fermé');
+                }
+            });
+        }
+        
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Page de test des connexions chargée');
+            
+            // Vérifier que admin-stats.js est chargé
+            if (typeof window.adminStatsManager === 'undefined') {
+                console.error('❌ admin-stats.js non chargé ou adminStatsManager non initialisé');
+                alert('❌ Erreur: admin-stats.js n\'est pas chargé correctement');
+                return;
+            }
+            
+            console.log('✅ adminStatsManager disponible:', window.adminStatsManager);
+            
+            // Attendre que le gestionnaire de statistiques soit initialisé
+            setTimeout(() => {
+                refreshStats();
+                updateConnectionsList();
+                console.log('✅ Initialisation terminée');
+            }, 1000);
+            
+            // Mettre à jour toutes les 5 secondes (optimisation FPS)
+            setInterval(() => {
+                refreshStats();
+                updateConnectionsList();
+            }, 5000);
+            
+            // Permettre de fermer le modal en cliquant à l'extérieur
+            const modal = document.getElementById('inputModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        hideModal();
+                    }
+                });
+                console.log('✅ Événement de fermeture du modal configuré');
+            }
+            
+            // Optimisation : réduire les animations CSS pour plus de FPS
+            document.body.style.willChange = 'auto';
+            
+            console.log('🚀 Page initialisée avec succès');
+        });
+    </script>
+</body>
+</html>

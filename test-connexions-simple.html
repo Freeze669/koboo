@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique Connexions - MAYU & JACK STUDIO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e293b;
+            color: white;
+            padding: 2rem;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #334155;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #60a5fa;
+            margin-bottom: 2rem;
+        }
+        
+        .test-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin: 1rem;
+            display: block;
+            width: 100%;
+        }
+        
+        .test-btn:hover {
+            background: #2563eb;
+        }
+        
+        .test-btn.danger {
+            background: #ef4444;
+        }
+        
+        .test-btn.danger:hover {
+            background: #dc2626;
+        }
+        
+        .connections-list {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            min-height: 200px;
+        }
+        
+        .connection-item {
+            background: #475569;
+            border: 1px solid #64748b;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .connection-user {
+            font-weight: bold;
+            color: #60a5fa;
+            font-size: 1.1rem;
+        }
+        
+        .connection-details {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .connection-time {
+            color: #10b981;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        
+        .status {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .auto-info {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Historique des Connexions</h1>
+        
+        <div class="status" id="status">
+            <h3>📊 Status</h3>
+            <div id="statusContent">Système prêt</div>
+        </div>
+        
+        <div class="auto-info">
+            <p>🔄 <strong>Connexions automatiques</strong> - Le système simule des connexions toutes les 5 secondes</p>
+        </div>
+        
+        <button class="test-btn" onclick="addRandomConnection()">
+            👤 Ajouter Connexion Aléatoire
+        </button>
+        
+        <button class="test-btn" onclick="addMultipleConnections()">
+            👥 Ajouter 5 Connexions Test
+        </button>
+        
+        <button class="test-btn danger" onclick="clearConnections()">
+            🗑️ Effacer Tout
+        </button>
+        
+        <div class="connections-list" id="connectionsList">
+            <p style="text-align: center; color: #94a3b8;">Aucune connexion enregistrée</p>
+        </div>
+    </div>
+
+    <script>
+        // Stockage simple des connexions
+        let connections = [];
+        let connectionId = 1;
+        let autoUpdateInterval;
+        
+        // Noms pour les connexions aléatoires
+        const randomNames = [
+            'Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank', 'Grace', 'Henry',
+            'Iris', 'Jack', 'Kate', 'Liam', 'Mia', 'Noah', 'Olivia', 'Paul',
+            'Quinn', 'Ruby', 'Sam', 'Tina', 'Uma', 'Victor', 'Wendy', 'Xavier'
+        ];
+        
+        // Fonction pour ajouter une connexion aléatoire
+        function addRandomConnection() {
+            const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+            const connection = {
+                id: connectionId++,
+                name: randomName,
+                ip: generateIP(),
+                userAgent: generateUserAgent(),
+                timestamp: new Date().toISOString()
+            };
+            
+            connections.unshift(connection);
+            if (connections.length > 50) {
+                connections = connections.slice(0, 50);
+            }
+            
+            updateConnectionsList();
+            updateStatus(`Connexion ajoutée: ${randomName}`);
+        }
+        
+        // Fonction pour ajouter plusieurs connexions de test
+        function addMultipleConnections() {
+            const testNames = ['Test1', 'Test2', 'Test3', 'Test4', 'Test5'];
+            
+            testNames.forEach((name, index) => {
+                setTimeout(() => {
+                    const connection = {
+                        id: connectionId++,
+                        name: name,
+                        ip: generateIP(),
+                        userAgent: generateUserAgent(),
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    connections.unshift(connection);
+                    
+                    if (index === testNames.length - 1) {
+                        updateConnectionsList();
+                        updateStatus(`${testNames.length} connexions de test ajoutées`);
+                    }
+                }, index * 100);
+            });
+        }
+        
+        // Fonction pour effacer toutes les connexions
+        function clearConnections() {
+            if (confirm('Êtes-vous sûr de vouloir effacer toutes les connexions ?')) {
+                connections = [];
+                connectionId = 1;
+                updateConnectionsList();
+                updateStatus('Toutes les connexions ont été effacées');
+            }
+        }
+        
+        // Fonction pour mettre à jour la liste des connexions
+        function updateConnectionsList() {
+            const list = document.getElementById('connectionsList');
+            
+            if (!list) return;
+            
+            if (connections.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #94a3b8;">Aucune connexion enregistrée</p>';
+                return;
+            }
+            
+            list.innerHTML = connections.map(connection => `
+                <div class="connection-item">
+                    <div class="connection-user">${connection.name}</div>
+                    <div class="connection-details">
+                        IP: ${connection.ip} • ${connection.userAgent}
+                    </div>
+                    <div class="connection-time">
+                        ${new Date(connection.timestamp).toLocaleString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Fonction pour générer une IP simulée
+        function generateIP() {
+            return `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+        }
+        
+        // Fonction pour générer un User-Agent simulé
+        function generateUserAgent() {
+            const browsers = ['Chrome', 'Firefox', 'Safari', 'Edge'];
+            const os = ['Windows', 'MacOS', 'Linux', 'Android', 'iOS'];
+            const browser = browsers[Math.floor(Math.random() * browsers.length)];
+            const operatingSystem = os[Math.floor(Math.random() * os.length)];
+            return `${browser} sur ${operatingSystem}`;
+        }
+        
+        // Fonction pour mettre à jour le status
+        function updateStatus(message) {
+            const statusContent = document.getElementById('statusContent');
+            if (statusContent) {
+                statusContent.textContent = message;
+            }
+        }
+        
+        // Fonction pour ajouter une connexion automatique
+        function addAutoConnection() {
+            const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+            const connection = {
+                id: connectionId++,
+                name: randomName,
+                ip: generateIP(),
+                userAgent: generateUserAgent(),
+                timestamp: new Date().toISOString()
+            };
+            
+            connections.unshift(connection);
+            if (connections.length > 50) {
+                connections = connections.slice(0, 50);
+            }
+            
+            updateConnectionsList();
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatus('Système prêt - Connexions automatiques activées');
+            
+            // Ajouter quelques connexions initiales
+            for (let i = 0; i < 3; i++) {
+                setTimeout(addAutoConnection, i * 500);
+            }
+            
+            // Démarrer les mises à jour automatiques
+            autoUpdateInterval = setInterval(addAutoConnection, 5000);
+            
+            // Mettre à jour la liste
+            updateConnectionsList();
+        });
+    </script>
+</body>
+</html>

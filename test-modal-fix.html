@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Fix - MAYU & JACK STUDIO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e293b;
+            color: white;
+            padding: 2rem;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #334155;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #60a5fa;
+            margin-bottom: 2rem;
+        }
+        
+        .test-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin: 1rem;
+            display: block;
+            width: 100%;
+        }
+        
+        .test-btn:hover {
+            background: #2563eb;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-input {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 1rem 0;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            background: #1e293b;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            min-width: 100px;
+        }
+        
+        .modal-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .modal-btn.secondary {
+            background: #64748b;
+            color: white;
+        }
+        
+        .result {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Modal Fix</h1>
+        
+        <button class="test-btn" onclick="openModal()">
+            🔗 Ouvrir Modal de Connexion
+        </button>
+        
+        <div class="result" id="result">
+            <h3>Résultat :</h3>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal de saisie personnalisé -->
+    <div class="modal-overlay" id="inputModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔗 Nouvelle Connexion</h3>
+                <p>Entrez le nom du visiteur ou laissez vide pour "Visiteur"</p>
+            </div>
+            <input type="text" class="modal-input" id="visitorNameInput" placeholder="Nom du visiteur..." maxlength="50">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="cancelInput()">
+                    ❌ Annuler
+                </button>
+                <button class="modal-btn primary" onclick="confirmInput()">
+                    ✅ Valider
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            const modal = document.getElementById('inputModal');
+            const input = document.getElementById('visitorNameInput');
+            
+            if (!modal || !input) {
+                alert('❌ Erreur: Modal ou input non trouvé');
+                return;
+            }
+            
+            modal.style.display = 'flex';
+            input.value = '';
+            input.focus();
+            
+            // Gestion clavier
+            input.onkeydown = function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    confirmInput();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelInput();
+                }
+            };
+            
+            // Fermer en cliquant à l'extérieur
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    hideModal();
+                }
+            };
+        }
+        
+        function confirmInput() {
+            const input = document.getElementById('visitorNameInput');
+            if (!input) return;
+            
+            const userInfo = input.value.trim() || 'Visiteur';
+            
+            // Afficher le résultat
+            showResult(userInfo);
+            
+            // Fermer le modal
+            hideModal();
+        }
+        
+        function cancelInput() {
+            hideModal();
+        }
+        
+        function hideModal() {
+            const modal = document.getElementById('inputModal');
+            const input = document.getElementById('visitorNameInput');
+            
+            if (modal) {
+                modal.style.display = 'none';
+                modal.onclick = null;
+            }
+            
+            if (input) {
+                input.onkeydown = null;
+                input.value = '';
+            }
+        }
+        
+        function showResult(userInfo) {
+            const result = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultContent.innerHTML = `
+                <p><strong>Nom saisi:</strong> ${userInfo}</p>
+                <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+                <p><strong>IP simulée:</strong> 192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}</p>
+                <p><strong>Status:</strong> ✅ Connexion simulée avec succès</p>
+            `;
+            
+            result.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
