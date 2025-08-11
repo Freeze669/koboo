@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Connexion Admin - Simple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #0056b3; }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        .console {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Connexion Admin - Simple</h1>
+    
+    <div class="test-section">
+        <h3>📋 Objectif</h3>
+        <p>Vérifier que la connexion admin fonctionne après la réorganisation des fichiers</p>
+    </div>
+    
+    <div class="test-section">
+        <h3>🔍 Test des Fichiers</h3>
+        <div id="fileStatus" class="status info">Vérification en cours...</div>
+        <button class="btn" onclick="testFiles()">🔍 Vérifier Fichiers</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>⚡ Test des Scripts</h3>
+        <div id="scriptStatus" class="status info">Test en attente...</div>
+        <button class="btn" onclick="testScripts()">⚡ Tester Scripts</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>🔐 Test de Connexion</h3>
+        <div id="loginStatus" class="status info">Test en attente...</div>
+        <button class="btn" onclick="testLogin()">🔐 Tester Connexion</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>🚀 Actions Rapides</h3>
+        <button class="btn" onclick="openLoginPage()">🔐 Page de Connexion</button>
+        <button class="btn" onclick="openAdminPanel()">⚙️ Panel Admin</button>
+        <button class="btn" onclick="openMainSite()">🏠 Site Principal</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>📝 Console de Débogage</h3>
+        <div class="console" id="debugConsole">Console de débogage...</div>
+    </div>
+
+    <!-- Test des scripts -->
+    <script src="../assets/js/admin-config.js"></script>
+    
+    <script>
+        function log(message, type = 'info') {
+            const console = document.getElementById('debugConsole');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : type === 'warning' ? '#ffc107' : '#007bff';
+            
+            console.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+            console.scrollTop = console.scrollHeight;
+        }
+        
+        async function testFiles() {
+            const status = document.getElementById('fileStatus');
+            status.className = 'status info';
+            status.innerHTML = '🔍 Vérification des fichiers...';
+            
+            try {
+                const files = [
+                    '../assets/js/admin-config.js',
+                    '../assets/js/discord-logger.js',
+                    '../assets/js/activity-monitor.js',
+                    '../assets/js/admin-info-pages.js'
+                ];
+                
+                let allExist = true;
+                for (const file of files) {
+                    try {
+                        const response = await fetch(file, { method: 'HEAD' });
+                        if (!response.ok) allExist = false;
+                    } catch {
+                        allExist = false;
+                    }
+                }
+                
+                if (allExist) {
+                    status.className = 'status success';
+                    status.innerHTML = '✅ Tous les fichiers JavaScript sont accessibles';
+                    log('✅ Tous les fichiers JavaScript sont accessibles', 'success');
+                } else {
+                    status.className = 'status error';
+                    status.innerHTML = '❌ Certains fichiers JavaScript sont manquants';
+                    log('❌ Certains fichiers JavaScript sont manquants', 'error');
+                }
+            } catch (error) {
+                status.className = 'status error';
+                status.innerHTML = '❌ Erreur lors de la vérification';
+                log(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function testScripts() {
+            const status = document.getElementById('scriptStatus');
+            status.className = 'status info';
+            status.innerHTML = '⚡ Test des scripts...';
+            
+            try {
+                // Vérifier si admin-config.js est chargé
+                if (typeof ADMIN_CONFIG !== 'undefined') {
+                    status.className = 'status success';
+                    status.innerHTML = '✅ ADMIN_CONFIG chargé avec succès';
+                    log('✅ ADMIN_CONFIG chargé avec succès', 'success');
+                    log(`🔑 Code admin: ${ADMIN_CONFIG.security.adminCode}`, 'info');
+                } else {
+                    status.className = 'status error';
+                    status.innerHTML = '❌ ADMIN_CONFIG non chargé';
+                    log('❌ ADMIN_CONFIG non chargé', 'error');
+                }
+                
+                // Vérifier d'autres objets globaux
+                if (typeof adminUtils !== 'undefined') {
+                    log('✅ adminUtils disponible', 'success');
+                } else {
+                    log('❌ adminUtils non disponible', 'error');
+                }
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.innerHTML = '❌ Erreur lors du test des scripts';
+                log(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function testLogin() {
+            const status = document.getElementById('loginStatus');
+            status.className = 'status info';
+            status.innerHTML = '🔐 Test de connexion...';
+            
+            try {
+                if (typeof ADMIN_CONFIG === 'undefined') {
+                    status.className = 'status error';
+                    status.innerHTML = '❌ ADMIN_CONFIG non disponible';
+                    log('❌ ADMIN_CONFIG non disponible pour le test de connexion', 'error');
+                    return;
+                }
+                
+                // Simuler une tentative de connexion
+                const testCode = ADMIN_CONFIG.security.adminCode;
+                log(`🔑 Test avec le code: ${testCode}`, 'info');
+                
+                // Vérifier si le code est valide
+                if (testCode && testCode.length > 0) {
+                    status.className = 'status success';
+                    status.innerHTML = '✅ Code d\'accès configuré et valide';
+                    log('✅ Code d\'accès configuré et valide', 'success');
+                } else {
+                    status.className = 'status error';
+                    status.innerHTML = '❌ Code d\'accès non configuré';
+                    log('❌ Code d\'accès non configuré', 'error');
+                }
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.innerHTML = '❌ Erreur lors du test de connexion';
+                log(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function openLoginPage() {
+            log('🚀 Ouverture de la page de connexion...', 'info');
+            window.open('./admin-login.html', '_blank');
+        }
+        
+        function openAdminPanel() {
+            log('🚀 Ouverture du panel admin...', 'info');
+            window.open('./admin-panel.html', '_blank');
+        }
+        
+        function openMainSite() {
+            log('🚀 Ouverture du site principal...', 'info');
+            window.open('../index.html', '_blank');
+        }
+        
+        // Initialisation automatique
+        window.addEventListener('load', () => {
+            log('🚀 Page de test chargée', 'success');
+            setTimeout(() => {
+                testFiles();
+                testScripts();
+                testLogin();
+            }, 1000);
+        });
+        
+        // Intercepter les erreurs
+        window.addEventListener('error', (event) => {
+            log(`❌ Erreur JavaScript: ${event.message}`, 'error');
+        });
+        
+        // Intercepter les erreurs de ressources
+        window.addEventListener('unhandledrejection', (event) => {
+            log(`❌ Promesse rejetée: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>

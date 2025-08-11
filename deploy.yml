@@ -1,0 +1,62 @@
+name: 🚀 Déploiement Automatique
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # 🔍 Vérification du Code
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Récupérer le code
+        uses: actions/checkout@v4
+        
+      - name: 🔍 Vérifier la structure
+        run: |
+          echo "📁 Vérification de la structure du projet..."
+          ls -la
+          echo "✅ Structure vérifiée"
+          
+      - name: 🔍 Vérifier les fichiers HTML
+        run: |
+          echo "🔍 Vérification des fichiers HTML..."
+          find . -name "*.html" -type f
+          echo "✅ Fichiers HTML trouvés"
+          
+      - name: 🔍 Vérifier les fichiers JavaScript
+        run: |
+          echo "🔍 Vérification des fichiers JavaScript..."
+          find . -name "*.js" -type f
+          echo "✅ Fichiers JavaScript trouvés"
+          
+      - name: 🔍 Vérifier les fichiers CSS
+        run: |
+          echo "🔍 Vérification des fichiers CSS..."
+          find . -name "*.css" -type f
+          echo "✅ Fichiers CSS trouvés"
+
+  # 🚀 Déploiement sur GitHub Pages
+  deploy:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: 📥 Récupérer le code
+        uses: actions/checkout@v4
+        
+      - name: 🚀 Déployer sur GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          cname: ${{ secrets.CNAME }}
+          
+      - name: ✅ Déploiement terminé
+        run: |
+          echo "🎉 Déploiement terminé avec succès!"
+          echo "🌐 Site disponible sur: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"

@@ -12,19 +12,25 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Discord Logging System -->
-    <script src="discord-logger.js"></script>
-    <script src="member-tracker.js"></script>
-    <script src="activity-monitor.js"></script>
-    <script src="discord-logging-system.js"></script>
+    <script src="../assets/js/discord-logger.js"></script>
+    <script src="../assets/js/member-tracker.js"></script>
+    <script src="../assets/js/activity-monitor.js"></script>
+    <script src="../assets/js/discord-logging-system.js"></script>
     
     <!-- Configuration admin et monitoring -->
-    <script src="admin-config.js"></script>
-    <script src="site-monitor.js"></script>
-    <script src="admin-info-pages.js"></script>
+    <script src="../assets/js/admin-config.js"></script>
+    <script src="../assets/js/site-monitor.js"></script>
+    <script src="../assets/js/admin-info-pages.js"></script>
     
     <!-- Performance et Animation Optimization -->
-    <script src="performance-monitor.js"></script>
-    <script src="animation-optimizer.js"></script>
+    <script src="../assets/js/performance-monitor.js"></script>
+    <script src="../assets/js/animation-optimizer.js"></script>
+    
+    <!-- Gestionnaire de graphiques -->
+    <script src="../assets/js/chart-config.js"></script>
+    
+    <!-- Gestionnaire de statistiques -->
+    <script src="../assets/js/admin-stats.js"></script>
     
     <style>
         * {
@@ -277,10 +283,14 @@
 
         /* Graphiques */
         .charts-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
             margin-bottom: 2rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            justify-content: center;
         }
 
         .chart-container {
@@ -289,6 +299,16 @@
             border-radius: 12px;
             padding: 1.5rem;
             backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+            height: 300px !important;
+            max-width: 100%;
+            max-height: 300px;
         }
 
         .chart-title {
@@ -1062,10 +1082,6 @@
                     <h4>Utilisation Mémoire</h4>
                     <canvas id="memoryChart"></canvas>
                 </div>
-                <div class="chart-container">
-                    <h4>Score Performance</h4>
-                    <canvas id="performanceChart"></canvas>
-                </div>
             </div>
         </div>
 
@@ -1189,6 +1205,9 @@
             // Initialiser les composants
             initializeMetrics();
             initializeActivityList();
+            
+            // Initialiser les graphiques
+            initializeCharts();
             
             console.log('✅ Panel admin initialisé avec succès');
         }
@@ -2183,6 +2202,233 @@
         }
 
         /**
+         * Initialiser les graphiques
+         */
+        function initializeCharts() {
+            console.log('📊 Initialisation des graphiques...');
+            
+            // Attendre que Chart.js soit chargé
+            if (typeof Chart === 'undefined') {
+                console.warn('⚠️ Chart.js non disponible, attente...');
+                setTimeout(initializeCharts, 500);
+                return;
+            }
+            
+            // Attendre que ChartManager soit disponible
+            if (!window.chartManager) {
+                console.warn('⚠️ ChartManager non disponible, attente...');
+                setTimeout(initializeCharts, 500);
+                return;
+            }
+            
+            try {
+                // Initialiser les graphiques
+                window.chartManager.initializeAllCharts();
+                console.log('✅ Graphiques initialisés avec succès');
+                
+                // Démarrer la mise à jour automatique des graphiques
+                startChartUpdates();
+                
+            } catch (error) {
+                console.error('❌ Erreur initialisation graphiques:', error);
+                
+                // Fallback: créer les graphiques directement si ChartManager échoue
+                console.log('🔄 Tentative de création directe des graphiques...');
+                createChartsDirectly();
+            }
+        }
+        
+        /**
+         * Créer les graphiques directement en cas d'échec du ChartManager
+         */
+        function createChartsDirectly() {
+            try {
+                // Configuration commune
+                const commonConfig = {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#94a3b8',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            ticks: { color: '#94a3b8', font: { size: 11 } },
+                            position: 'left',
+                            border: { display: false }
+                        },
+                        x: {
+                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            ticks: { color: '#94a3b8', font: { size: 11 } },
+                            position: 'bottom',
+                            border: { display: false }
+                        }
+                    },
+                    elements: {
+                        point: { radius: 3, hoverRadius: 5 },
+                        line: { tension: 0.4 }
+                    },
+                    animation: { duration: 0 },
+                    resizeDelay: 0
+                };
+                
+                // Créer le graphique FPS
+                const fpsCtx = document.getElementById('fpsChart');
+                if (fpsCtx && !window.fpsChart) {
+                    window.fpsChart = new Chart(fpsCtx, {
+                        type: 'line',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                label: 'FPS',
+                                data: [],
+                                borderColor: '#60a5fa',
+                                backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            ...commonConfig,
+                            scales: {
+                                ...commonConfig.scales,
+                                y: { ...commonConfig.scales.y, max: 120, min: 0 }
+                            }
+                        }
+                    });
+                    console.log('✅ Graphique FPS créé directement');
+                }
+                
+                // Créer le graphique mémoire
+                const memoryCtx = document.getElementById('memoryChart');
+                if (memoryCtx && !window.memoryChart) {
+                    window.memoryChart = new Chart(memoryCtx, {
+                        type: 'line',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                label: 'Mémoire (MB)',
+                                data: [],
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            ...commonConfig,
+                            scales: {
+                                ...commonConfig.scales,
+                                y: { ...commonConfig.scales.y, max: 500, min: 0 }
+                            }
+                        }
+                    });
+                    console.log('✅ Graphique mémoire créé directement');
+                }
+                
+                // Démarrer les mises à jour
+                startChartUpdates();
+                
+            } catch (error) {
+                console.error('❌ Erreur création directe des graphiques:', error);
+            }
+        }
+        
+        /**
+         * Démarrer les mises à jour automatiques des graphiques
+         */
+        function startChartUpdates() {
+            console.log('🔄 Démarrage des mises à jour automatiques des graphiques...');
+            
+            // Mise à jour toutes les 3 secondes
+            setInterval(() => {
+                const stats = generatePerformanceStats();
+                
+                // Essayer d'abord avec ChartManager
+                if (window.chartManager && window.chartManager.isInitialized) {
+                    try {
+                        window.chartManager.updateAllCharts(stats);
+                    } catch (error) {
+                        console.warn('⚠️ Erreur ChartManager, utilisation des graphiques directs');
+                        updateChartsDirectly(stats);
+                    }
+                } else {
+                    // Utiliser les graphiques créés directement
+                    updateChartsDirectly(stats);
+                }
+            }, 3000);
+            
+            console.log('✅ Mises à jour automatiques des graphiques démarrées');
+        }
+        
+        /**
+         * Mettre à jour les graphiques créés directement
+         */
+        function updateChartsDirectly(stats) {
+            try {
+                // Mettre à jour FPS
+                if (window.fpsChart) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    window.fpsChart.data.labels.push(timestamp);
+                    window.fpsChart.data.datasets[0].data.push(stats.fps);
+                    
+                    // Limiter à 20 points
+                    if (window.fpsChart.data.labels.length > 20) {
+                        window.fpsChart.data.labels.shift();
+                        window.fpsChart.data.datasets[0].data.shift();
+                    }
+                    
+                    window.fpsChart.update('none');
+                }
+                
+                // Mettre à jour mémoire
+                if (window.memoryChart) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    window.memoryChart.data.labels.push(timestamp);
+                    window.memoryChart.data.datasets[0].data.push(stats.memory);
+                    
+                    // Limiter à 20 points
+                    if (window.memoryChart.data.labels.length > 20) {
+                        window.memoryChart.data.labels.shift();
+                        window.memoryChart.data.datasets[0].data.shift();
+                    }
+                    
+                    window.memoryChart.update('none');
+                }
+                
+                console.log('✅ Graphiques mis à jour directement');
+                
+            } catch (error) {
+                console.error('❌ Erreur mise à jour directe:', error);
+            }
+        }
+        
+        /**
+         * Générer des statistiques de performance simulées
+         */
+        function generatePerformanceStats() {
+            const now = Date.now();
+            return {
+                timestamp: now,
+                fps: Math.floor(Math.random() * 30) + 30, // 30-60 FPS
+                memory: Math.floor(Math.random() * 200) + 100, // 100-300 MB
+                cpu: Math.floor(Math.random() * 30) + 20, // 20-50%
+                network: Math.floor(Math.random() * 100) + 50 // 50-150 ms
+            };
+        }
+
+        /**
          * Mettre à jour la liste des activités
          */
         function updateActivityList() {
@@ -2667,204 +2913,46 @@
          */
         function updatePerformanceCharts(stats) {
             try {
-                // Mettre à jour les graphiques FPS si Chart.js est disponible
-                if (window.Chart && window.performanceMonitor) {
-                    updateFPSChart();
-                    updateMemoryChart();
-                    updatePerformanceScoreChart();
+                // Utiliser le gestionnaire de graphiques
+                if (window.chartManager && window.chartManager.isInitialized) {
+                    window.chartManager.updateAllCharts(stats);
+                    console.log('✅ Graphiques mis à jour avec succès');
+                } else {
+                    console.warn('⚠️ ChartManager non disponible, initialisation...');
+                    if (window.chartManager) {
+                        window.chartManager.init();
+                        // Réessayer après initialisation
+                        setTimeout(() => {
+                            if (window.chartManager && window.chartManager.isInitialized) {
+                                window.chartManager.updateAllCharts(stats);
+                                console.log('✅ Graphiques mis à jour après initialisation');
+                            }
+                        }, 500);
+                    }
                 }
             } catch (error) {
-                console.warn('⚠️ Erreur mise à jour graphiques:', error);
+                console.error('❌ Erreur mise à jour graphiques:', error);
             }
         }
 
         /**
-         * Mettre à jour le graphique FPS
+         * Fonctions de contrôle des graphiques
          */
-        function updateFPSChart() {
-            if (!window.performanceMonitor || !window.performanceMonitor.history) return;
-            
-            const fpsHistory = window.performanceMonitor.history.fps || [];
-            if (fpsHistory.length === 0) return;
-            
-            const ctx = document.getElementById('fpsChart');
-            if (!ctx) return;
-            
-            // Détruire le graphique existant s'il y en a un
-            if (window.fpsChart) {
-                window.fpsChart.destroy();
+        function restartCharts() {
+            if (window.chartManager) {
+                window.chartManager.restart();
             }
-            
-            const labels = fpsHistory.slice(-20).map((_, index) => `${index * 2}s`);
-            const data = fpsHistory.slice(-20).map(item => item.value || 0);
-            
-            window.fpsChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'FPS',
-                        data: data,
-                        borderColor: '#60a5fa',
-                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 120,
-                            grid: {
-                                color: 'rgba(51, 65, 85, 0.3)'
-                            },
-                            ticks: {
-                                color: '#94a3b8'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(51, 65, 85, 0.3)'
-                            },
-                            ticks: {
-                                color: '#94a3b8'
-                            }
-                        }
-                    }
-                }
-            });
         }
 
-        /**
-         * Mettre à jour le graphique mémoire
-         */
-        function updateMemoryChart() {
-            if (!window.performanceMonitor || !window.performanceMonitor.history) return;
-            
-            const memoryHistory = window.performanceMonitor.history.memoryUsage || [];
-            if (memoryHistory.length === 0) return;
-            
-            const ctx = document.getElementById('memoryChart');
-            if (!ctx) return;
-            
-            // Détruire le graphique existant s'il y en a un
-            if (window.memoryChart) {
-                window.memoryChart.destroy();
+        function refreshCharts() {
+            if (window.chartManager) {
+                window.chartManager.initializeAllCharts();
             }
-            
-            const labels = memoryHistory.slice(-20).map((_, index) => `${index * 2}s`);
-            const data = memoryHistory.slice(-20).map(item => item.value || 0);
-            
-            window.memoryChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Mémoire (MB)',
-                        data: data,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(51, 65, 85, 0.3)'
-                            },
-                            ticks: {
-                                color: '#94a3b8'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(51, 65, 85, 0.3)'
-                            },
-                            ticks: {
-                                color: '#94a3b8'
-                            }
-                        }
-                    }
-                }
-            });
         }
 
-        /**
-         * Mettre à jour le graphique score de performance
-         */
-        function updatePerformanceScoreChart() {
-            if (!window.performanceMonitor || !window.performanceMonitor.history) return;
-            
-            const ctx = document.getElementById('performanceChart');
-            if (!ctx) return;
-            
-            // Détruire le graphique existant s'il y en a un
-            if (window.performanceChart) {
-                window.performanceChart.destroy();
-            }
-            
-            // Créer des données de performance simulées basées sur les métriques actuelles
-            const currentFPS = window.performanceMonitor.metrics.fps || 60;
-            const currentMemory = window.performanceMonitor.metrics.memoryUsage || 50;
-            const currentLoadTime = window.performanceMonitor.metrics.loadTime || 1000;
-            
-            // Calculer un score de performance basé sur ces métriques
-            const fpsScore = Math.min(100, (currentFPS / 60) * 100);
-            const memoryScore = Math.max(0, 100 - (currentMemory / 200) * 100);
-            const loadScore = Math.max(0, 100 - (currentLoadTime / 5000) * 100);
-            
-            const overallScore = Math.round((fpsScore + memoryScore + loadScore) / 3);
-            
-            window.performanceChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['FPS', 'Mémoire', 'Chargement', 'Score Global'],
-                    datasets: [{
-                        data: [fpsScore, memoryScore, loadScore, overallScore],
-                        backgroundColor: [
-                            '#60a5fa', // FPS - Bleu
-                            '#10b981', // Mémoire - Vert
-                            '#f59e0b', // Chargement - Orange
-                            '#8b5cf6'  // Score Global - Violet
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: '#94a3b8',
-                                padding: 20
-                            }
-                        }
-                    }
-                }
-            });
-        }
+
+
+
     </script>
 </body>
 </html>

@@ -1,32 +1,86 @@
-# Backend Go
-*.exe
-*.go
-go.mod
-go.sum
-go_config.json
+# 🚫 Fichiers à ignorer pour GitHub
 
-# Backend Node.js
-admin_server.js
-package.json
-package-lock.json
-node_modules/
-
-# Fichiers de test
-test_api.html
-test-admin.html
-test-simple.html
-admin-config-simple.js
-test-github-pages.html
-
-# Fichiers temporaires
-*.tmp
-*.log
-*.bat
-
-# Fichiers système
+# 📁 Système d'exploitation
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Fichiers de build
+# 📁 Éditeurs de code
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 📁 Logs et fichiers temporaires
+*.log
+*.tmp
+*.temp
+logs/
+temp/
+tmp/
+
+# 📁 Dépendances (si ajoutées plus tard)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 📁 Fichiers de build
 dist/
 build/
+*.min.js
+*.min.css
+
+# 📁 Fichiers de configuration sensibles
+.env
+.env.local
+.env.production
+config/database.php
+config/secrets.php
+
+# 📁 Sauvegardes
+*.bak
+*.backup
+*.old
+
+# 📁 Fichiers de cache
+.cache/
+*.cache
+
+# 📁 Fichiers de test
+coverage/
+.nyc_output/
+
+# 📁 Fichiers de déploiement
+.deploy/
+deploy.sh
+
+# 📁 Fichiers de documentation générés
+docs/_build/
+docs/.doctrees/
+
+# 📁 Fichiers de base de données
+*.db
+*.sqlite
+*.sqlite3
+
+# 📁 Fichiers de session
+sessions/
+*.sess
+
+# 📁 Fichiers d'upload
+uploads/
+user-uploads/
+
+# 📁 Fichiers de sauvegarde automatique
+auto-backup/
+backup-*/
+
+# 📁 Fichiers de configuration locale
+config.local.php
+admin-config.local.js
+
+# 📁 Fichiers de test de développement
+test-dev/
+dev-*/

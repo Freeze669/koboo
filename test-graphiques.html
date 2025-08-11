@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test des Graphiques - Panel Admin</title>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Scripts admin -->
+    <script src="../assets/js/admin-config.js"></script>
+    <script src="../assets/js/chart-config.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 15px;
+        }
+        
+        .test-section {
+            background: rgba(30, 41, 59, 0.3);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .chart-container {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(51, 65, 85, 0.3);
+        }
+        
+        .chart-container h3 {
+            margin: 0 0 15px 0;
+            color: #60a5fa;
+            text-align: center;
+        }
+        
+        canvas {
+            width: 100% !important;
+            height: 300px !important;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 8px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn.success { background: linear-gradient(135deg, #10b981, #059669); }
+        .btn.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .btn.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .success { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .error { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+        .info { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+        .warning { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+        
+        .console {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #94a3b8;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .metric {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(51, 65, 85, 0.3);
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #60a5fa;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test des Graphiques - Panel Admin</h1>
+            <p>Vérification et test des graphiques Chart.js dans le panel d'administration</p>
+        </div>
+        
+        <!-- Statut des composants -->
+        <div class="test-section">
+            <h2>📊 Statut des Composants</h2>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-label">Chart.js</div>
+                    <div class="metric-value" id="chartjsStatus">❓</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">ChartManager</div>
+                    <div class="metric-value" id="chartManagerStatus">❓</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">AdminConfig</div>
+                    <div class="metric-value" id="adminConfigStatus">❓</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Graphiques</div>
+                    <div class="metric-value" id="chartsStatus">❓</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contrôles -->
+        <div class="test-section">
+            <h2>🎮 Contrôles des Graphiques</h2>
+            <div class="controls">
+                <button class="btn" onclick="testChartJS()">🔍 Tester Chart.js</button>
+                <button class="btn" onclick="initCharts()">🚀 Initialiser Graphiques</button>
+                <button class="btn" onclick="updateCharts()">🔄 Mettre à Jour</button>
+                <button class="btn" onclick="restartCharts()">🔄 Redémarrer</button>
+                <button class="btn success" onclick="simulateData()">📊 Simuler Données</button>
+                <button class="btn warning" onclick="testPerformance()">⚡ Test Performance</button>
+                <button class="btn danger" onclick="clearCharts()">🗑️ Effacer</button>
+            </div>
+        </div>
+        
+        <!-- Graphiques -->
+        <div class="test-section">
+            <h2>📈 Graphiques de Test</h2>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>FPS (Images par seconde)</h3>
+                    <canvas id="fpsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Mémoire (MB)</h3>
+                    <canvas id="memoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Console de débogage -->
+        <div class="test-section">
+            <h2>📝 Console de Débogage</h2>
+            <div class="console" id="debugConsole">Console de débogage...</div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let chartManager = null;
+        let updateInterval = null;
+        let testData = [];
+        
+        // Fonction de logging
+        function log(message, type = 'info') {
+            const console = document.getElementById('debugConsole');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : '#3b82f6';
+            
+            console.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+            console.scrollTop = console.scrollHeight;
+        }
+        
+        // Test de Chart.js
+        function testChartJS() {
+            const status = document.getElementById('chartjsStatus');
+            
+            if (typeof Chart !== 'undefined') {
+                status.textContent = '✅';
+                status.style.color = '#10b981';
+                log('✅ Chart.js disponible et fonctionnel', 'success');
+                
+                // Test de création d'un graphique simple
+                try {
+                    const testCanvas = document.createElement('canvas');
+                    testCanvas.id = 'testChart';
+                    testCanvas.style.display = 'none';
+                    document.body.appendChild(testCanvas);
+                    
+                    const testChart = new Chart(testCanvas, {
+                        type: 'line',
+                        data: { labels: ['Test'], datasets: [{ data: [1] }] },
+                        options: { responsive: false }
+                    });
+                    
+                    testChart.destroy();
+                    document.body.removeChild(testCanvas);
+                    
+                    log('✅ Test de création de graphique réussi', 'success');
+                } catch (error) {
+                    log(`❌ Erreur test graphique: ${error.message}`, 'error');
+                }
+            } else {
+                status.textContent = '❌';
+                status.style.color = '#ef4444';
+                log('❌ Chart.js non disponible', 'error');
+            }
+        }
+        
+        // Test du ChartManager
+        function testChartManager() {
+            const status = document.getElementById('chartManagerStatus');
+            
+            if (window.chartManager && window.chartManager.isInitialized) {
+                status.textContent = '✅';
+                status.style.color = '#10b981';
+                log('✅ ChartManager disponible et initialisé', 'success');
+                chartManager = window.chartManager;
+            } else if (window.chartManager) {
+                status.textContent = '⚠️';
+                status.style.color = '#f59e0b';
+                log('⚠️ ChartManager disponible mais non initialisé', 'warning');
+                chartManager = window.chartManager;
+            } else {
+                status.textContent = '❌';
+                status.style.color = '#ef4444';
+                log('❌ ChartManager non disponible', 'error');
+            }
+        }
+        
+        // Test de AdminConfig
+        function testAdminConfig() {
+            const status = document.getElementById('adminConfigStatus');
+            
+            if (typeof ADMIN_CONFIG !== 'undefined') {
+                status.textContent = '✅';
+                status.style.color = '#10b981';
+                log('✅ ADMIN_CONFIG disponible', 'success');
+                log(`🔑 Code admin: ${ADMIN_CONFIG.security.adminCode}`, 'info');
+            } else {
+                status.textContent = '❌';
+                status.style.color = '#ef4444';
+                log('❌ ADMIN_CONFIG non disponible', 'error');
+            }
+        }
+        
+        // Initialisation des graphiques
+        function initCharts() {
+            log('🚀 Initialisation des graphiques...', 'info');
+            
+            if (!chartManager) {
+                log('❌ ChartManager non disponible', 'error');
+                return;
+            }
+            
+            try {
+                chartManager.initializeAllCharts();
+                log('✅ Graphiques initialisés avec succès', 'success');
+                
+                // Mettre à jour le statut
+                document.getElementById('chartsStatus').textContent = '✅';
+                document.getElementById('chartsStatus').style.color = '#10b981';
+                
+                // Démarrer la mise à jour automatique
+                startAutoUpdate();
+                
+            } catch (error) {
+                log(`❌ Erreur initialisation: ${error.message}`, 'error');
+            }
+        }
+        
+        // Mise à jour des graphiques
+        function updateCharts() {
+            if (!chartManager) {
+                log('❌ ChartManager non disponible', 'error');
+                return;
+            }
+            
+            const stats = generateTestData();
+            chartManager.updateAllCharts(stats);
+            log('🔄 Graphiques mis à jour avec données de test', 'info');
+        }
+        
+        // Redémarrage des graphiques
+        function restartCharts() {
+            log('🔄 Redémarrage des graphiques...', 'info');
+            
+            if (chartManager) {
+                chartManager.restart();
+                log('✅ Graphiques redémarrés', 'success');
+            } else {
+                log('❌ ChartManager non disponible', 'error');
+            }
+        }
+        
+        // Simulation de données
+        function simulateData() {
+            log('📊 Simulation de données de performance...', 'info');
+            
+            const stats = generateTestData();
+            log(`📈 Données générées: FPS=${stats.fps}, Mémoire=${stats.memory}MB, Performance=${stats.performance}%`, 'info');
+            
+            if (chartManager) {
+                chartManager.updateAllCharts(stats);
+                log('✅ Données appliquées aux graphiques', 'success');
+            }
+        }
+        
+        // Test de performance
+        function testPerformance() {
+            log('⚡ Test de performance des graphiques...', 'info');
+            
+            const startTime = performance.now();
+            
+            // Générer et appliquer 100 mises à jour
+            for (let i = 0; i < 100; i++) {
+                const stats = generateTestData();
+                if (chartManager) {
+                    chartManager.updateAllCharts(stats);
+                }
+            }
+            
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            
+            log(`⚡ Performance: 100 mises à jour en ${duration.toFixed(2)}ms (${(1000/duration*100).toFixed(0)} mises/sec)`, 'success');
+        }
+        
+        // Effacement des graphiques
+        function clearCharts() {
+            log('🗑️ Effacement des graphiques...', 'warning');
+            
+            if (chartManager) {
+                chartManager.cleanup();
+                log('✅ Graphiques effacés', 'success');
+                
+                // Réinitialiser le statut
+                document.getElementById('chartsStatus').textContent = '❓';
+                document.getElementById('chartsStatus').style.color = '#94a3b8';
+            }
+            
+            // Arrêter la mise à jour automatique
+            if (updateInterval) {
+                clearInterval(updateInterval);
+                updateInterval = null;
+            }
+        }
+        
+        // Génération de données de test
+        function generateTestData() {
+            const now = Date.now();
+            const fps = Math.floor(Math.random() * 30) + 30; // 30-60 FPS
+            const memory = Math.floor(Math.random() * 200) + 100; // 100-300 MB
+            
+            return {
+                timestamp: now,
+                fps: fps,
+                memory: memory,
+                cpu: Math.floor(Math.random() * 30) + 20, // 20-50%
+                network: Math.floor(Math.random() * 100) + 50 // 50-150 ms
+            };
+        }
+        
+        // Mise à jour automatique
+        function startAutoUpdate() {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+            
+            updateInterval = setInterval(() => {
+                if (chartManager) {
+                    const stats = generateTestData();
+                    chartManager.updateAllCharts(stats);
+                }
+            }, 2000); // Mise à jour toutes les 2 secondes
+            
+            log('🔄 Mise à jour automatique démarrée (2s)', 'info');
+        }
+        
+        // Initialisation au chargement
+        window.addEventListener('load', () => {
+            log('🚀 Page de test des graphiques chargée', 'success');
+            
+            // Attendre que tous les scripts soient chargés
+            setTimeout(() => {
+                testChartJS();
+                testChartManager();
+                testAdminConfig();
+                
+                // Initialiser automatiquement si tout est disponible
+                if (window.chartManager && typeof Chart !== 'undefined') {
+                    setTimeout(() => {
+                        initCharts();
+                    }, 1000);
+                }
+            }, 500);
+        });
+        
+        // Intercepter les erreurs
+        window.addEventListener('error', (event) => {
+            log(`❌ Erreur JavaScript: ${event.message}`, 'error');
+        });
+        
+        // Intercepter les promesses rejetées
+        window.addEventListener('unhandledrejection', (event) => {
+            log(`❌ Promesse rejetée: ${event.reason}`, 'error');
+        });
+        
+        // Exposer les fonctions globalement pour le débogage
+        window.testChartJS = testChartJS;
+        window.initCharts = initCharts;
+        window.updateCharts = updateCharts;
+        window.restartCharts = restartCharts;
+        window.simulateData = simulateData;
+        window.testPerformance = testPerformance;
+        window.clearCharts = clearCharts;
+    </script>
+</body>
+</html>
