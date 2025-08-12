@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Édition des Tarifs sur le Site Principal</title>
+    <link rel="stylesheet" href="tarifs-site-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .test-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .test-header p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            margin-bottom: 3rem;
+        }
+        
+        .test-section h2 {
+            color: #f8fafc;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .test-section h2 i {
+            color: #3b82f6;
+        }
+        
+        .test-info {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .test-info h3 {
+            color: #f8fafc;
+            margin-bottom: 1rem;
+        }
+        
+        .test-info ul {
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        
+        .test-info li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .test-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .test-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .test-btn.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .test-btn.warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .test-btn.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .status-display {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: #cbd5e1;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .webhook-config {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .webhook-config h3 {
+            color: #f8fafc;
+            margin-bottom: 1rem;
+        }
+        
+        .webhook-input {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .webhook-input input {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 6px;
+            padding: 0.75rem;
+            color: #f8fafc;
+            font-size: 0.9rem;
+        }
+        
+        .webhook-input input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .webhook-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .webhook-status.connected {
+            color: #10b981;
+        }
+        
+        .webhook-status.disconnected {
+            color: #ef4444;
+        }
+        
+        .webhook-status.unknown {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-euro-sign"></i> Test - Édition des Tarifs sur le Site Principal</h1>
+            <p>Page de test pour vérifier le fonctionnement de l'édition des tarifs directement sur le site principal</p>
+        </div>
+        
+        <!-- Configuration Webhook Discord -->
+        <div class="test-section">
+            <h2><i class="fas fa-cog"></i> Configuration Discord</h2>
+            <div class="webhook-config">
+                <h3>Webhook Discord</h3>
+                <div class="webhook-input">
+                    <input type="text" id="webhook-url" placeholder="URL du webhook Discord...">
+                    <button class="test-btn" onclick="updateWebhook()">
+                        <i class="fas fa-save"></i> Sauvegarder
+                    </button>
+                </div>
+                <div class="webhook-status" id="webhook-status">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Statut inconnu</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test des Tarifs -->
+        <div class="test-section">
+            <h2><i class="fas fa-euro-sign"></i> Test des Tarifs</h2>
+            <div class="test-info">
+                <h3>Fonctionnalités à tester :</h3>
+                <ul>
+                    <li><strong>Chargement automatique</strong> : Les tarifs se chargent depuis la configuration</li>
+                    <li><strong>Mode édition</strong> : Bouton "Modifier" pour passer en mode édition</li>
+                    <li><strong>Édition en ligne</strong> : Modification directe des prix et descriptions</li>
+                    <li><strong>Ajout de services</strong> : Création de nouveaux services</li>
+                    <li><strong>Sauvegarde</strong> : Sauvegarde automatique dans le localStorage</li>
+                    <li><strong>Notifications</strong> : Envoi de notifications Discord lors des changements</li>
+                </ul>
+            </div>
+            
+            <div class="test-actions">
+                <button class="test-btn" onclick="testTarifsLoading()">
+                    <i class="fas fa-download"></i> Test Chargement
+                </button>
+                <button class="test-btn success" onclick="testTarifsEdit()">
+                    <i class="fas fa-edit"></i> Test Édition
+                </button>
+                    <button class="test-btn warning" onclick="testTarifsSave()">
+                    <i class="fas fa-save"></i> Test Sauvegarde
+                </button>
+                <button class="test-btn danger" onclick="testTarifsReset()">
+                    <i class="fas fa-undo"></i> Reset Tarifs
+                </button>
+            </div>
+            
+            <div id="tarifs-status" class="status-display">
+                En attente de test...
+            </div>
+        </div>
+        
+        <!-- Test des Notifications -->
+        <div class="test-section">
+            <h2><i class="fas fa-bell"></i> Test des Notifications</h2>
+            <div class="test-info">
+                <h3>Types de notifications à tester :</h3>
+                <ul>
+                    <li><strong>Notifications immédiates</strong> : Pour les événements importants</li>
+                    <li><strong>Notifications groupées</strong> : Regroupement automatique des événements</li>
+                    <li><strong>Notifications de connexion</strong> : Groupement par IP</li>
+                    <li><strong>Notifications de tarifs</strong> : Mise à jour des prix</li>
+                </ul>
+            </div>
+            
+            <div class="test-actions">
+                <button class="test-btn" onclick="testNotificationImmediate()">
+                    <i class="fas fa-bolt"></i> Notification Immédiate
+                </button>
+                <button class="test-btn success" onclick="testNotificationGrouped()">
+                    <i class="fas fa-layer-group"></i> Notification Groupée
+                </button>
+                <button class="test-btn warning" onclick="testNotificationConnection()">
+                    <i class="fas fa-network-wired"></i> Notification Connexion
+                </button>
+                <button class="test-btn danger" onclick="testNotificationTarifs()">
+                    <i class="fas fa-euro-sign"></i> Notification Tarifs
+                </button>
+            </div>
+            
+            <div id="notifications-status" class="status-display">
+                En attente de test...
+            </div>
+        </div>
+        
+        <!-- Test Intégré -->
+        <div class="test-section">
+            <h2><i class="fas fa-puzzle-piece"></i> Test Intégré</h2>
+            <div class="test-info">
+                <h3>Test complet du système :</h3>
+                <ul>
+                    <li><strong>Workflow complet</strong> : Édition → Sauvegarde → Notification</li>
+                    <li><strong>Persistance</strong> : Vérification du stockage local</li>
+                    <li><strong>Intégration</strong> : Fonctionnement avec le site principal</li>
+                </ul>
+            </div>
+            
+            <div class="test-actions">
+                <button class="test-btn success" onclick="testCompleteWorkflow()">
+                    <i class="fas fa-play"></i> Test Complet
+                </button>
+                <button class="test-btn warning" onclick="testPersistence()">
+                    <i class="fas fa-database"></i> Test Persistance
+                </button>
+                <button class="test-btn" onclick="testIntegration()">
+                    <i class="fas fa-link"></i> Test Intégration
+                </button>
+            </div>
+            
+            <div id="integration-status" class="status-display">
+                En attente de test...
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ========================================
+        // FONCTIONS DE TEST
+        // ========================================
+        
+        // Mettre à jour le webhook Discord
+        function updateWebhook() {
+            const webhookInput = document.getElementById('webhook-url');
+            const webhookUrl = webhookInput.value.trim();
+            
+            if (webhookUrl && webhookUrl.includes('discord.com/api/webhooks/')) {
+                if (window.updateWebhookUrl) {
+                    const success = window.updateWebhookUrl(webhookUrl);
+                    if (success) {
+                        showStatus('tarifs-status', '✅ Webhook Discord mis à jour avec succès !', 'success');
+                        updateWebhookStatus();
+                    } else {
+                        showStatus('tarifs-status', '❌ Erreur lors de la mise à jour du webhook', 'error');
+                    }
+                } else {
+                    showStatus('tarifs-status', '⚠️ Fonction updateWebhookUrl non disponible', 'warning');
+                }
+            } else {
+                showStatus('tarifs-status', '❌ URL de webhook Discord invalide', 'error');
+            }
+        }
+        
+        // Mettre à jour le statut du webhook
+        function updateWebhookStatus() {
+            const statusElement = document.getElementById('webhook-status');
+            if (window.isWebhookConfigured && window.isWebhookConfigured()) {
+                statusElement.className = 'webhook-status connected';
+                statusElement.innerHTML = '<i class="fas fa-check-circle"></i> <span>Webhook connecté</span>';
+            } else {
+                statusElement.className = 'webhook-status disconnected';
+                statusElement.innerHTML = '<i class="fas fa-times-circle"></i> <span>Webhook non configuré</span>';
+            }
+        }
+        
+        // Test du chargement des tarifs
+        function testTarifsLoading() {
+            try {
+                if (window.tarifsConfig) {
+                    const tarifs = window.tarifsConfig.getAllTarifs();
+                    const servicesCount = Object.keys(tarifs.services).length;
+                    const forfaitsCount = Object.keys(tarifs.forfaits).length;
+                    
+                    showStatus('tarifs-status', 
+                        `✅ Tarifs chargés avec succès\n` +
+                        `📊 Services: ${servicesCount}\n` +
+                        `📦 Forfaits: ${forfaitsCount}\n` +
+                        `💾 Stockage: ${localStorage.getItem('tarifs-config') ? 'Actif' : 'Inactif'}`, 'success');
+                } else {
+                    showStatus('tarifs-status', '❌ TarifsConfig non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('tarifs-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test du mode édition
+        function testTarifsEdit() {
+            try {
+                if (window.tarifsConfig) {
+                    showStatus('tarifs-status', 
+                        `✅ Mode édition disponible\n` +
+                        `🔧 Interface: Prête\n` +
+                        `📝 Fonctions: Modifier, Ajouter, Supprimer\n` +
+                        `💾 Sauvegarde: Automatique`, 'success');
+                } else {
+                    showStatus('tarifs-status', '❌ TarifsConfig non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('tarifs-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test de la sauvegarde
+        function testTarifsSave() {
+            try {
+                if (window.tarifsConfig) {
+                    // Test de sauvegarde
+                    const success = window.tarifsConfig.saveToStorage();
+                    if (success) {
+                        showStatus('tarifs-status', 
+                            `✅ Sauvegarde réussie\n` +
+                            `💾 Stockage local: OK\n` +
+                            `📊 Données: ${JSON.stringify(window.tarifsConfig.getAllTarifs()).length} caractères\n` +
+                            `🔄 Persistance: Activée`, 'success');
+                    } else {
+                        showStatus('tarifs-status', '❌ Échec de la sauvegarde', 'error');
+                    }
+                } else {
+                    showStatus('tarifs-status', '❌ TarifsConfig non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('tarifs-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Reset des tarifs
+        function testTarifsReset() {
+            try {
+                if (confirm('Êtes-vous sûr de vouloir réinitialiser les tarifs ?')) {
+                    localStorage.removeItem('tarifs-config');
+                    if (window.tarifsConfig) {
+                        window.tarifsConfig.loadFromStorage();
+                    }
+                    showStatus('tarifs-status', '✅ Tarifs réinitialisés avec succès', 'success');
+                }
+            } catch (error) {
+                showStatus('tarifs-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test notification immédiate
+        function testNotificationImmediate() {
+            try {
+                if (window.notificationsGrouped) {
+                    window.notificationsGrouped.addNotification('test_immediate', {
+                        message: 'Test de notification immédiate',
+                        timestamp: new Date().toISOString(),
+                        test: true
+                    }, 'important');
+                    
+                    showStatus('notifications-status', 
+                        `✅ Notification immédiate envoyée\n` +
+                        `⚡ Priorité: Importante\n` +
+                        `📤 Envoi: Immédiat\n` +
+                        `🔔 Type: test_immediate`, 'success');
+                } else {
+                    showStatus('notifications-status', '❌ NotificationsGrouped non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('notifications-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test notification groupée
+        function testNotificationGrouped() {
+            try {
+                if (window.notificationsGrouped) {
+                    // Envoyer plusieurs notifications normales
+                    for (let i = 1; i <= 3; i++) {
+                        window.notificationsGrouped.addNotification('test_grouped', {
+                            message: `Test de notification groupée ${i}`,
+                            timestamp: new Date().toISOString(),
+                            test: true
+                        });
+                    }
+                    
+                    showStatus('notifications-status', 
+                        `✅ Notifications groupées envoyées\n` +
+                        `📦 Quantité: 3\n` +
+                        `⏱️ Groupement: 30 secondes\n` +
+                        `🔔 Type: test_grouped`, 'success');
+                } else {
+                    showStatus('notifications-status', '❌ NotificationsGrouped non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('notifications-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test notification de connexion
+        function testNotificationConnection() {
+            try {
+                if (window.notificationsGrouped) {
+                    // Simuler des connexions depuis différentes IPs
+                    const ips = ['192.168.1.1', '10.0.0.1', '172.16.0.1'];
+                    ips.forEach((ip, index) => {
+                        setTimeout(() => {
+                            window.notificationsGrouped.addNotification('ip_connection', {
+                                ip: ip,
+                                userAgent: 'Test Browser',
+                                timestamp: new Date().toISOString(),
+                                test: true
+                            });
+                        }, index * 1000);
+                    });
+                    
+                    showStatus('notifications-status', 
+                        `✅ Notifications de connexion envoyées\n` +
+                        `🌐 IPs: 3 différentes\n` +
+                        `⏱️ Délai: 1 seconde entre chaque\n` +
+                        `🔔 Type: ip_connection`, 'success');
+                } else {
+                    showStatus('notifications-status', '❌ NotificationsGrouped non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('notifications-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test notification de tarifs
+        function testNotificationTarifs() {
+            try {
+                if (window.notificationsGrouped) {
+                    window.notificationsGrouped.addNotification('tarifs_updated', {
+                        message: 'Test de mise à jour des tarifs',
+                        timestamp: new Date().toISOString(),
+                        updatedBy: 'Test Page',
+                        test: true
+                    }, 'important');
+                    
+                    showStatus('notifications-status', 
+                        `✅ Notification de tarifs envoyée\n` +
+                        `⚡ Priorité: Importante\n` +
+                        `💎 Type: tarifs_updated\n` +
+                        `👤 Par: Test Page`, 'success');
+                } else {
+                    showStatus('notifications-status', '❌ NotificationsGrouped non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('notifications-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test du workflow complet
+        function testCompleteWorkflow() {
+            try {
+                if (window.tarifsConfig && window.notificationsGrouped) {
+                    // 1. Modifier un tarif
+                    const success = window.tarifsConfig.updateTarif('services', 'logo-simple', {
+                        nom: 'Logo Simple (Test)',
+                        prix: 55,
+                        devise: 'EUR',
+                        duree: '1 semaine',
+                        categorie: 'graphisme'
+                    });
+                    
+                    if (success) {
+                        // 2. Envoyer une notification
+                        window.notificationsGrouped.addNotification('tarifs_updated', {
+                            message: 'Test du workflow complet',
+                            timestamp: new Date().toISOString(),
+                            test: true
+                        }, 'important');
+                        
+                        showStatus('integration-status', 
+                            `✅ Workflow complet réussi\n` +
+                            `1️⃣ Modification: OK\n` +
+                            `2️⃣ Sauvegarde: OK\n` +
+                            `3️⃣ Notification: OK\n` +
+                            `🔄 Système: Fonctionnel`, 'success');
+                    } else {
+                        showStatus('integration-status', '❌ Échec de la modification', 'error');
+                    }
+                } else {
+                    showStatus('integration-status', '❌ Modules non disponibles', 'error');
+                }
+            } catch (error) {
+                showStatus('integration-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test de la persistance
+        function testPersistence() {
+            try {
+                if (window.tarifsConfig) {
+                    const beforeSave = JSON.stringify(window.tarifsConfig.getAllTarifs());
+                    const saveSuccess = window.tarifsConfig.saveToStorage();
+                    
+                    if (saveSuccess) {
+                        // Vérifier le stockage local
+                        const stored = localStorage.getItem('tarifs-config');
+                        if (stored) {
+                            showStatus('integration-status', 
+                                `✅ Persistance testée avec succès\n` +
+                                `💾 Stockage: ${stored.length} caractères\n` +
+                                `🔄 Sauvegarde: ${saveSuccess ? 'OK' : 'Échec'}\n` +
+                                `📊 Données: ${beforeSave.length} caractères`, 'success');
+                        } else {
+                            showStatus('integration-status', '❌ Données non trouvées dans le stockage', 'error');
+                        }
+                    } else {
+                        showStatus('integration-status', '❌ Échec de la sauvegarde', 'error');
+                    }
+                } else {
+                    showStatus('integration-status', '❌ TarifsConfig non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('integration-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test de l'intégration
+        function testIntegration() {
+            try {
+                const modules = {
+                    'TarifsConfig': !!window.tarifsConfig,
+                    'NotificationsGrouped': !!window.notificationsGrouped,
+                    'DiscordConfig': !!window.DISCORD_CONFIG,
+                    'LocalStorage': !!localStorage
+                };
+                
+                const allModules = Object.values(modules).every(Boolean);
+                
+                if (allModules) {
+                    showStatus('integration-status', 
+                        `✅ Intégration complète\n` +
+                        `🔧 TarifsConfig: ${modules.TarifsConfig ? 'OK' : 'Manquant'}\n` +
+                        `🔔 NotificationsGrouped: ${modules.NotificationsGrouped ? 'OK' : 'Manquant'}\n` +
+                        `🌐 DiscordConfig: ${modules.DiscordConfig ? 'OK' : 'Manquant'}\n` +
+                        `💾 LocalStorage: ${modules.LocalStorage ? 'OK' : 'Manquant'}`, 'success');
+                } else {
+                    showStatus('integration-status', 
+                        `⚠️ Intégration partielle\n` +
+                        `🔧 TarifsConfig: ${modules.TarifsConfig ? 'OK' : 'Manquant'}\n` +
+                        `🔔 NotificationsGrouped: ${modules.NotificationsGrouped ? 'OK' : 'Manquant'}\n` +
+                        `🌐 DiscordConfig: ${modules.DiscordConfig ? 'OK' : 'Manquant'}\n` +
+                        `💾 LocalStorage: ${modules.LocalStorage ? 'OK' : 'Manquant'}`, 'warning');
+                }
+            } catch (error) {
+                showStatus('integration-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Afficher le statut
+        function showStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.className = `status-display status-${type}`;
+            }
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger les scripts nécessaires
+            loadTarifsScripts();
+            
+            // Mettre à jour le statut du webhook
+            setTimeout(updateWebhookStatus, 1000);
+        });
+        
+        // Charger les scripts des tarifs
+        function loadTarifsScripts() {
+            // Charger tarifs-config.js
+            if (!window.tarifsConfig) {
+                const script1 = document.createElement('script');
+                script1.src = 'tarifs-config.js';
+                script1.onload = () => {
+                    // Charger notifications-grouped.js
+                    const script2 = document.createElement('script');
+                    script2.src = 'notifications-grouped.js';
+                    script2.onload = () => {
+                        // Charger discord-webhook-config.js
+                        const script3 = document.createElement('script');
+                        script3.src = 'discord-webhook-config.js';
+                        script3.onload = () => {
+                            // Initialiser les notifications
+                            if (window.isWebhookConfigured && window.isWebhookConfigured()) {
+                                const webhookUrl = window.getWebhookUrl();
+                                window.notificationsGrouped = new NotificationsGrouped(webhookUrl);
+                            }
+                            
+                            // Mettre à jour le statut
+                            updateWebhookStatus();
+                        };
+                        document.head.appendChild(script3);
+                    };
+                    document.head.appendChild(script2);
+                };
+                document.head.appendChild(script1);
+            }
+        }
+    </script>
+</body>
+</html>

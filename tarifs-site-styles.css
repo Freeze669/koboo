@@ -1,0 +1,369 @@
+/* ========================================
+   STYLES POUR L'ÉDITION DES TARIFS SUR LE SITE PRINCIPAL
+   Mayu & Jack Studio
+   ======================================== */
+
+/* En-tête des tarifs avec bouton d'édition */
+.pricing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.pricing-header h3 {
+    margin: 0;
+    font-size: 2rem;
+    color: #f8fafc;
+}
+
+.edit-tarifs-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.edit-tarifs-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.edit-tarifs-btn.editing {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.edit-tarifs-btn i {
+    font-size: 0.8rem;
+}
+
+/* Mode édition des tarifs */
+.tarifs-edit-container {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 1rem;
+}
+
+.edit-sections {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.edit-section h4 {
+    color: #f8fafc;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.edit-section h4 i {
+    color: #3b82f6;
+}
+
+/* Liste des services à éditer */
+.edit-services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.edit-service-item,
+.edit-forfait-item {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.edit-service-item:hover,
+.edit-forfait-item:hover {
+    border-color: rgba(59, 130, 246, 0.3);
+    background: rgba(30, 41, 59, 0.8);
+}
+
+.edit-service-item.new-service,
+.edit-forfait-item.new-forfait {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+/* Inputs des services */
+.service-inputs,
+.forfait-inputs {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 1rem;
+    flex: 1;
+    margin-right: 1rem;
+}
+
+.forfait-inputs {
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+}
+
+.service-inputs input,
+.service-inputs select,
+.forfait-inputs input,
+.forfait-inputs select,
+.forfait-inputs textarea {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 6px;
+    padding: 0.5rem;
+    color: #f8fafc;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.service-inputs input:focus,
+.service-inputs select:focus,
+.forfait-inputs input:focus,
+.forfait-inputs select:focus,
+.forfait-inputs textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.forfait-inputs textarea {
+    grid-column: 1 / -1;
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* Boutons d'action */
+.service-actions,
+.forfait-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.delete-service-btn,
+.delete-forfait-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+}
+
+.delete-service-btn:hover,
+.delete-forfait-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* Boutons d'ajout */
+.add-service-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+}
+
+.add-service-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+/* Actions d'édition */
+.edit-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.save-tarifs-btn,
+.cancel-edit-btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.save-tarifs-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.save-tarifs-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.cancel-edit-btn {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+}
+
+.cancel-edit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+}
+
+/* Messages de notification */
+.tarifs-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    color: #f8fafc;
+    font-weight: 500;
+    z-index: 10000;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 400px;
+}
+
+.tarifs-message.show {
+    transform: translateX(0);
+}
+
+.tarifs-message-success {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.tarifs-message-error {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.tarifs-message-warning {
+    border-color: rgba(245, 158, 11, 0.3);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.tarifs-message i {
+    font-size: 1.1rem;
+}
+
+.tarifs-message-success i {
+    color: #10b981;
+}
+
+.tarifs-message-error i {
+    color: #ef4444;
+}
+
+.tarifs-message-warning i {
+    color: #f59e0b;
+}
+
+/* Message "aucun service" */
+.no-services {
+    color: #94a3b8;
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pricing-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .edit-sections {
+        grid-template-columns: 1fr;
+    }
+    
+    .service-inputs,
+    .forfait-inputs {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .edit-service-item,
+    .edit-forfait-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .service-actions,
+    .forfait-actions {
+        justify-content: center;
+    }
+    
+    .edit-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .tarifs-message {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .tarifs-edit-container {
+        padding: 1rem;
+    }
+    
+    .edit-section h4 {
+        font-size: 1.1rem;
+    }
+    
+    .service-inputs input,
+    .service-inputs select,
+    .forfait-inputs input,
+    .forfait-inputs select,
+    .forfait-inputs textarea {
+        font-size: 0.85rem;
+        padding: 0.4rem;
+    }
+}

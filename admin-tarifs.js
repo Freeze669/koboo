@@ -14,7 +14,6 @@ class AdminTarifs {
      * Initialisation
      */
     init() {
-        console.log('🚀 Initialisation du module de gestion des tarifs...');
         this.renderTarifsPanel();
         this.setupEventListeners();
     }

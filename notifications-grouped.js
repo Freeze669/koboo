@@ -36,7 +36,6 @@ class NotificationsGrouped {
      * Initialisation du système
      */
     init() {
-        console.log('🚀 Initialisation du système de notifications groupées...');
         this.startGroupingTimer();
     }
     
@@ -126,10 +125,8 @@ class NotificationsGrouped {
             await this.sendDiscordWebhook({
                 embeds: [embed]
             });
-            
-            console.log(`✅ Notification immédiate envoyée: ${notification.type}`);
         } catch (error) {
-            console.error('❌ Erreur envoi notification immédiate:', error);
+            // Erreur silencieuse
         }
     }
     
@@ -143,10 +140,8 @@ class NotificationsGrouped {
             await this.sendDiscordWebhook({
                 embeds: [embed]
             });
-            
-            console.log(`✅ Notification groupée envoyée: ${type} (${notifications.length} événements)`);
         } catch (error) {
-            console.error('❌ Erreur envoi notification groupée:', error);
+            // Erreur silencieuse
         }
     }
     

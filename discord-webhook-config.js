@@ -132,14 +132,11 @@ function updateWebhookUrl(newUrl) {
         // Sauvegarder dans le localStorage
         try {
             localStorage.setItem('discord_webhook_url', newUrl);
-            console.log('✅ URL du webhook Discord mise à jour et sauvegardée');
             return true;
         } catch (error) {
-            console.error('❌ Erreur sauvegarde webhook URL:', error);
             return false;
         }
     } else {
-        console.error('❌ URL webhook Discord invalide');
         return false;
     }
 }
@@ -150,11 +147,10 @@ function loadWebhookUrl() {
         const savedUrl = localStorage.getItem('discord_webhook_url');
         if (savedUrl && savedUrl.includes('discord.com/api/webhooks/')) {
             DISCORD_CONFIG.webhookUrl = savedUrl;
-            console.log('✅ URL du webhook Discord chargée depuis le stockage');
             return true;
         }
     } catch (error) {
-        console.warn('⚠️ Erreur chargement webhook URL:', error);
+        // Erreur silencieuse
     }
     return false;
 }

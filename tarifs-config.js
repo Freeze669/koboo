@@ -8,65 +8,116 @@ class TarifsConfig {
         this.tarifs = {
             // Services de base
             services: {
-                'design-web': {
-                    nom: 'Design Web',
-                    description: 'Création de sites web personnalisés',
-                    prix: 299,
-                    devise: 'EUR',
-                    duree: '2-3 semaines',
-                    categorie: 'web'
-                },
-                'logo-design': {
-                    nom: 'Logo Design',
-                    description: 'Création de logos uniques',
-                    prix: 99,
+                // Services Graphisme
+                'logo-simple': {
+                    nom: 'Logo Simple',
+                    description: 'Logo basique et élégant',
+                    prix: 50,
                     devise: 'EUR',
                     duree: '1 semaine',
-                    categorie: 'design'
+                    categorie: 'graphisme'
                 },
-                'branding': {
-                    nom: 'Branding Complet',
-                    description: 'Identité visuelle complète',
-                    prix: 499,
+                'logo-complexe': {
+                    nom: 'Logo Complexe',
+                    description: 'Logo détaillé et personnalisé',
+                    prix: 150,
                     devise: 'EUR',
-                    duree: '3-4 semaines',
-                    categorie: 'branding'
+                    duree: '2 semaines',
+                    categorie: 'graphisme'
                 },
-                'maintenance': {
-                    nom: 'Maintenance Web',
-                    description: 'Maintenance et mises à jour',
-                    prix: 49,
+                'affiche-flyer': {
+                    nom: 'Affiche/Flyer',
+                    description: 'Support de communication print',
+                    prix: 30,
                     devise: 'EUR',
-                    duree: 'mensuel',
-                    categorie: 'maintenance'
+                    duree: '3-5 jours',
+                    categorie: 'graphisme'
+                },
+                'habillage-reseaux': {
+                    nom: 'Habillage Réseaux Sociaux',
+                    description: 'Bannières et visuels pour réseaux',
+                    prix: 100,
+                    devise: 'EUR',
+                    duree: '1 semaine',
+                    categorie: 'graphisme'
+                },
+                'templates-rp': {
+                    nom: 'Templates RP',
+                    description: 'Modèles de jeux de rôle',
+                    prix: 40,
+                    devise: 'EUR',
+                    duree: '1 semaine',
+                    categorie: 'graphisme'
+                },
+                
+                // Services Développement
+                'site-vitrine': {
+                    nom: 'Site Vitrine',
+                    description: 'Site web professionnel',
+                    prix: 300,
+                    devise: 'EUR',
+                    duree: '2-3 semaines',
+                    categorie: 'developpement'
+                },
+                'site-ecommerce': {
+                    nom: 'Site E-commerce',
+                    description: 'Boutique en ligne complète',
+                    prix: 800,
+                    devise: 'EUR',
+                    duree: '4-6 semaines',
+                    categorie: 'developpement'
+                },
+                'bot-discord-simple': {
+                    nom: 'Bot Discord Simple',
+                    description: 'Bot Discord basique',
+                    prix: 150,
+                    devise: 'EUR',
+                    duree: '1 semaine',
+                    categorie: 'developpement'
+                },
+                'bot-discord-avance': {
+                    nom: 'Bot Discord Avancé',
+                    description: 'Bot Discord avec fonctionnalités avancées',
+                    prix: 400,
+                    devise: 'EUR',
+                    duree: '2-3 semaines',
+                    categorie: 'developpement'
+                },
+                'application-web': {
+                    nom: 'Application Web',
+                    description: 'Application web complexe',
+                    prix: 1000,
+                    devise: 'EUR',
+                    duree: '6-8 semaines',
+                    categorie: 'developpement'
                 }
             },
             
             // Forfaits
             forfaits: {
-                'starter': {
-                    nom: 'Pack Starter',
-                    services: ['design-web', 'logo-design'],
-                    prix: 349,
+                'pack-graphisme': {
+                    nom: 'Pack Graphisme Complet',
+                    services: ['logo-simple', 'affiche-flyer', 'habillage-reseaux'],
+                    prix: 150,
+                    devise: 'EUR',
+                    reduction: 20,
+                    description: 'Pack graphisme complet pour débuter'
+                },
+                'pack-developpement': {
+                    nom: 'Pack Développement Web',
+                    services: ['site-vitrine', 'logo-simple'],
+                    prix: 400,
                     devise: 'EUR',
                     reduction: 15,
-                    description: 'Pack idéal pour débuter'
+                    description: 'Pack web complet avec logo'
                 },
-                'business': {
-                    nom: 'Pack Business',
-                    services: ['design-web', 'logo-design', 'branding'],
-                    prix: 699,
+                'pack-entreprise': {
+                    nom: 'Pack Entreprise Premium',
+                    services: ['site-ecommerce', 'logo-complexe', 'habillage-reseaux'],
+                    prix: 1000,
                     devise: 'EUR',
                     reduction: 25,
-                    description: 'Pack complet pour entreprises'
-                },
-                'premium': {
-                    nom: 'Pack Premium',
-                    services: ['design-web', 'logo-design', 'branding', 'maintenance'],
-                    prix: 899,
-                    devise: 'EUR',
-                    reduction: 30,
-                    description: 'Pack premium avec maintenance'
+                    description: 'Pack premium pour entreprises'
                 }
             },
             
@@ -105,10 +156,9 @@ class TarifsConfig {
             if (saved) {
                 const parsed = JSON.parse(saved);
                 this.tarifs = { ...this.tarifs, ...parsed };
-                console.log('✅ Configuration des tarifs chargée depuis le stockage');
             }
         } catch (error) {
-            console.warn('⚠️ Erreur lors du chargement des tarifs:', error);
+            // Erreur silencieuse
         }
     }
     
@@ -118,10 +168,8 @@ class TarifsConfig {
     saveToStorage() {
         try {
             localStorage.setItem('tarifs-config', JSON.stringify(this.tarifs));
-            console.log('✅ Configuration des tarifs sauvegardée');
             return true;
         } catch (error) {
-            console.error('❌ Erreur lors de la sauvegarde des tarifs:', error);
             return false;
         }
     }
