@@ -1074,9 +1074,31 @@
             
             // Écouter les changements de tarifs en temps réel
             document.addEventListener('tarifsChanged', (event) => {
-                console.log('🔄 Tarifs mis à jour en temps réel !');
-                renderTarifsDisplay();
+                const { tarifs, timestamp, source } = event.detail;
+                console.log(`🔄 Tarifs mis à jour en temps réel via ${source} à ${new Date(timestamp).toLocaleTimeString()} !`);
+                
+                // Mettre à jour l'affichage avec animation
+                updateTarifsDisplayWithAnimation(tarifs);
             });
+        }
+        
+        // Mettre à jour l'affichage avec animation
+        function updateTarifsDisplayWithAnimation(tarifs) {
+            // Ajouter une classe d'animation
+            const tarifsContainer = document.querySelector('.pricing-cards');
+            if (tarifsContainer) {
+                tarifsContainer.classList.add('updating');
+                
+                // Mettre à jour l'affichage
+                renderTarifsDisplay();
+                
+                // Retirer la classe d'animation après un délai
+                setTimeout(() => {
+                    tarifsContainer.classList.remove('updating');
+                }, 1000);
+            } else {
+                renderTarifsDisplay();
+            }
         }
         
         // Initialiser l'affichage des tarifs
@@ -1084,6 +1106,64 @@
         
         // Charger les scripts d'affichage des tarifs
         loadTarifsDisplayScripts();
+        
+        // Ajouter des styles CSS pour les animations temps réel
+        const realtimeStyles = document.createElement('style');
+        realtimeStyles.textContent = `
+            .pricing-cards.updating {
+                animation: updatePulse 1s ease-in-out;
+            }
+            
+            @keyframes updatePulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.02); background: rgba(59, 130, 246, 0.1); }
+                100% { transform: scale(1); }
+            }
+            
+            .realtime-indicator {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(45deg, #10b981, #059669);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 25px;
+                font-size: 0.8rem;
+                z-index: 1000;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: all 0.3s ease;
+            }
+            
+            .realtime-indicator.show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            
+            .realtime-indicator i {
+                margin-right: 0.5rem;
+                animation: pulse 2s infinite;
+            }
+            
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.5; }
+            }
+        `;
+        document.head.appendChild(realtimeStyles);
+        
+        // Créer l'indicateur temps réel
+        const realtimeIndicator = document.createElement('div');
+        realtimeIndicator.className = 'realtime-indicator';
+        realtimeIndicator.innerHTML = '<i class="fas fa-broadcast-tower"></i> Temps Réel Actif';
+        document.body.appendChild(realtimeIndicator);
+        
+        // Afficher l'indicateur quand Firebase est connecté
+        if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+            setTimeout(() => {
+                realtimeIndicator.classList.add('show');
+            }, 2000);
+        }
     </script>
 </body>
 </html> 

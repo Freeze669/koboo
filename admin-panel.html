@@ -53,6 +53,100 @@
     <!-- Configuration Discord -->
     <script src="discord-webhook-config.js"></script>
     
+    <!-- Script d'optimisation Firebase pour l'admin -->
+    <script>
+        // Optimisation Firebase pour le panel admin
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérifier la connexion Firebase
+            if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+                console.log('✅ Firebase connecté pour le panel admin');
+                
+                // Ajouter un indicateur de connexion Firebase
+                const firebaseStatus = document.createElement('div');
+                firebaseStatus.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 20px;
+                    background: linear-gradient(45deg, #10b981, #059669);
+                    color: white;
+                    padding: 0.5rem 1rem;
+                    border-radius: 25px;
+                    font-size: 0.8rem;
+                    z-index: 1000;
+                    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+                `;
+                firebaseStatus.innerHTML = '<i class="fas fa-fire"></i> Firebase Connecté';
+                document.body.appendChild(firebaseStatus);
+                
+                // Écouter les changements de tarifs pour confirmation
+                document.addEventListener('tarifsChanged', (event) => {
+                    const { source, timestamp } = event.detail;
+                    if (source === 'firebase') {
+                        console.log('🔄 Changement Firebase confirmé dans le panel admin');
+                        
+                        // Afficher une notification de confirmation
+                        showFirebaseConfirmation();
+                    }
+                });
+                
+            } else {
+                console.log('⚠️ Firebase non disponible, mode local storage activé');
+                
+                // Afficher un avertissement
+                const warningStatus = document.createElement('div');
+                warningStatus.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 20px;
+                    background: linear-gradient(45deg, #f59e0b, #d97706);
+                    color: white;
+                    padding: 0.5rem 1rem;
+                    border-radius: 25px;
+                    font-size: 0.8rem;
+                    z-index: 1000;
+                    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+                `;
+                warningStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Mode Local Storage';
+                document.body.appendChild(warningStatus);
+            }
+        });
+        
+        // Afficher une confirmation Firebase
+        function showFirebaseConfirmation() {
+            const confirmation = document.createElement('div');
+            confirmation.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 20px;
+                background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 25px;
+                font-size: 0.8rem;
+                z-index: 1000;
+                box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+                animation: slideIn 0.3s ease;
+            `;
+            confirmation.innerHTML = '<i class="fas fa-check-circle"></i> Changement Sauvegardé';
+            document.body.appendChild(confirmation);
+            
+            // Ajouter l'animation CSS
+            const animationStyle = document.createElement('style');
+            animationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(-100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(animationStyle);
+            
+            // Supprimer après 3 secondes
+            setTimeout(() => {
+                confirmation.remove();
+            }, 3000);
+        }
+    </script>
+    
     <style>
         * {
             margin: 0;

@@ -1,6 +1,11 @@
 // ========================================
-// CONFIGURATION FIREBASE REALTIME DATABASE
+// CONFIGURATION FIREBASE MODERNE - KOBOO STUDIO
 // ========================================
+
+// Import des fonctions Firebase (sera chargé dynamiquement)
+let firebaseApp;
+let firebaseDatabase;
+let firebaseAnalytics;
 
 // Configuration Firebase RÉELLE pour Koboo Studio
 const firebaseConfig = {
@@ -14,12 +19,8 @@ const firebaseConfig = {
     measurementId: "G-MJPQ0N92VZ"
 };
 
-// Initialiser Firebase
-let firebaseApp;
-let firebaseDatabase;
-
-// Fonction d'initialisation Firebase
-function initializeFirebase() {
+// Fonction d'initialisation Firebase moderne
+async function initializeFirebaseModern() {
     try {
         // Vérifier si Firebase est déjà chargé
         if (typeof firebase === 'undefined') {
@@ -31,11 +32,19 @@ function initializeFirebase() {
         firebaseApp = firebase.initializeApp(firebaseConfig);
         firebaseDatabase = firebase.database();
         
-        console.log('✅ Firebase initialisé avec succès');
+        // Initialiser Analytics si disponible
+        try {
+            firebaseAnalytics = firebase.analytics();
+            console.log('✅ Firebase Analytics initialisé');
+        } catch (error) {
+            console.log('⚠️ Firebase Analytics non disponible');
+        }
+        
+        console.log('✅ Firebase initialisé avec succès pour Koboo Studio (Configuration Moderne)');
         return true;
         
     } catch (error) {
-        console.warn('⚠️ Erreur initialisation Firebase:', error.message);
+        console.warn('⚠️ Erreur initialisation Firebase moderne:', error.message);
         return false;
     }
 }
@@ -74,6 +83,15 @@ async function saveToFirebase(path, data) {
         const ref = getDatabaseRef(path);
         if (ref) {
             await ref.set(data);
+            
+            // Log Analytics si disponible
+            if (firebaseAnalytics) {
+                firebaseAnalytics.logEvent('data_saved', {
+                    path: path,
+                    data_size: JSON.stringify(data).length
+                });
+            }
+            
             return true;
         }
         return false;
@@ -89,7 +107,17 @@ async function getFromFirebase(path) {
         const ref = getDatabaseRef(path);
         if (ref) {
             const snapshot = await ref.once('value');
-            return snapshot.val();
+            const data = snapshot.val();
+            
+            // Log Analytics si disponible
+            if (firebaseAnalytics) {
+                firebaseAnalytics.logEvent('data_retrieved', {
+                    path: path,
+                    has_data: !!data
+                });
+            }
+            
+            return data;
         }
         return null;
     } catch (error) {
@@ -104,6 +132,15 @@ async function updateInFirebase(path, data) {
         const ref = getDatabaseRef(path);
         if (ref) {
             await ref.update(data);
+            
+            // Log Analytics si disponible
+            if (firebaseAnalytics) {
+                firebaseAnalytics.logEvent('data_updated', {
+                    path: path,
+                    update_size: Object.keys(data).length
+                });
+            }
+            
             return true;
         }
         return false;
@@ -119,6 +156,14 @@ async function deleteFromFirebase(path) {
         const ref = getDatabaseRef(path);
         if (ref) {
             await ref.remove();
+            
+            // Log Analytics si disponible
+            if (firebaseAnalytics) {
+                firebaseAnalytics.logEvent('data_deleted', {
+                    path: path
+                });
+            }
+            
             return true;
         }
         return false;
@@ -133,9 +178,19 @@ function isFirebaseAvailable() {
     return firebaseDatabase !== undefined && firebaseDatabase !== null;
 }
 
+// Fonction pour obtenir des statistiques Firebase
+function getFirebaseStats() {
+    return {
+        app: !!firebaseApp,
+        database: !!firebaseDatabase,
+        analytics: !!firebaseAnalytics,
+        config: firebaseConfig
+    };
+}
+
 // Export des fonctions pour utilisation dans d'autres modules
 window.firebaseConfig = {
-    initialize: initializeFirebase,
+    initialize: initializeFirebaseModern,
     getRef: getDatabaseRef,
     listen: listenToChanges,
     stopListen: stopListening,
@@ -143,10 +198,39 @@ window.firebaseConfig = {
     get: getFromFirebase,
     update: updateInFirebase,
     delete: deleteFromFirebase,
-    isAvailable: isFirebaseAvailable
+    isAvailable: isFirebaseAvailable,
+    getStats: getFirebaseStats
 };
 
 // Auto-initialisation si Firebase est déjà chargé
 if (typeof firebase !== 'undefined') {
-    initializeFirebase();
+    initializeFirebaseModern();
 }
+
+// ========================================
+// INSTRUCTIONS D'UTILISATION
+// ========================================
+
+/*
+✅ CONFIGURATION FIREBASE ACTIVÉE !
+
+Vos vraies clés Firebase sont maintenant configurées :
+- apiKey: ✅ Configuré
+- authDomain: ✅ Configuré  
+- databaseURL: ✅ Configuré
+- projectId: ✅ Configuré
+- storageBucket: ✅ Configuré
+- messagingSenderId: ✅ Configuré
+- appId: ✅ Configuré
+- measurementId: ✅ Configuré
+
+🚀 Le système temps réel est maintenant opérationnel !
+
+Pour tester :
+1. Ouvrez "test-firebase-optimized.html"
+2. Cliquez sur "Tester la Connexion Firebase"
+3. Vérifiez que la connexion réussit
+4. Testez la synchronisation temps réel
+
+Le panel admin et le site principal se synchroniseront automatiquement !
+*/

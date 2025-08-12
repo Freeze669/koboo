@@ -170,9 +170,12 @@ class TarifsConfig {
      */
     setupRealtimeListener() {
         if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+            console.log('🔄 Configuration des écouteurs Firebase en temps réel...');
+            
             // Écouter les changements des services
             this.servicesListener = window.firebaseConfig.listen('tarifs/services', (data) => {
                 if (data) {
+                    console.log('🔄 Services mis à jour en temps réel:', data);
                     this.tarifs.services = data;
                     this.notifyTarifsChanged();
                 }
@@ -181,10 +184,24 @@ class TarifsConfig {
             // Écouter les changements des forfaits
             this.forfaitsListener = window.firebaseConfig.listen('tarifs/forfaits', (data) => {
                 if (data) {
+                    console.log('🔄 Forfaits mis à jour en temps réel:', data);
                     this.tarifs.forfaits = data;
                     this.notifyTarifsChanged();
                 }
             });
+            
+            // Écouter les changements des options
+            this.optionsListener = window.firebaseConfig.listen('tarifs/options', (data) => {
+                if (data) {
+                    console.log('🔄 Options mises à jour en temps réel:', data);
+                    this.tarifs.options = data;
+                    this.notifyTarifsChanged();
+                }
+            });
+            
+            console.log('✅ Écouteurs Firebase configurés avec succès');
+        } else {
+            console.log('⚠️ Firebase non disponible, mode local storage activé');
         }
     }
     
@@ -192,11 +209,30 @@ class TarifsConfig {
      * Notifier que les tarifs ont changé
      */
     notifyTarifsChanged() {
+        console.log('📢 Notification de changement de tarifs en cours...');
+        
         // Déclencher un événement personnalisé
         const event = new CustomEvent('tarifsChanged', {
-            detail: { tarifs: this.tarifs }
+            detail: { 
+                tarifs: this.tarifs,
+                timestamp: new Date().toISOString(),
+                source: 'firebase'
+            }
         });
         document.dispatchEvent(event);
+        
+        // Notifier aussi via le système de notifications Discord si disponible
+        if (window.notificationsGrouped) {
+            window.notificationsGrouped.addNotification('tarifs_updated', {
+                message: 'Tarifs mis à jour en temps réel via Firebase',
+                timestamp: new Date().toISOString(),
+                updatedBy: 'Firebase Realtime',
+                changes: Object.keys(this.tarifs.services).length + ' services, ' + 
+                        Object.keys(this.tarifs.forfaits).length + ' forfaits'
+            }, 'important');
+        }
+        
+        console.log('✅ Notification de changement envoyée');
     }
     
     /**
@@ -439,12 +475,22 @@ class TarifsConfig {
      * Arrêter l'écoute des changements
      */
     stopListening() {
+        console.log('🛑 Arrêt des écouteurs Firebase...');
+        
         if (this.servicesListener) {
             window.firebaseConfig.stopListen(this.servicesListener);
+            this.servicesListener = null;
         }
         if (this.forfaitsListener) {
             window.firebaseConfig.stopListen(this.forfaitsListener);
+            this.forfaitsListener = null;
         }
+        if (this.optionsListener) {
+            window.firebaseConfig.stopListen(this.optionsListener);
+            this.optionsListener = null;
+        }
+        
+        console.log('✅ Écouteurs Firebase arrêtés');
     }
 }
 

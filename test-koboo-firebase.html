@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Test Firebase Koboo Studio - Configuration Réelle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header h1 {
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        
+        .header .subtitle {
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-section h2 {
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .test-button.success {
+            background: linear-gradient(45deg, #10b981, #059669);
+        }
+        
+        .test-button.warning {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+        }
+        
+        .test-button.danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+        }
+        
+        .status {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+        
+        .status.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: #10b981;
+            color: #10b981;
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .status.info {
+            background: rgba(59, 130, 246, 0.1);
+            border-left-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .firebase-status {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .firebase-status.connected {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .firebase-status.disconnected {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .config-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        
+        .config-key {
+            color: #60a5fa;
+            font-weight: bold;
+        }
+        
+        .config-value {
+            color: #10b981;
+        }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.25rem 0;
+        }
+        
+        .log-entry.success { color: #10b981; }
+        .log-entry.error { color: #ef4444; }
+        .log-entry.info { color: #3b82f6; }
+        .log-entry.warning { color: #f59e0b; }
+        .log-entry.firebase { color: #f97316; }
+        .log-entry.realtime { color: #8b5cf6; }
+        
+        .realtime-demo {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .realtime-demo h4 {
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+        
+        .realtime-demo input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin: 0.5rem;
+            width: 200px;
+        }
+        
+        .realtime-demo button {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-fire"></i> Test Firebase Koboo Studio</h1>
+            <div class="subtitle">Configuration Réelle - Système Temps Réel</div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-cog"></i> Configuration Firebase</h2>
+            <p>Vérification de votre configuration Firebase personnalisée.</p>
+            
+            <div class="config-display">
+                <div><span class="config-key">Project ID:</span> <span class="config-value">koboo-460e2</span></div>
+                <div><span class="config-key">Database URL:</span> <span class="config-value">https://koboo-460e2-default-rtdb.europe-west1.firebasedatabase.app</span></div>
+                <div><span class="config-key">Region:</span> <span class="config-value">europe-west1</span></div>
+                <div><span class="config-key">Analytics:</span> <span class="config-value">G-MJPQ0N92VZ</span></div>
+            </div>
+            
+            <button class="test-button success" onclick="testFirebaseConnection()">
+                <i class="fas fa-plug"></i> Tester la Connexion Firebase
+            </button>
+            
+            <div id="firebase-connection-status"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-database"></i> Test Base de Données</h2>
+            <p>Test des opérations CRUD avec votre base Firebase.</p>
+            
+            <button class="test-button" onclick="testDatabaseOperations()">
+                <i class="fas fa-database"></i> Tester les Opérations Base
+            </button>
+            
+            <div id="database-test-status"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-sync"></i> Synchronisation Temps Réel</h2>
+            <p>Test de la synchronisation en temps réel des tarifs.</p>
+            
+            <button class="test-button success" onclick="testRealtimeSync()">
+                <i class="fas fa-sync"></i> Tester Synchronisation Temps Réel
+            </button>
+            
+            <div id="realtime-sync-status"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-broadcast-tower"></i> Démonstration Temps Réel</h2>
+            <p>Modifiez un tarif et voyez les changements en temps réel !</p>
+            
+            <div class="realtime-demo">
+                <h4>Modifier un service en temps réel</h4>
+                <input type="text" id="service-name" placeholder="Nom du service" value="Logo Simple">
+                <input type="number" id="service-price" placeholder="Prix" value="50">
+                <button onclick="updateServiceRealtime()">
+                    <i class="fas fa-sync"></i> Mettre à Jour
+                </button>
+                <p><small>Ouvrez cette page dans un autre onglet pour voir les changements en temps réel !</small></p>
+            </div>
+            
+            <div id="realtime-demo-status"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-chart-bar"></i> Statistiques Firebase</h2>
+            <p>État de votre configuration Firebase.</p>
+            
+            <button class="test-button" onclick="showFirebaseStats()">
+                <i class="fas fa-chart-bar"></i> Afficher les Statistiques
+            </button>
+            
+            <div id="firebase-stats"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-list"></i> Log des Tests</h2>
+            <div id="test-log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // Log des tests
+        function logTest(message, type = 'info') {
+            const logContainer = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Test de connexion Firebase
+        async function testFirebaseConnection() {
+            logTest('🧪 Test de connexion Firebase Koboo Studio...', 'info');
+            
+            const statusContainer = document.getElementById('firebase-connection-status');
+            statusContainer.innerHTML = '';
+            
+            try {
+                // Charger Firebase SDK
+                if (typeof firebase === 'undefined') {
+                    logTest('📥 Chargement Firebase SDK...', 'info');
+                    
+                    // Charger Firebase App
+                    const firebaseAppScript = document.createElement('script');
+                    firebaseAppScript.src = 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js';
+                    await new Promise((resolve, reject) => {
+                        firebaseAppScript.onload = resolve;
+                        firebaseAppScript.onerror = reject;
+                        document.head.appendChild(firebaseAppScript);
+                    });
+                    
+                    // Charger Firebase Database
+                    const firebaseDatabaseScript = document.createElement('script');
+                    firebaseDatabaseScript.src = 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js';
+                    await new Promise((resolve, reject) => {
+                        firebaseDatabaseScript.onload = resolve;
+                        firebaseDatabaseScript.onerror = reject;
+                        document.head.appendChild(firebaseDatabaseScript);
+                    });
+                    
+                    logTest('✅ Firebase SDK chargé', 'success');
+                }
+                
+                // Charger la configuration Firebase
+                if (!window.firebaseConfig) {
+                    logTest('📥 Chargement configuration Firebase Koboo Studio...', 'info');
+                    const firebaseConfigScript = document.createElement('script');
+                    firebaseConfigScript.src = 'firebase-config-modern.js';
+                    await new Promise((resolve, reject) => {
+                        firebaseConfigScript.onload = resolve;
+                        firebaseConfigScript.onerror = reject;
+                        document.head.appendChild(firebaseConfigScript);
+                    });
+                }
+                
+                // Initialiser Firebase
+                if (window.firebaseConfig) {
+                    const success = await window.firebaseConfig.initialize();
+                    if (success) {
+                        logTest('✅ Firebase initialisé avec succès pour Koboo Studio', 'success');
+                        
+                        statusContainer.innerHTML = `
+                            <div class="firebase-status connected">
+                                <i class="fas fa-check-circle"></i> Firebase connecté et opérationnel pour Koboo Studio !
+                            </div>
+                        `;
+                        
+                        // Tester la connexion à la base de données
+                        await testDatabaseConnection();
+                        
+                    } else {
+                        throw new Error('Échec de l\'initialisation Firebase');
+                    }
+                } else {
+                    throw new Error('Configuration Firebase non disponible');
+                }
+                
+            } catch (error) {
+                logTest(`❌ Erreur connexion Firebase: ${error.message}`, 'error');
+                statusContainer.innerHTML = `
+                    <div class="firebase-status disconnected">
+                        <i class="fas fa-times-circle"></i> Erreur connexion Firebase: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test de connexion à la base de données
+        async function testDatabaseConnection() {
+            try {
+                logTest('🔍 Test de connexion à la base de données Koboo Studio...', 'info');
+                
+                // Tenter de lire depuis la base
+                const testData = await window.firebaseConfig.get('test/connection');
+                logTest('✅ Connexion à la base de données réussie', 'success');
+                
+                // Écrire des données de test
+                await window.firebaseConfig.save('test/connection', {
+                    timestamp: new Date().toISOString(),
+                    message: 'Test de connexion réussi - Koboo Studio',
+                    status: 'connected',
+                    project: 'koboo-460e2',
+                    test: 'koboo-firebase-test'
+                });
+                
+                logTest('✅ Écriture dans la base de données réussie', 'success');
+                
+            } catch (error) {
+                logTest(`❌ Erreur connexion base de données: ${error.message}`, 'error');
+            }
+        }
+
+        // Test des opérations base de données
+        async function testDatabaseOperations() {
+            logTest('🧪 Test des opérations base de données...', 'info');
+            
+            const statusContainer = document.getElementById('database-test-status');
+            statusContainer.innerHTML = '';
+            
+            if (!window.firebaseConfig || !window.firebaseConfig.isAvailable()) {
+                logTest('❌ Firebase non disponible', 'error');
+                statusContainer.innerHTML = `
+                    <div class="status error">
+                        <i class="fas fa-times-circle"></i> Firebase non disponible. Testez d'abord la connexion.
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                // Test CREATE
+                logTest('📝 Test CREATE...', 'info');
+                const testData = {
+                    nom: 'Service Test Koboo',
+                    prix: 99.99,
+                    devise: 'EUR',
+                    timestamp: new Date().toISOString(),
+                    projet: 'koboo-460e2'
+                };
+                
+                await window.firebaseConfig.save('test/crud/create', testData);
+                logTest('✅ CREATE réussi', 'success');
+                
+                // Test READ
+                logTest('👁️ Test READ...', 'info');
+                const readData = await window.firebaseConfig.get('test/crud/create');
+                if (readData && readData.nom === testData.nom) {
+                    logTest('✅ READ réussi', 'success');
+                } else {
+                    throw new Error('Données lues incorrectes');
+                }
+                
+                // Test UPDATE
+                logTest('✏️ Test UPDATE...', 'info');
+                const updatedData = { ...testData, prix: 149.99 };
+                await window.firebaseConfig.update('test/crud/create', updatedData);
+                logTest('✅ UPDATE réussi', 'success');
+                
+                // Test DELETE
+                logTest('🗑️ Test DELETE...', 'info');
+                await window.firebaseConfig.delete('test/crud/create');
+                logTest('✅ DELETE réussi', 'success');
+                
+                statusContainer.innerHTML = `
+                    <div class="status success">
+                        <i class="fas fa-check-circle"></i> Toutes les opérations CRUD Firebase fonctionnent parfaitement pour Koboo Studio !
+                    </div>
+                `;
+                
+                logTest('🎉 Test CRUD Firebase terminé avec succès', 'success');
+                
+            } catch (error) {
+                logTest(`❌ Erreur test CRUD: ${error.message}`, 'error');
+                statusContainer.innerHTML = `
+                    <div class="status error">
+                        <i class="fas fa-times-circle"></i> Erreur test CRUD: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test de synchronisation temps réel
+        async function testRealtimeSync() {
+            logTest('🧪 Test de synchronisation temps réel Koboo Studio...', 'info');
+            
+            const statusContainer = document.getElementById('realtime-sync-status');
+            statusContainer.innerHTML = '';
+            
+            if (!window.firebaseConfig || !window.firebaseConfig.isAvailable()) {
+                logTest('❌ Firebase non disponible', 'error');
+                statusContainer.innerHTML = `
+                    <div class="status error">
+                        <i class="fas fa-times-circle"></i> Firebase non disponible. Testez d'abord la connexion.
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                // Charger tarifs-config.js
+                if (!window.tarifsConfig) {
+                    logTest('📥 Chargement tarifs-config.js...', 'info');
+                    const script = document.createElement('script');
+                    script.src = 'tarifs-config.js';
+                    await new Promise((resolve, reject) => {
+                        script.onload = resolve;
+                        script.onerror = reject;
+                        document.head.appendChild(script);
+                    });
+                }
+                
+                if (window.tarifsConfig) {
+                    logTest('✅ tarifsConfig chargé', 'success');
+                    
+                    // Tester la synchronisation avec Firebase
+                    await window.tarifsConfig.syncWithFirebase();
+                    logTest('✅ Synchronisation avec Firebase réussie', 'success');
+                    
+                    // Configurer l'écouteur temps réel
+                    document.addEventListener('tarifsChanged', (event) => {
+                        const { source, timestamp } = event.detail;
+                        logTest(`🔄 Changement détecté via ${source} à ${new Date(timestamp).toLocaleTimeString()}`, 'realtime');
+                    });
+                    
+                    // Récupérer les tarifs
+                    const tarifs = window.tarifsConfig.getAllTarifs();
+                    logTest(`📊 Tarifs récupérés: ${Object.keys(tarifs.services).length} services, ${Object.keys(tarifs.forfaits).length} forfaits`, 'success');
+                    
+                    statusContainer.innerHTML = `
+                        <div class="status success">
+                            <i class="fas fa-check-circle"></i> Synchronisation temps réel activée pour Koboo Studio ! ${Object.keys(tarifs.services).length} services et ${Object.keys(tarifs.forfaits).length} forfaits synchronisés.
+                        </div>
+                    `;
+                    
+                    logTest('🎉 Test de synchronisation temps réel terminé avec succès', 'success');
+                    
+                } else {
+                    throw new Error('tarifsConfig non disponible');
+                }
+                
+            } catch (error) {
+                logTest(`❌ Erreur synchronisation temps réel: ${error.message}`, 'error');
+                statusContainer.innerHTML = `
+                    <div class="status error">
+                        <i class="fas fa-times-circle"></i> Erreur synchronisation temps réel: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test de mise à jour en temps réel
+        async function updateServiceRealtime() {
+            const serviceName = document.getElementById('service-name').value;
+            const servicePrice = document.getElementById('service-price').value;
+            
+            if (!serviceName || !servicePrice) {
+                logTest('❌ Veuillez remplir tous les champs', 'error');
+                return;
+            }
+            
+            if (!window.firebaseConfig || !window.firebaseConfig.isAvailable()) {
+                logTest('❌ Firebase non disponible', 'error');
+                return;
+            }
+            
+            try {
+                logTest(`🔄 Mise à jour en temps réel: ${serviceName} - ${servicePrice}€`, 'firebase');
+                
+                await window.firebaseConfig.save('test/realtime/service', {
+                    nom: serviceName,
+                    prix: parseFloat(servicePrice),
+                    devise: 'EUR',
+                    timestamp: new Date().toISOString(),
+                    projet: 'koboo-460e2',
+                    test: 'realtime-update'
+                });
+                
+                logTest('✅ Mise à jour envoyée à Firebase', 'success');
+                
+                const statusContainer = document.getElementById('realtime-demo-status');
+                statusContainer.innerHTML = `
+                    <div class="status success">
+                        <i class="fas fa-sync"></i> Mise à jour envoyée ! Vérifiez l'autre onglet pour voir les changements en temps réel.
+                    </div>
+                `;
+                
+            } catch (error) {
+                logTest(`❌ Erreur mise à jour temps réel: ${error.message}`, 'error');
+            }
+        }
+
+        // Afficher les statistiques Firebase
+        function showFirebaseStats() {
+            logTest('📊 Récupération des statistiques Firebase...', 'info');
+            
+            const statsContainer = document.getElementById('firebase-stats');
+            
+            if (!window.firebaseConfig) {
+                statsContainer.innerHTML = `
+                    <div class="status error">
+                        <i class="fas fa-times-circle"></i> Firebase non configuré
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                const stats = window.firebaseConfig.getStats();
+                
+                let statsHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.app ? '✅' : '❌'}</div>
+                            <div class="stat-label">Application Firebase</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.database ? '✅' : '❌'}</div>
+                            <div class="stat-label">Base de Données</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.analytics ? '✅' : '❌'}</div>
+                            <div class="stat-label">Analytics</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.config ? '✅' : '❌'}</div>
+                            <div class="stat-label">Configuration</div>
+                        </div>
+                    </div>
+                `;
+                
+                statsContainer.innerHTML = statsHTML;
+                logTest('✅ Statistiques Firebase affichées', 'success');
+                
+            } catch (error) {
+                logTest(`❌ Erreur récupération statistiques: ${error.message}`, 'error');
+                statsContainer.innerHTML = `
+                    <div class="status error">
+                        <i class="fas fa-times-circle"></i> Erreur récupération statistiques: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            logTest('🚀 Page de test Firebase Koboo Studio chargée et prête', 'info');
+            logTest('💡 Commencez par tester la connexion Firebase', 'info');
+            
+            // Écouter les changements Firebase en temps réel
+            if (window.firebaseConfig) {
+                window.firebaseConfig.listen('test/realtime/service', (data) => {
+                    if (data) {
+                        logTest(`🔄 Changement détecté en temps réel: ${data.nom} - ${data.prix}€`, 'firebase');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
