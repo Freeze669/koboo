@@ -144,7 +144,59 @@ class TarifsConfig {
             }
         };
         
-        this.loadFromStorage();
+        // Initialiser Firebase et charger les données
+        this.initializeFirebase();
+        
+        // Écouter les changements en temps réel
+        this.setupRealtimeListener();
+    }
+    
+    /**
+     * Initialiser Firebase
+     */
+    async initializeFirebase() {
+        // Attendre que Firebase soit disponible
+        if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+            // Charger depuis Firebase
+            await this.loadFromFirebase();
+        } else {
+            // Fallback vers le stockage local
+            this.loadFromStorage();
+        }
+    }
+    
+    /**
+     * Configurer l'écouteur en temps réel
+     */
+    setupRealtimeListener() {
+        if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+            // Écouter les changements des services
+            this.servicesListener = window.firebaseConfig.listen('tarifs/services', (data) => {
+                if (data) {
+                    this.tarifs.services = data;
+                    this.notifyTarifsChanged();
+                }
+            });
+            
+            // Écouter les changements des forfaits
+            this.forfaitsListener = window.firebaseConfig.listen('tarifs/forfaits', (data) => {
+                if (data) {
+                    this.tarifs.forfaits = data;
+                    this.notifyTarifsChanged();
+                }
+            });
+        }
+    }
+    
+    /**
+     * Notifier que les tarifs ont changé
+     */
+    notifyTarifsChanged() {
+        // Déclencher un événement personnalisé
+        const event = new CustomEvent('tarifsChanged', {
+            detail: { tarifs: this.tarifs }
+        });
+        document.dispatchEvent(event);
     }
     
     /**
@@ -163,6 +215,63 @@ class TarifsConfig {
     }
     
     /**
+     * Charger la configuration depuis Firebase
+     */
+    async loadFromFirebase() {
+        try {
+            if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+                // Charger les services
+                const services = await window.firebaseConfig.get('tarifs/services');
+                if (services) {
+                    this.tarifs.services = services;
+                }
+                
+                // Charger les forfaits
+                const forfaits = await window.firebaseConfig.get('tarifs/forfaits');
+                if (forfaits) {
+                    this.tarifs.forfaits = forfaits;
+                }
+                
+                // Charger les options
+                const options = await window.firebaseConfig.get('tarifs/options');
+                if (options) {
+                    this.tarifs.options = options;
+                }
+                
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.warn('⚠️ Erreur chargement Firebase, fallback vers local storage');
+            return false;
+        }
+    }
+    
+    /**
+     * Sauvegarder la configuration dans Firebase
+     */
+    async saveToFirebase() {
+        try {
+            if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+                // Sauvegarder les services
+                await window.firebaseConfig.save('tarifs/services', this.tarifs.services);
+                
+                // Sauvegarder les forfaits
+                await window.firebaseConfig.save('tarifs/forfaits', this.tarifs.forfaits);
+                
+                // Sauvegarder les options
+                await window.firebaseConfig.save('tarifs/options', this.tarifs.options);
+                
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.warn('⚠️ Erreur sauvegarde Firebase, fallback vers local storage');
+            return false;
+        }
+    }
+    
+    /**
      * Sauvegarder la configuration dans le stockage local
      */
     saveToStorage() {
@@ -177,10 +286,17 @@ class TarifsConfig {
     /**
      * Mettre à jour un tarif
      */
-    updateTarif(categorie, id, nouvellesDonnees) {
+    async updateTarif(categorie, id, nouvellesDonnees) {
         if (this.tarifs[categorie] && this.tarifs[categorie][id]) {
             this.tarifs[categorie][id] = { ...this.tarifs[categorie][id], ...nouvellesDonnees };
-            this.saveToStorage();
+            
+            // Sauvegarder dans Firebase en priorité
+            if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+                await this.saveToFirebase();
+            } else {
+                this.saveToStorage();
+            }
+            
             return true;
         }
         return false;
@@ -189,22 +305,36 @@ class TarifsConfig {
     /**
      * Ajouter un nouveau tarif
      */
-    addTarif(categorie, id, donnees) {
+    async addTarif(categorie, id, donnees) {
         if (!this.tarifs[categorie]) {
             this.tarifs[categorie] = {};
         }
         this.tarifs[categorie][id] = donnees;
-        this.saveToStorage();
+        
+        // Sauvegarder dans Firebase en priorité
+        if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+            await this.saveToFirebase();
+        } else {
+            this.saveToStorage();
+        }
+        
         return true;
     }
     
     /**
      * Supprimer un tarif
      */
-    removeTarif(categorie, id) {
+    async removeTarif(categorie, id) {
         if (this.tarifs[categorie] && this.tarifs[categorie][id]) {
             delete this.tarifs[categorie][id];
-            this.saveToStorage();
+            
+            // Sauvegarder dans Firebase en priorité
+            if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+                await this.saveToFirebase();
+            } else {
+                this.saveToStorage();
+            }
+            
             return true;
         }
         return false;
@@ -253,15 +383,67 @@ class TarifsConfig {
     /**
      * Importer la configuration
      */
-    importConfig(configJson) {
+    async importConfig(configJson) {
         try {
             const config = JSON.parse(configJson);
             this.tarifs = config;
-            this.saveToStorage();
+            
+            // Sauvegarder dans Firebase en priorité
+            if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+                await this.saveToFirebase();
+            } else {
+                this.saveToStorage();
+            }
+            
             return true;
         } catch (error) {
             console.error('❌ Erreur lors de l\'import de la configuration:', error);
             return false;
+        }
+    }
+    
+    /**
+     * Réinitialiser la configuration
+     */
+    async resetConfig() {
+        this.tarifs = {
+            services: {},
+            forfaits: {},
+            options: {}
+        };
+        
+        // Sauvegarder dans Firebase en priorité
+        if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+            await this.saveToFirebase();
+        } else {
+            this.saveToStorage();
+        }
+    }
+    
+    /**
+     * Synchroniser avec Firebase (pour l'initialisation)
+     */
+    async syncWithFirebase() {
+        if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+            // Vérifier si Firebase a des données
+            const hasFirebaseData = await this.loadFromFirebase();
+            
+            if (!hasFirebaseData) {
+                // Si Firebase est vide, y sauvegarder les données locales
+                await this.saveToFirebase();
+            }
+        }
+    }
+    
+    /**
+     * Arrêter l'écoute des changements
+     */
+    stopListening() {
+        if (this.servicesListener) {
+            window.firebaseConfig.stopListen(this.servicesListener);
+        }
+        if (this.forfaitsListener) {
+            window.firebaseConfig.stopListen(this.forfaitsListener);
         }
     }
 }

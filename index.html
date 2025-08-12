@@ -6,7 +6,6 @@
     <title>Mayu & Jack | Studio Créatif Premium</title>
     <meta name="description" content="Studio créatif premium spécialisé en graphisme et développement web. Créations sur mesure pour des projets d'exception.">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="tarifs-site-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
@@ -507,13 +506,9 @@
                     <div class="pricing-overview">
                         <div class="pricing-header">
                             <h3>Nos Tarifs</h3>
-                            <button id="edit-tarifs-btn" class="edit-tarifs-btn" onclick="toggleTarifsEdit()">
-                                <i class="fas fa-edit"></i> Modifier
-                            </button>
                         </div>
                         
-                        <!-- Mode Affichage -->
-                        <div id="tarifs-display" class="pricing-cards">
+                        <div class="pricing-cards">
                             <div class="pricing-card">
                                 <h4>Graphisme</h4>
                                 <div id="graphisme-services"></div>
@@ -528,43 +523,7 @@
                             </div>
                         </div>
                         
-                        <!-- Mode Édition -->
-                        <div id="tarifs-edit" class="tarifs-edit-container" style="display: none;">
-                            <div class="edit-sections">
-                                <div class="edit-section">
-                                    <h4><i class="fas fa-palette"></i> Services Graphisme</h4>
-                                    <div id="edit-graphisme" class="edit-services-list"></div>
-                                    <button class="add-service-btn" onclick="addNewService('graphisme')">
-                                        <i class="fas fa-plus"></i> Ajouter Service
-                                    </button>
-                                </div>
-                                
-                                <div class="edit-section">
-                                    <h4><i class="fas fa-code"></i> Services Développement</h4>
-                                    <div id="edit-developpement" class="edit-services-list"></div>
-                                    <button class="add-service-btn" onclick="addNewService('developpement')">
-                                        <i class="fas fa-plus"></i> Ajouter Service
-                                    </button>
-                                </div>
-                                
-                                <div class="edit-section">
-                                    <h4><i class="fas fa-box"></i> Forfaits</h4>
-                                    <div id="edit-forfaits" class="edit-services-list"></div>
-                                    <button class="add-service-btn" onclick="addNewForfait()">
-                                        <i class="fas fa-plus"></i> Ajouter Forfait
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="edit-actions">
-                                <button class="save-tarifs-btn" onclick="saveAllTarifs()">
-                                    <i class="fas fa-save"></i> Sauvegarder
-                                </button>
-                                <button class="cancel-edit-btn" onclick="cancelTarifsEdit()">
-                                    <i class="fas fa-times"></i> Annuler
-                                </button>
-                            </div>
-                        </div>
+
                     </div>
                     
                     <div class="contact-methods">
@@ -985,46 +944,78 @@
         });
         
         // ========================================
-        // GESTION DES TARIFS SUR LE SITE PRINCIPAL
+        // AFFICHAGE DYNAMIQUE DES TARIFS AVEC FIREBASE
         // ========================================
         
-        // Charger les scripts nécessaires
-        function loadTarifsScripts() {
-            // Charger tarifs-config.js
-            if (!window.tarifsConfig) {
-                const script1 = document.createElement('script');
-                script1.src = 'tarifs-config.js';
-                script1.onload = () => {
-                    // Charger notifications-grouped.js
-                    const script2 = document.createElement('script');
-                    script2.src = 'notifications-grouped.js';
-                    script2.onload = () => {
-                        // Charger discord-webhook-config.js
-                        const script3 = document.createElement('script');
-                        script3.src = 'discord-webhook-config.js';
-                        script3.onload = () => {
-                            initializeTarifsOnSite();
-                        };
-                        document.head.appendChild(script3);
-                    };
-                    document.head.appendChild(script2);
-                };
-                document.head.appendChild(script1);
-            } else {
-                initializeTarifsOnSite();
+        // Charger les scripts nécessaires pour l'affichage des tarifs
+        async function loadTarifsDisplayScripts() {
+            try {
+                // Charger Firebase SDK en premier
+                if (typeof firebase === 'undefined') {
+                    const firebaseScript = document.createElement('script');
+                    firebaseScript.src = 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js';
+                    await new Promise((resolve, reject) => {
+                        firebaseScript.onload = resolve;
+                        firebaseScript.onerror = reject;
+                        document.head.appendChild(firebaseScript);
+                    });
+                    
+                    const firebaseDatabaseScript = document.createElement('script');
+                    firebaseDatabaseScript.src = 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js';
+                    await new Promise((resolve, reject) => {
+                        firebaseDatabaseScript.onload = resolve;
+                        firebaseDatabaseScript.onerror = reject;
+                        document.head.appendChild(firebaseDatabaseScript);
+                    });
+                }
+                
+                // Charger la configuration Firebase
+                if (!window.firebaseConfig) {
+                    const firebaseConfigScript = document.createElement('script');
+                    firebaseConfigScript.src = 'firebase-config.js';
+                    await new Promise((resolve, reject) => {
+                        firebaseConfigScript.onload = resolve;
+                        firebaseConfigScript.onerror = reject;
+                        document.head.appendChild(firebaseConfigScript);
+                    });
+                }
+                
+                // Charger tarifs-config.js
+                if (!window.tarifsConfig) {
+                    const script = document.createElement('script');
+                    script.src = 'tarifs-config.js';
+                    await new Promise((resolve, reject) => {
+                        script.onload = resolve;
+                        script.onerror = reject;
+                        document.head.appendChild(script);
+                    });
+                }
+                
+                initializeTarifsDisplay();
+                
+            } catch (error) {
+                console.warn('⚠️ Erreur chargement Firebase, utilisation du mode local storage');
+                // Fallback vers le mode local storage
+                if (!window.tarifsConfig) {
+                    const script = document.createElement('script');
+                    script.src = 'tarifs-config.js';
+                    script.onload = () => initializeTarifsDisplay();
+                    document.head.appendChild(script);
+                } else {
+                    initializeTarifsDisplay();
+                }
             }
         }
         
-        // Initialiser les tarifs sur le site
-        function initializeTarifsOnSite() {
+        // Initialiser l'affichage des tarifs
+        function initializeTarifsDisplay() {
             if (window.tarifsConfig) {
-                renderTarifsOnSite();
-                setupTarifsEventListeners();
+                renderTarifsDisplay();
             }
         }
         
-        // Rendre les tarifs sur le site
-        function renderTarifsOnSite() {
+        // Rendre l'affichage des tarifs
+        function renderTarifsDisplay() {
             const tarifs = window.tarifsConfig.getAllTarifs();
             
             // Services Graphisme
@@ -1072,350 +1063,27 @@
             ).join('')}</ul>`;
         }
         
-        // Rendre les tarifs en mode édition
-        function renderTarifsEdit() {
-            const tarifs = window.tarifsConfig.getAllTarifs();
-            
-            // Services Graphisme
-            const editGraphisme = document.getElementById('edit-graphisme');
-            if (editGraphisme) {
-                editGraphisme.innerHTML = renderEditServicesList(tarifs.services, 'graphisme');
-            }
-            
-            // Services Développement
-            const editDeveloppement = document.getElementById('edit-developpement');
-            if (editDeveloppement) {
-                editDeveloppement.innerHTML = renderEditServicesList(tarifs.services, 'developpement');
-            }
-            
-            // Forfaits
-            const editForfaits = document.getElementById('edit-forfaits');
-            if (editForfaits) {
-                editForfaits.innerHTML = renderEditForfaitsList(tarifs.forfaits);
-            }
-        }
-        
-        // Rendre la liste d'édition des services
-        function renderEditServicesList(services, categorie) {
-            const filteredServices = Object.entries(services).filter(([id, service]) => 
-                service.categorie === categorie
-            );
-            
-            if (filteredServices.length === 0) {
-                return '<p class="no-services">Aucun service disponible</p>';
-            }
-            
-            return filteredServices.map(([id, service]) => `
-                <div class="edit-service-item" data-id="${id}" data-categorie="${categorie}">
-                    <div class="service-inputs">
-                        <input type="text" class="service-nom" value="${service.nom}" placeholder="Nom du service">
-                        <input type="number" class="service-prix" value="${service.prix}" placeholder="Prix">
-                        <select class="service-devise">
-                            <option value="EUR" ${service.devise === 'EUR' ? 'selected' : ''}>EUR (€)</option>
-                            <option value="USD" ${service.devise === 'USD' ? 'selected' : ''}>USD ($)</option>
-                            <option value="GBP" ${service.devise === 'GBP' ? 'selected' : ''}>GBP (£)</option>
-                        </select>
-                        <input type="text" class="service-duree" value="${service.duree || ''}" placeholder="Durée">
-                    </div>
-                    <div class="service-actions">
-                        <button class="delete-service-btn" onclick="deleteService('${id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // Rendre la liste d'édition des forfaits
-        function renderEditForfaitsList(forfaits) {
-            if (Object.keys(forfaits).length === 0) {
-                return '<p class="no-services">Aucun forfait disponible</p>';
-            }
-            
-            return Object.entries(forfaits).map(([id, forfait]) => `
-                <div class="edit-forfait-item" data-id="${id}">
-                    <div class="forfait-inputs">
-                        <input type="text" class="forfait-nom" value="${forfait.nom}" placeholder="Nom du forfait">
-                        <input type="number" class="forfait-prix" value="${forfait.prix}" placeholder="Prix">
-                        <select class="forfait-devise">
-                            <option value="EUR" ${forfait.devise === 'EUR' ? 'selected' : ''}>EUR (€)</option>
-                            <option value="USD" ${forfait.devise === 'USD' ? 'selected' : ''}>USD ($)</option>
-                            <option value="GBP" ${forfait.devise === 'GBP' ? 'selected' : ''}>GBP (£)</option>
-                        </select>
-                        <input type="number" class="forfait-reduction" value="${forfait.reduction}" placeholder="Réduction %">
-                        <textarea class="forfait-description" placeholder="Description">${forfait.description || ''}</textarea>
-                    </div>
-                    <div class="forfait-actions">
-                        <button class="delete-forfait-btn" onclick="deleteForfait('${id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // Basculer entre affichage et édition
-        function toggleTarifsEdit() {
-            const display = document.getElementById('tarifs-display');
-            const edit = document.getElementById('tarifs-edit');
-            const editBtn = document.getElementById('edit-tarifs-btn');
-            
-            if (display.style.display === 'none') {
-                // Passer en mode affichage
-                display.style.display = 'block';
-                edit.style.display = 'none';
-                editBtn.innerHTML = '<i class="fas fa-edit"></i> Modifier';
-                editBtn.classList.remove('editing');
-            } else {
-                // Passer en mode édition
-                display.style.display = 'none';
-                edit.style.display = 'block';
-                editBtn.innerHTML = '<i class="fas fa-eye"></i> Voir';
-                editBtn.classList.add('editing');
-                renderTarifsEdit();
-            }
-        }
-        
-        // Ajouter un nouveau service
-        function addNewService(categorie) {
-            const container = document.getElementById(`edit-${categorie}`);
-            if (!container) return;
-            
-            const newServiceId = `new-${categorie}-${Date.now()}`;
-            const newServiceHtml = `
-                <div class="edit-service-item new-service" data-id="${newServiceId}" data-categorie="${categorie}">
-                    <div class="service-inputs">
-                        <input type="text" class="service-nom" placeholder="Nom du service">
-                        <input type="number" class="service-prix" placeholder="Prix">
-                        <select class="service-devise">
-                            <option value="EUR">EUR (€)</option>
-                            <option value="USD">USD ($)</option>
-                            <option value="GBP">GBP (£)</option>
-                        </select>
-                        <input type="text" class="service-duree" placeholder="Durée">
-                    </div>
-                    <div class="service-actions">
-                        <button class="delete-service-btn" onclick="removeNewService('${newServiceId}')">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            container.insertAdjacentHTML('beforeend', newServiceHtml);
-        }
-        
-        // Ajouter un nouveau forfait
-        function addNewForfait() {
-            const container = document.getElementById('edit-forfaits');
-            if (!container) return;
-            
-            const newForfaitId = `new-forfait-${Date.now()}`;
-            const newForfaitHtml = `
-                <div class="edit-forfait-item new-forfait" data-id="${newForfaitId}">
-                    <div class="forfait-inputs">
-                        <input type="text" class="forfait-nom" placeholder="Nom du forfait">
-                        <input type="number" class="forfait-prix" placeholder="Prix">
-                        <select class="forfait-devise">
-                            <option value="EUR">EUR (€)</option>
-                            <option value="USD">USD ($)</option>
-                            <option value="GBP">GBP (£)</option>
-                        </select>
-                        <input type="number" class="forfait-reduction" placeholder="Réduction %">
-                        <textarea class="forfait-description" placeholder="Description"></textarea>
-                    </div>
-                    <div class="forfait-actions">
-                        <button class="delete-forfait-btn" onclick="removeNewForfait('${newForfaitId}')">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            container.insertAdjacentHTML('beforeend', newForfaitHtml);
-        }
-        
-        // Supprimer un nouveau service
-        function removeNewService(serviceId) {
-            const serviceElement = document.querySelector(`[data-id="${serviceId}"]`);
-            if (serviceElement) {
-                serviceElement.remove();
-            }
-        }
-        
-        // Supprimer un nouveau forfait
-        function removeNewForfait(forfaitId) {
-            const forfaitElement = document.querySelector(`[data-id="${forfaitId}"]`);
-            if (forfaitElement) {
-                forfaitElement.remove();
-            }
-        }
-        
-        // Supprimer un service existant
-        function deleteService(serviceId) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce service ?')) {
-                window.tarifsConfig.removeTarif('services', serviceId);
-                renderTarifsEdit();
-            }
-        }
-        
-        // Supprimer un forfait existant
-        function deleteForfait(forfaitId) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce forfait ?')) {
-                window.tarifsConfig.removeTarif('forfaits', forfaitId);
-                renderTarifsEdit();
-            }
-        }
-        
-        // Sauvegarder tous les tarifs
-        function saveAllTarifs() {
-            try {
-                // Sauvegarder les services modifiés
-                const serviceItems = document.querySelectorAll('.edit-service-item:not(.new-service)');
-                serviceItems.forEach(item => {
-                    const id = item.dataset.id;
-                    const categorie = item.dataset.categorie;
-                    const nom = item.querySelector('.service-nom').value;
-                    const prix = parseFloat(item.querySelector('.service-prix').value);
-                    const devise = item.querySelector('.service-devise').value;
-                    const duree = item.querySelector('.service-duree').value;
-                    
-                    if (nom && prix > 0) {
-                        window.tarifsConfig.updateTarif('services', id, {
-                            nom,
-                            prix,
-                            devise,
-                            duree,
-                            categorie
-                        });
-                    }
-                });
-                
-                // Sauvegarder les nouveaux services
-                const newServiceItems = document.querySelectorAll('.edit-service-item.new-service');
-                newServiceItems.forEach(item => {
-                    const categorie = item.dataset.categorie;
-                    const nom = item.querySelector('.service-nom').value;
-                    const prix = parseFloat(item.querySelector('.service-prix').value);
-                    const devise = item.querySelector('.service-devise').value;
-                    const duree = item.querySelector('.service-duree').value;
-                    
-                    if (nom && prix > 0) {
-                        const newId = `service-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                        window.tarifsConfig.addTarif('services', newId, {
-                            nom,
-                            prix,
-                            devise,
-                            duree,
-                            categorie
-                        });
-                    }
-                });
-                
-                // Sauvegarder les forfaits modifiés
-                const forfaitItems = document.querySelectorAll('.edit-forfait-item:not(.new-forfait)');
-                forfaitItems.forEach(item => {
-                    const id = item.dataset.id;
-                    const nom = item.querySelector('.forfait-nom').value;
-                    const prix = parseFloat(item.querySelector('.forfait-prix').value);
-                    const devise = item.querySelector('.forfait-devise').value;
-                    const reduction = parseFloat(item.querySelector('.forfait-reduction').value);
-                    const description = item.querySelector('.forfait-description').value;
-                    
-                    if (nom && prix > 0) {
-                        window.tarifsConfig.updateTarif('forfaits', id, {
-                            nom,
-                            prix,
-                            devise,
-                            reduction,
-                            description
-                        });
-                    }
-                });
-                
-                // Sauvegarder les nouveaux forfaits
-                const newForfaitItems = document.querySelectorAll('.edit-forfait-item.new-forfait');
-                newForfaitItems.forEach(item => {
-                    const nom = item.querySelector('.forfait-nom').value;
-                    const prix = parseFloat(item.querySelector('.forfait-prix').value);
-                    const devise = item.querySelector('.forfait-devise').value;
-                    const reduction = parseFloat(item.querySelector('.forfait-reduction').value);
-                    const description = item.querySelector('.forfait-description').value;
-                    
-                    if (nom && prix > 0) {
-                        const newId = `forfait-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                        window.tarifsConfig.addTarif('forfaits', newId, {
-                            nom,
-                            prix,
-                            devise,
-                            reduction,
-                            description
-                        });
-                    }
-                });
-                
-                // Notifier tous les utilisateurs
-                if (window.notificationsGrouped) {
-                    window.notificationsGrouped.addNotification('tarifs_updated', {
-                        message: 'Tarifs mis à jour sur le site principal',
-                        timestamp: new Date().toISOString(),
-                        updatedBy: 'Site Principal'
-                    }, 'important');
-                }
-                
-                // Revenir en mode affichage
-                toggleTarifsEdit();
-                
-                // Actualiser l'affichage
-                renderTarifsOnSite();
-                
-                // Message de succès
-                showTarifsMessage('✅ Tarifs sauvegardés avec succès !', 'success');
-                
-            } catch (error) {
-                showTarifsMessage('❌ Erreur lors de la sauvegarde : ' + error.message, 'error');
-            }
-        }
-        
-        // Annuler l'édition
-        function cancelTarifsEdit() {
-            toggleTarifsEdit();
-            showTarifsMessage('⚠️ Modifications annulées', 'warning');
-        }
-        
-        // Afficher un message
-        function showTarifsMessage(message, type = 'info') {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `tarifs-message tarifs-message-${type}`;
-            messageDiv.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-                ${message}
-            `;
-            
-            document.body.appendChild(messageDiv);
-            
-            setTimeout(() => {
-                messageDiv.classList.add('show');
-            }, 100);
-            
-            setTimeout(() => {
-                messageDiv.classList.remove('show');
-                setTimeout(() => messageDiv.remove(), 300);
-            }, 3000);
-        }
-        
-        // Configurer les écouteurs d'événements
-        function setupTarifsEventListeners() {
+        // Configurer les écouteurs d'événements pour l'affichage
+        function setupTarifsDisplayEventListeners() {
             // Charger les tarifs au chargement de la page
             document.addEventListener('DOMContentLoaded', () => {
                 if (window.tarifsConfig) {
-                    renderTarifsOnSite();
+                    renderTarifsDisplay();
                 }
+            });
+            
+            // Écouter les changements de tarifs en temps réel
+            document.addEventListener('tarifsChanged', (event) => {
+                console.log('🔄 Tarifs mis à jour en temps réel !');
+                renderTarifsDisplay();
             });
         }
         
-        // Charger les scripts des tarifs
-        loadTarifsScripts();
+        // Initialiser l'affichage des tarifs
+        setupTarifsDisplayEventListeners();
+        
+        // Charger les scripts d'affichage des tarifs
+        loadTarifsDisplayScripts();
     </script>
 </body>
 </html> 
