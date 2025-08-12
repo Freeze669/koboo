@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <link rel="stylesheet" href="admin-styles.css">
     
-    <!-- Styles pour l'édition temps réel des tarifs -->
+    <!-- Styles pour l'affichage des tarifs -->
     <style>
-        /* Styles pour l'édition temps réel des tarifs */
+        /* Styles pour l'affichage des tarifs */
         .service-item, .forfait-item {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -21,7 +21,6 @@
             padding: 1rem;
             margin: 0.5rem 0;
             transition: all 0.3s ease;
-            position: relative;
         }
         
         .service-item:hover, .forfait-item:hover {
@@ -71,121 +70,6 @@
             margin-top: 0.5rem;
         }
         
-        .service-actions, .forfait-actions {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            display: flex;
-            gap: 0.5rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .service-item:hover .service-actions,
-        .forfait-item:hover .forfait-actions {
-            opacity: 1;
-        }
-        
-        .save-btn, .cancel-btn, .delete-btn {
-            background: none;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-        
-        .save-btn {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-        
-        .save-btn:hover {
-            background: rgba(16, 185, 129, 0.3);
-            border-color: rgba(16, 185, 129, 0.5);
-        }
-        
-        .cancel-btn {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-        
-        .cancel-btn:hover {
-            background: rgba(245, 158, 11, 0.3);
-            border-color: rgba(245, 158, 11, 0.5);
-        }
-        
-        .delete-btn {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-        
-        .delete-btn:hover {
-            background: rgba(239, 68, 68, 0.3);
-            border-color: rgba(239, 68, 68, 0.5);
-        }
-        
-        .editable-text, .editable-number {
-            cursor: text;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-        
-        .editable-text:hover, .editable-number:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .editable-text:focus, .editable-number:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: #60a5fa;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
-        }
-        
-        .editable-number:focus {
-            border-color: #10b981;
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-        }
-        
-        /* Confirmation de sauvegarde */
-        .save-confirmation {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(45deg, #10b981, #059669);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            z-index: 10000;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .save-confirmation.show {
-            transform: translateX(0);
-        }
-        
-        .save-confirmation.error {
-            background: linear-gradient(45deg, #ef4444, #dc2626);
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-        
-        .save-confirmation i {
-            font-size: 1.2rem;
-        }
-        
         /* Animation de mise à jour */
         .pricing-cards.updating {
             animation: updatePulse 1s ease-in-out;
@@ -197,145 +81,6 @@
             100% { transform: scale(1); }
         }
         
-        /* Bouton d'ajout de tarif */
-        .add-tarif-container {
-            text-align: center;
-            margin-top: 2rem;
-        }
-        
-        .add-tarif-btn {
-            background: linear-gradient(45deg, #60a5fa, #3b82f6);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .add-tarif-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(96, 165, 250, 0.4);
-        }
-        
-        /* Modal d'ajout de tarif */
-        .add-tarif-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-        
-        .add-tarif-modal.show {
-            display: flex;
-        }
-        
-        .add-tarif-modal-content {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .add-tarif-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .add-tarif-modal-header h3 {
-            color: #60a5fa;
-            margin: 0;
-        }
-        
-        .close-add-modal {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-        
-        .close-add-modal:hover {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-        }
-        
-        .add-tarif-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .form-group label {
-            color: #cbd5e1;
-            font-weight: 500;
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 0.75rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #60a5fa;
-            box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        
-        .add-tarif-submit {
-            background: linear-gradient(45deg, #10b981, #059669);
-            color: white;
-            border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-        
-        .add-tarif-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-        }
-        
         /* Responsive */
         @media (max-width: 768px) {
             .service-content, .forfait-content {
@@ -343,20 +88,8 @@
                 gap: 0.5rem;
             }
             
-            .service-actions, .forfait-actions {
-                position: static;
-                opacity: 1;
-                justify-content: center;
-                margin-top: 1rem;
-            }
-            
             .forfait-description {
                 grid-column: 1;
-            }
-            
-            .add-tarif-modal-content {
-                margin: 1rem;
-                padding: 1.5rem;
             }
         }
     </style>
@@ -873,8 +606,7 @@
                             </div>
                         </div>
                         
-                        <!-- Bouton d'ajout de nouveau tarif -->
-                        <div id="add-tarif-container" class="add-tarif-container"></div>
+
                         
 
                     </div>
@@ -1389,18 +1121,9 @@
                 forfaitsContainer.innerHTML = renderForfaitsList(tarifs.forfaits);
             }
             
-            // Ajouter le bouton d'ajout de nouveau tarif
-            const addTarifContainer = document.getElementById('add-tarif-container');
-            if (addTarifContainer) {
-                addTarifContainer.innerHTML = `
-                    <button class="add-tarif-btn" onclick="showAddTarifModal()">
-                        <i class="fas fa-plus"></i> Ajouter un nouveau tarif
-                    </button>
-                `;
-            }
         }
         
-        // Rendre la liste des services par catégorie avec édition temps réel
+        // Rendre la liste des services par catégorie (affichage uniquement)
         function renderServicesList(services, categorie) {
             const filteredServices = Object.entries(services).filter(([id, service]) => 
                 service.categorie === categorie
@@ -1411,53 +1134,31 @@
             }
             
             return filteredServices.map(([id, service]) => `
-                <div class="service-item editable" data-categorie="services" data-id="${id}">
+                <div class="service-item">
                     <div class="service-content">
-                        <div class="service-name editable-text" data-field="nom" contenteditable="true">${service.nom}</div>
-                        <div class="service-price editable-number" data-field="prix" contenteditable="true">${service.prix}</div>
+                        <div class="service-name">${service.nom}</div>
+                        <div class="service-price">${service.prix}</div>
                         <div class="service-currency">${service.devise}</div>
-                        <div class="service-duration editable-text" data-field="duree" contenteditable="true">${service.duree}</div>
-                    </div>
-                    <div class="service-actions">
-                        <button class="save-btn" onclick="saveTarifChanges('services', '${id}')" style="display: none;">
-                            <i class="fas fa-save"></i>
-                        </button>
-                        <button class="cancel-btn" onclick="cancelTarifChanges('services', '${id}')" style="display: none;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <button class="delete-btn" onclick="deleteTarif('services', '${id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div class="service-duration">${service.duree}</div>
                     </div>
                 </div>
             `).join('');
         }
         
-        // Rendre la liste des forfaits avec édition temps réel
+        // Rendre la liste des forfaits (affichage uniquement)
         function renderForfaitsList(forfaits) {
             if (Object.keys(forfaits).length === 0) {
                 return '<p class="no-services">Aucun forfait disponible</p>';
             }
             
             return Object.entries(forfaits).map(([id, forfait]) => `
-                <div class="forfait-item editable" data-categorie="forfaits" data-id="${id}">
+                <div class="forfait-item">
                     <div class="forfait-content">
-                        <div class="forfait-name editable-text" data-field="nom" contenteditable="true">${forfait.nom}</div>
-                        <div class="forfait-price editable-number" data-field="prix" contenteditable="true">${forfait.prix}</div>
+                        <div class="forfait-name">${forfait.nom}</div>
+                        <div class="forfait-price">${forfait.prix}</div>
                         <div class="forfait-currency">${forfait.devise}</div>
-                        <div class="forfait-reduction editable-number" data-field="reduction" contenteditable="true">${forfait.reduction}% de réduction</div>
-                        <div class="forfait-description editable-text" data-field="description" contenteditable="true">${forfait.description}</div>
-                    </div>
-                    <div class="forfait-actions">
-                        <button class="save-btn" onclick="saveTarifChanges('forfaits', '${id}')" style="display: none;">
-                            <i class="fas fa-save"></i>
-                        </button>
-                        <button class="cancel-btn" onclick="cancelTarifChanges('forfaits', '${id}')" style="display: none;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <button class="delete-btn" onclick="deleteTarif('forfaits', '${id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div class="forfait-reduction">${forfait.reduction}% de réduction</div>
+                        <div class="forfait-description">${forfait.description}</div>
                     </div>
                 </div>
             `).join('');
@@ -1501,157 +1202,12 @@
             }
         }
         
-        // ========================================
-        // FONCTIONS D'ÉDITION TEMPS RÉEL DES TARIFS
-        // ========================================
-        
-        // Sauvegarder les changements d'un tarif
-        async function saveTarifChanges(categorie, id) {
-            try {
-                const tarifElement = document.querySelector(`[data-categorie="${categorie}"][data-id="${id}"]`);
-                if (!tarifElement) return;
-                
-                // Récupérer les nouvelles valeurs
-                const newData = {};
-                const editableFields = tarifElement.querySelectorAll('[data-field]');
-                
-                editableFields.forEach(field => {
-                    const fieldName = field.getAttribute('data-field');
-                    let value = field.textContent.trim();
-                    
-                    // Convertir les nombres
-                    if (field.classList.contains('editable-number')) {
-                        value = parseFloat(value) || 0;
-                    }
-                    
-                    newData[fieldName] = value;
-                });
-                
-                // Sauvegarder via tarifsConfig
-                if (window.tarifsConfig) {
-                    await window.tarifsConfig.updateTarif(categorie, id, newData);
-                    
-                    // Afficher confirmation
-                    showSaveConfirmation('Tarif mis à jour avec succès !');
-                    
-                    // Masquer les boutons de sauvegarde
-                    hideSaveButtons(tarifElement);
-                }
-                
-            } catch (error) {
-                console.error('❌ Erreur sauvegarde tarif:', error);
-                showSaveConfirmation('Erreur lors de la sauvegarde', 'error');
-            }
-        }
-        
-        // Annuler les changements d'un tarif
-        function cancelTarifChanges(categorie, id) {
-            const tarifElement = document.querySelector(`[data-categorie="${categorie}"][data-id="${id}"]`);
-            if (!tarifElement) return;
-            
-            // Recharger les données originales
-            if (window.tarifsConfig) {
-                const tarifs = window.tarifsConfig.getAllTarifs();
-                const tarif = tarifs[categorie][id];
-                
-                if (tarif) {
-                    const editableFields = tarifElement.querySelectorAll('[data-field]');
-                    editableFields.forEach(field => {
-                        const fieldName = field.getAttribute('data-field');
-                        field.textContent = tarif[fieldName];
-                    });
-                }
-            }
-            
-            // Masquer les boutons de sauvegarde
-            hideSaveButtons(tarifElement);
-        }
-        
-        // Supprimer un tarif
-        async function deleteTarif(categorie, id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce tarif ?')) {
-                try {
-                    if (window.tarifsConfig) {
-                        await window.tarifsConfig.removeTarif(categorie, id);
-                        showSaveConfirmation('Tarif supprimé avec succès !');
-                        
-                        // Recharger l'affichage
-                        renderTarifsDisplay();
-                    }
-                } catch (error) {
-                    console.error('❌ Erreur suppression tarif:', error);
-                    showSaveConfirmation('Erreur lors de la suppression', 'error');
-                }
-            }
-        }
-        
-        // Afficher les boutons de sauvegarde
-        function showSaveButtons(tarifElement) {
-            const saveBtn = tarifElement.querySelector('.save-btn');
-            const cancelBtn = tarifElement.querySelector('.cancel-btn');
-            
-            if (saveBtn) saveBtn.style.display = 'inline-block';
-            if (cancelBtn) cancelBtn.style.display = 'inline-block';
-        }
-        
-        // Masquer les boutons de sauvegarde
-        function hideSaveButtons(tarifElement) {
-            const saveBtn = tarifElement.querySelector('.save-btn');
-            const cancelBtn = tarifElement.querySelector('.cancel-btn');
-            
-            if (saveBtn) saveBtn.style.display = 'none';
-            if (cancelBtn) cancelBtn.style.display = 'none';
-        }
-        
-        // Afficher une confirmation de sauvegarde
-        function showSaveConfirmation(message, type = 'success') {
-            const confirmation = document.createElement('div');
-            confirmation.className = `save-confirmation ${type}`;
-            confirmation.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                ${message}
-            `;
-            
-            document.body.appendChild(confirmation);
-            
-            // Animation d'apparition
-            setTimeout(() => confirmation.classList.add('show'), 100);
-            
-            // Supprimer après 3 secondes
-            setTimeout(() => {
-                confirmation.classList.remove('show');
-                setTimeout(() => confirmation.remove(), 300);
-            }, 3000);
-        }
-        
-        // Configurer les événements d'édition
-        function setupEditEvents() {
-            // Écouter les clics sur les champs éditables
-            document.addEventListener('click', (e) => {
-                if (e.target.classList.contains('editable-text') || e.target.classList.contains('editable-number')) {
-                    const tarifElement = e.target.closest('.editable');
-                    if (tarifElement) {
-                        showSaveButtons(tarifElement);
-                    }
-                }
-            });
-            
-            // Écouter les changements de contenu
-            document.addEventListener('input', (e) => {
-                if (e.target.classList.contains('editable-text') || e.target.classList.contains('editable-number')) {
-                    const tarifElement = e.target.closest('.editable');
-                    if (tarifElement) {
-                        showSaveButtons(tarifElement);
-                    }
-                }
-            });
-        }
+
         
         // Initialiser l'affichage des tarifs
         setupTarifsDisplayEventListeners();
         
-        // Configurer les événements d'édition
-        setupEditEvents();
+
         
         // Charger les scripts d'affichage des tarifs
         loadTarifsDisplayScripts();
@@ -1714,192 +1270,9 @@
             }, 2000);
         }
         
-        // ========================================
-        // FONCTIONS POUR LE MODAL D'AJOUT DE TARIF
-        // ========================================
-        
-        // Afficher le modal d'ajout de tarif
-        function showAddTarifModal() {
-            const modal = document.getElementById('addTarifModal');
-            if (modal) {
-                modal.classList.add('show');
-                setupModalFields();
-            }
-        }
-        
-        // Fermer le modal d'ajout de tarif
-        function closeAddTarifModal() {
-            const modal = document.getElementById('addTarifModal');
-            if (modal) {
-                modal.classList.remove('show');
-                document.getElementById('addTarifForm').reset();
-            }
-        }
-        
-        // Configurer les champs du modal selon le type
-        function setupModalFields() {
-            const tarifType = document.getElementById('tarifType');
-            const serviceFields = document.getElementById('serviceFields');
-            const serviceFields2 = document.getElementById('serviceFields2');
-            const forfaitFields = document.getElementById('forfaitFields');
-            
-            tarifType.addEventListener('change', () => {
-                if (tarifType.value === 'services') {
-                    serviceFields.style.display = 'block';
-                    serviceFields2.style.display = 'block';
-                    forfaitFields.style.display = 'none';
-                } else if (tarifType.value === 'forfaits') {
-                    serviceFields.style.display = 'none';
-                    serviceFields2.style.display = 'none';
-                    forfaitFields.style.display = 'block';
-                } else {
-                    serviceFields.style.display = 'none';
-                    serviceFields2.style.display = 'none';
-                    forfaitFields.style.display = 'none';
-                }
-            });
-        }
-        
-        // Gérer la soumission du formulaire d'ajout
-        document.addEventListener('DOMContentLoaded', () => {
-            const addTarifForm = document.getElementById('addTarifForm');
-            if (addTarifForm) {
-                addTarifForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    const formData = new FormData(addTarifForm);
-                    const tarifType = formData.get('tarifType');
-                    
-                    if (tarifType === 'services') {
-                        await addNewService(formData);
-                    } else if (tarifType === 'forfaits') {
-                        await addNewForfait(formData);
-                    }
-                });
-            }
-        });
-        
-        // Ajouter un nouveau service
-        async function addNewService(formData) {
-            try {
-                const newService = {
-                    nom: formData.get('tarifName'),
-                    description: formData.get('tarifDescription'),
-                    prix: parseFloat(formData.get('tarifPrice')),
-                    devise: formData.get('tarifCurrency'),
-                    categorie: formData.get('tarifCategory'),
-                    duree: formData.get('tarifDuration')
-                };
-                
-                // Générer un ID unique
-                const serviceId = 'service-' + Date.now();
-                
-                if (window.tarifsConfig) {
-                    await window.tarifsConfig.addTarif('services', serviceId, newService);
-                    showSaveConfirmation('Nouveau service ajouté avec succès !');
-                    closeAddTarifModal();
-                    renderTarifsDisplay();
-                }
-                
-            } catch (error) {
-                console.error('❌ Erreur ajout service:', error);
-                showSaveConfirmation('Erreur lors de l\'ajout du service', 'error');
-            }
-        }
-        
-        // Ajouter un nouveau forfait
-        async function addNewForfait(formData) {
-            try {
-                const newForfait = {
-                    nom: formData.get('tarifName'),
-                    description: formData.get('tarifDescription'),
-                    prix: parseFloat(formData.get('tarifPrice')),
-                    devise: formData.get('tarifCurrency'),
-                    reduction: parseFloat(formData.get('tarifReduction')) || 0,
-                    services: [] // Liste des services inclus dans le forfait
-                };
-                
-                // Générer un ID unique
-                const forfaitId = 'forfait-' + Date.now();
-                
-                if (window.tarifsConfig) {
-                    await window.tarifsConfig.addTarif('forfaits', forfaitId, newForfait);
-                    showSaveConfirmation('Nouveau forfait ajouté avec succès !');
-                    closeAddTarifModal();
-                    renderTarifsDisplay();
-                }
-                
-            } catch (error) {
-                console.error('❌ Erreur ajout forfait:', error);
-                showSaveConfirmation('Erreur lors de l\'ajout du forfait', 'error');
-            }
-        }
+
     </script>
     
-    <!-- Modal d'ajout de nouveau tarif -->
-    <div class="add-tarif-modal" id="addTarifModal">
-        <div class="add-tarif-modal-content">
-            <div class="add-tarif-modal-header">
-                <h3><i class="fas fa-plus"></i> Ajouter un nouveau tarif</h3>
-                <button class="close-add-modal" onclick="closeAddTarifModal()">&times;</button>
-            </div>
-            <form class="add-tarif-form" id="addTarifForm">
-                <div class="form-group">
-                    <label for="tarifType">Type de tarif</label>
-                    <select id="tarifType" name="tarifType" required>
-                        <option value="">Sélectionnez un type</option>
-                        <option value="services">Service</option>
-                        <option value="forfaits">Forfait</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="tarifName">Nom</label>
-                    <input type="text" id="tarifName" name="tarifName" required placeholder="Ex: Logo Simple">
-                </div>
-                
-                <div class="form-group">
-                    <label for="tarifDescription">Description</label>
-                    <textarea id="tarifDescription" name="tarifDescription" required placeholder="Description du service ou forfait"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="tarifPrice">Prix</label>
-                    <input type="number" id="tarifPrice" name="tarifPrice" required placeholder="0" min="0" step="0.01">
-                </div>
-                
-                <div class="form-group">
-                    <label for="tarifCurrency">Devise</label>
-                    <select id="tarifCurrency" name="tarifCurrency" required>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="USD">USD ($)</option>
-                        <option value="GBP">GBP (£)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group" id="serviceFields" style="display: none;">
-                    <label for="tarifCategory">Catégorie</label>
-                    <select id="tarifCategory" name="tarifCategory">
-                        <option value="graphisme">Graphisme</option>
-                        <option value="developpement">Développement</option>
-                    </select>
-                </div>
-                
-                <div class="form-group" id="serviceFields2" style="display: none;">
-                    <label for="tarifDuration">Durée</label>
-                    <input type="text" id="tarifDuration" name="tarifDuration" placeholder="Ex: 1 semaine">
-                </div>
-                
-                <div class="form-group" id="forfaitFields" style="display: none;">
-                    <label for="tarifReduction">Réduction (%)</label>
-                    <input type="number" id="tarifReduction" name="tarifReduction" placeholder="0" min="0" max="100">
-                </div>
-                
-                <button type="submit" class="add-tarif-submit">
-                    <i class="fas fa-save"></i> Ajouter le tarif
-                </button>
-            </form>
-        </div>
-    </div>
+
 </body>
 </html> 

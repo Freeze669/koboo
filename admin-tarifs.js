@@ -19,7 +19,7 @@ class AdminTarifs {
     }
     
     /**
-     * Rendu du panel des tarifs
+     * Rendu du panel des tarifs avec édition temps réel
      */
     renderTarifsPanel() {
         const container = document.getElementById('tarifs-management');
@@ -27,7 +27,7 @@ class AdminTarifs {
         
         container.innerHTML = `
             <div class="tarifs-header">
-                <h3><i class="fas fa-euro-sign"></i> Gestion des Tarifs</h3>
+                <h3><i class="fas fa-euro-sign"></i> Gestion des Tarifs - Édition Temps Réel</h3>
                 <div class="tarifs-actions">
                     <button class="btn btn-primary" onclick="adminTarifs.exportConfig()">
                         <i class="fas fa-download"></i> Exporter
@@ -38,31 +38,34 @@ class AdminTarifs {
                     <button class="btn btn-success" onclick="adminTarifs.addNewService()">
                         <i class="fas fa-plus"></i> Nouveau Service
                     </button>
+                    <button class="btn btn-info" onclick="adminTarifs.addNewForfait()">
+                        <i class="fas fa-box"></i> Nouveau Forfait
+                    </button>
                 </div>
             </div>
             
             <div class="tarifs-content">
                 <div class="tarifs-section">
-                    <h4><i class="fas fa-cogs"></i> Services</h4>
+                    <h4><i class="fas fa-cogs"></i> Services - Édition Temps Réel</h4>
                     <div id="services-list" class="tarifs-list"></div>
                 </div>
                 
                 <div class="tarifs-section">
-                    <h4><i class="fas fa-box"></i> Forfaits</h4>
+                    <h4><i class="fas fa-box"></i> Forfaits - Édition Temps Réel</h4>
                     <div id="forfaits-list" class="tarifs-list"></div>
                 </div>
                 
                 <div class="tarifs-section">
-                    <h4><i class="fas fa-puzzle-piece"></i> Options Additionnelles</h4>
+                    <h4><i class="fas fa-puzzle-piece"></i> Options Additionnelles - Édition Temps Réel</h4>
                     <div id="options-list" class="tarifs-list"></div>
                 </div>
             </div>
             
-            <!-- Modal d'édition -->
+            <!-- Modal d'édition temps réel -->
             <div id="tarif-edit-modal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3 id="modal-title">Éditer le Tarif</h3>
+                        <h3 id="modal-title">Éditer le Tarif - Temps Réel</h3>
                         <span class="close" onclick="adminTarifs.closeModal()">&times;</span>
                     </div>
                     <div class="modal-body">
@@ -144,7 +147,7 @@ class AdminTarifs {
     }
     
     /**
-     * Rendu de la liste des services
+     * Rendu de la liste des services avec édition temps réel
      */
     renderServicesList() {
         const container = document.getElementById('services-list');
@@ -155,18 +158,34 @@ class AdminTarifs {
         
         Object.entries(services).forEach(([id, service]) => {
             html += `
-                <div class="tarif-item" data-id="${id}" data-type="services">
+                <div class="tarif-item editable" data-id="${id}" data-type="services">
                     <div class="tarif-info">
-                        <h5>${service.nom}</h5>
-                        <p>${service.description}</p>
+                        <div class="editable-field" data-field="nom" contenteditable="true">
+                            <h5>${service.nom}</h5>
+                        </div>
+                        <div class="editable-field" data-field="description" contenteditable="true">
+                            <p>${service.description}</p>
+                        </div>
                         <div class="tarif-details">
-                            <span class="price">${service.prix} ${service.devise}</span>
-                            <span class="duration">${service.duree}</span>
-                            <span class="category">${service.categorie}</span>
+                            <div class="editable-field" data-field="prix" contenteditable="true">
+                                <span class="price">${service.prix} ${service.devise}</span>
+                            </div>
+                            <div class="editable-field" data-field="duree" contenteditable="true">
+                                <span class="duration">${service.duree}</span>
+                            </div>
+                            <div class="editable-field" data-field="categorie" contenteditable="true">
+                                <span class="category">${service.categorie}</span>
+                            </div>
                         </div>
                     </div>
                     <div class="tarif-actions">
-                        <button class="btn btn-sm btn-primary" onclick="adminTarifs.editTarif('services', '${id}')">
+                        <button class="btn btn-sm btn-success save-btn" onclick="adminTarifs.saveTarifChanges('services', '${id}')" style="display: none;">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning cancel-btn" onclick="adminTarifs.cancelTarifChanges('services', '${id}')" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="btn btn-sm btn-primary edit-btn" onclick="adminTarifs.enableEditing('services', '${id}')">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn btn-sm btn-danger" onclick="adminTarifs.deleteTarif('services', '${id}')">
@@ -178,10 +197,13 @@ class AdminTarifs {
         });
         
         container.innerHTML = html || '<p class="no-tarifs">Aucun service configuré</p>';
+        
+        // Ajouter les événements d'édition temps réel
+        this.setupRealtimeEditing();
     }
     
     /**
-     * Rendu de la liste des forfaits
+     * Rendu de la liste des forfaits avec édition temps réel
      */
     renderForfaitsList() {
         const container = document.getElementById('forfaits-list');
@@ -193,13 +215,21 @@ class AdminTarifs {
         Object.entries(forfaits).forEach(([id, forfait]) => {
             const prixCalcule = this.tarifsConfig.calculateForfaitPrix(id);
             html += `
-                <div class="tarif-item" data-id="${id}" data-type="forfaits">
+                <div class="tarif-item editable" data-id="${id}" data-type="forfaits">
                     <div class="tarif-info">
-                        <h5>${forfait.nom}</h5>
-                        <p>${forfait.description}</p>
+                        <div class="editable-field" data-field="nom" contenteditable="true">
+                            <h5>${forfait.nom}</h5>
+                        </div>
+                        <div class="editable-field" data-field="description" contenteditable="true">
+                            <p>${forfait.description}</p>
+                        </div>
                         <div class="tarif-details">
-                            <span class="price">${forfait.prix} ${forfait.devise}</span>
-                            <span class="reduction">-${forfait.reduction}%</span>
+                            <div class="editable-field" data-field="prix" contenteditable="true">
+                                <span class="price">${forfait.prix} ${forfait.devise}</span>
+                            </div>
+                            <div class="editable-field" data-field="reduction" contenteditable="true">
+                                <span class="reduction">-${forfait.reduction}%</span>
+                            </div>
                             <span class="calculated-price">Prix calculé: ${prixCalcule.toFixed(2)} ${forfait.devise}</span>
                         </div>
                         <div class="forfait-services">
@@ -207,7 +237,13 @@ class AdminTarifs {
                         </div>
                     </div>
                     <div class="tarif-actions">
-                        <button class="btn btn-sm btn-primary" onclick="adminTarifs.editTarif('forfaits', '${id}')">
+                        <button class="btn btn-sm btn-success save-btn" onclick="adminTarifs.saveTarifChanges('forfaits', '${id}')" style="display: none;">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning cancel-btn" onclick="adminTarifs.cancelTarifChanges('forfaits', '${id}')" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="btn btn-sm btn-primary edit-btn" onclick="adminTarifs.enableEditing('forfaits', '${id}')">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn btn-sm btn-danger" onclick="adminTarifs.deleteTarif('forfaits', '${id}')">
@@ -219,6 +255,9 @@ class AdminTarifs {
         });
         
         container.innerHTML = html || '<p class="no-tarifs">Aucun forfait configuré</p>';
+        
+        // Ajouter les événements d'édition temps réel
+        this.setupRealtimeEditing();
     }
     
     /**
@@ -507,6 +546,197 @@ class AdminTarifs {
                 this.closeImportModal();
             }
         });
+    }
+    
+    /**
+     * Configuration de l'édition temps réel
+     */
+    setupRealtimeEditing() {
+        // Écouter les clics sur les champs éditables
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.editable-field')) {
+                const tarifItem = e.target.closest('.tarif-item');
+                if (tarifItem) {
+                    this.enableEditing(
+                        tarifItem.dataset.type,
+                        tarifItem.dataset.id
+                    );
+                }
+            }
+        });
+        
+        // Écouter les changements de contenu
+        document.addEventListener('input', (e) => {
+            if (e.target.closest('.editable-field')) {
+                const tarifItem = e.target.closest('.tarif-item');
+                if (tarifItem) {
+                    this.showSaveButtons(tarifItem);
+                }
+            }
+        });
+    }
+    
+    /**
+     * Activer l'édition d'un tarif
+     */
+    enableEditing(type, id) {
+        const tarifItem = document.querySelector(`[data-type="${type}"][data-id="${id}"]`);
+        if (!tarifItem) return;
+        
+        // Sauvegarder les valeurs originales
+        tarifItem.dataset.originalValues = JSON.stringify({
+            nom: tarifItem.querySelector('[data-field="nom"] h5').textContent,
+            description: tarifItem.querySelector('[data-field="description"] p').textContent,
+            prix: tarifItem.querySelector('[data-field="prix"] .price').textContent.split(' ')[0],
+            duree: tarifItem.querySelector('[data-field="duree"] .duration')?.textContent || '',
+            reduction: tarifItem.querySelector('[data-field="reduction"] .reduction')?.textContent.replace('-', '').replace('%', '') || '',
+            categorie: tarifItem.querySelector('[data-field="categorie"] .category')?.textContent || ''
+        });
+        
+        // Afficher les boutons de sauvegarde
+        this.showSaveButtons(tarifItem);
+        
+        // Ajouter la classe d'édition
+        tarifItem.classList.add('editing');
+    }
+    
+    /**
+     * Afficher les boutons de sauvegarde
+     */
+    showSaveButtons(tarifItem) {
+        const saveBtn = tarifItem.querySelector('.save-btn');
+        const cancelBtn = tarifItem.querySelector('.cancel-btn');
+        const editBtn = tarifItem.querySelector('.edit-btn');
+        
+        if (saveBtn) saveBtn.style.display = 'inline-block';
+        if (cancelBtn) cancelBtn.style.display = 'inline-block';
+        if (editBtn) editBtn.style.display = 'none';
+    }
+    
+    /**
+     * Masquer les boutons de sauvegarde
+     */
+    hideSaveButtons(tarifItem) {
+        const saveBtn = tarifItem.querySelector('.save-btn');
+        const cancelBtn = tarifItem.querySelector('.cancel-btn');
+        const editBtn = tarifItem.querySelector('.edit-btn');
+        
+        if (saveBtn) saveBtn.style.display = 'none';
+        if (cancelBtn) cancelBtn.style.display = 'none';
+        if (editBtn) editBtn.style.display = 'inline-block';
+    }
+    
+    /**
+     * Sauvegarder les changements d'un tarif
+     */
+    async saveTarifChanges(type, id) {
+        try {
+            const tarifItem = document.querySelector(`[data-type="${type}"][data-id="${id}"]`);
+            if (!tarifItem) return;
+            
+            // Récupérer les nouvelles valeurs
+            const newData = {};
+            const editableFields = tarifItem.querySelectorAll('[data-field]');
+            
+            editableFields.forEach(field => {
+                const fieldName = field.getAttribute('data-field');
+                let value = field.textContent.trim();
+                
+                // Convertir les nombres
+                if (fieldName === 'prix') {
+                    value = parseFloat(value) || 0;
+                } else if (fieldName === 'reduction') {
+                    value = parseFloat(value) || 0;
+                }
+                
+                newData[fieldName] = value;
+            });
+            
+            // Sauvegarder via tarifsConfig
+            if (this.tarifsConfig) {
+                await this.tarifsConfig.updateTarif(type, id, newData);
+                
+                // Afficher confirmation
+                this.showNotification('Tarif mis à jour avec succès !', 'success');
+                
+                // Masquer les boutons de sauvegarde
+                this.hideSaveButtons(tarifItem);
+                
+                // Retirer la classe d'édition
+                tarifItem.classList.remove('editing');
+                
+                // Recharger l'affichage
+                this.renderTarifsLists();
+            }
+            
+        } catch (error) {
+            console.error('❌ Erreur sauvegarde tarif:', error);
+            this.showNotification('Erreur lors de la sauvegarde', 'error');
+        }
+    }
+    
+    /**
+     * Annuler les changements d'un tarif
+     */
+    cancelTarifChanges(type, id) {
+        const tarifItem = document.querySelector(`[data-type="${type}"][data-id="${id}"]`);
+        if (!tarifItem) return;
+        
+        // Recharger les valeurs originales
+        const originalValues = JSON.parse(tarifItem.dataset.originalValues || '{}');
+        
+        if (originalValues.nom) {
+            tarifItem.querySelector('[data-field="nom"] h5').textContent = originalValues.nom;
+        }
+        if (originalValues.description) {
+            tarifItem.querySelector('[data-field="description"] p').textContent = originalValues.description;
+        }
+        if (originalValues.prix) {
+            const priceSpan = tarifItem.querySelector('[data-field="prix"] .price');
+            const devise = priceSpan.textContent.split(' ')[1] || 'EUR';
+            priceSpan.textContent = `${originalValues.prix} ${devise}`;
+        }
+        if (originalValues.duree) {
+            const dureeSpan = tarifItem.querySelector('[data-field="duree"] .duration');
+            if (dureeSpan) dureeSpan.textContent = originalValues.duree;
+        }
+        if (originalValues.reduction) {
+            const reductionSpan = tarifItem.querySelector('[data-field="reduction"] .reduction');
+            if (reductionSpan) reductionSpan.textContent = `-${originalValues.reduction}%`;
+        }
+        if (originalValues.categorie) {
+            const categorieSpan = tarifItem.querySelector('[data-field="categorie"] .category');
+            if (categorieSpan) categorieSpan.textContent = originalValues.categorie;
+        }
+        
+        // Masquer les boutons de sauvegarde
+        this.hideSaveButtons(tarifItem);
+        
+        // Retirer la classe d'édition
+        tarifItem.classList.remove('editing');
+    }
+    
+    /**
+     * Ajouter un nouveau forfait
+     */
+    addNewForfait() {
+        // Ouvrir le modal d'édition avec un nouveau forfait
+        this.currentEditing = { type: 'forfaits', id: null };
+        
+        // Remplir le formulaire avec des valeurs par défaut
+        document.getElementById('tarif-nom').value = '';
+        document.getElementById('tarif-description').value = '';
+        document.getElementById('tarif-prix').value = '';
+        document.getElementById('tarif-devise').value = 'EUR';
+        document.getElementById('tarif-duree').value = '';
+        document.getElementById('tarif-categorie').value = '';
+        
+        // Ajuster le formulaire pour les forfaits
+        this.adjustFormForType('forfaits');
+        
+        // Afficher le modal
+        document.getElementById('tarif-edit-modal').style.display = 'block';
+        document.getElementById('modal-title').textContent = 'Nouveau Forfait';
     }
 }
 

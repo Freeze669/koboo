@@ -495,3 +495,115 @@
 .tarifs-list::-webkit-scrollbar-thumb:hover {
     background: rgba(59, 130, 246, 0.7);
 }
+
+/* ========================================
+   STYLES POUR L'ÉDITION TEMPS RÉEL
+   ======================================== */
+
+/* Champs éditables */
+.editable-field {
+    cursor: text;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    position: relative;
+}
+
+.editable-field:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.editable-field:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #60a5fa;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+}
+
+.editable-field h5,
+.editable-field p,
+.editable-field span {
+    margin: 0;
+    padding: 0;
+}
+
+/* État d'édition */
+.tarif-item.editing {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+}
+
+.tarif-item.editing .editable-field {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Boutons d'action temps réel */
+.tarif-actions .save-btn,
+.tarif-actions .cancel-btn {
+    display: none;
+}
+
+.tarif-actions .save-btn {
+    background: linear-gradient(45deg, #10b981, #059669);
+    color: white;
+    border: none;
+}
+
+.tarif-actions .save-btn:hover {
+    background: linear-gradient(45deg, #059669, #047857);
+    transform: translateY(-1px);
+}
+
+.tarif-actions .cancel-btn {
+    background: linear-gradient(45deg, #f59e0b, #d97706);
+    color: white;
+    border: none;
+}
+
+.tarif-actions .cancel-btn:hover {
+    background: linear-gradient(45deg, #d97706, #b45309);
+    transform: translateY(-1px);
+}
+
+/* Indicateur d'édition */
+.tarif-item.editing::before {
+    content: '✏️';
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* Animation de sauvegarde */
+.tarif-item.saving {
+    animation: savePulse 0.6s ease-in-out;
+}
+
+@keyframes savePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); background: rgba(16, 185, 129, 0.2); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive pour l'édition temps réel */
+@media (max-width: 768px) {
+    .editable-field {
+        padding: 0.5rem;
+        margin: 0.25rem 0;
+    }
+    
+    .tarif-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .tarif-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
