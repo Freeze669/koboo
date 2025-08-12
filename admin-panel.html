@@ -8,6 +8,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <!-- Styles des tarifs -->
+    <link rel="stylesheet" href="admin-tarifs.css">
+    
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -30,6 +33,18 @@
     
     <!-- Gestionnaire de statistiques -->
     <script src="admin-stats.js"></script>
+    
+    <!-- Configuration des tarifs -->
+    <script src="tarifs-config.js"></script>
+    
+    <!-- Gestion des tarifs -->
+    <script src="admin-tarifs.js"></script>
+    
+    <!-- Système de notifications groupées -->
+    <script src="notifications-grouped.js"></script>
+    
+    <!-- Configuration Discord -->
+    <script src="discord-webhook-config.js"></script>
     
     <style>
         * {
@@ -1233,6 +1248,11 @@
             </div>
         </div>
 
+        <!-- Gestion des Tarifs -->
+        <div class="tarifs-management" id="tarifs-management">
+            <!-- Le contenu sera généré dynamiquement par admin-tarifs.js -->
+        </div>
+
 
         
         <!-- Statut d'Optimisation des Animations -->
@@ -1309,6 +1329,12 @@
             
             // Initialiser les graphiques
             initializeCharts();
+            
+            // Initialiser le système de notifications groupées
+            initializeNotificationsGrouped();
+            
+            // Initialiser la gestion des tarifs
+            initializeTarifsManagement();
             
             console.log('✅ Panel admin initialisé avec succès');
         }
@@ -3182,6 +3208,58 @@
                 }
             } catch (error) {
                 console.error('❌ Erreur mise à jour graphiques:', error);
+            }
+        }
+
+        /**
+         * Initialiser le système de notifications groupées
+         */
+        function initializeNotificationsGrouped() {
+            try {
+                console.log('🚀 Initialisation du système de notifications groupées...');
+                
+                // Utiliser la configuration Discord
+                if (window.isWebhookConfigured && window.isWebhookConfigured()) {
+                    const webhookUrl = window.getWebhookUrl();
+                    window.notificationsGrouped = new NotificationsGrouped(webhookUrl);
+                    console.log('✅ Système de notifications groupées initialisé');
+                    
+                    // Tester avec une notification
+                    setTimeout(() => {
+                        if (window.notificationsGrouped) {
+                            window.notificationsGrouped.addNotification('admin_access', {
+                                username: 'Admin',
+                                ip: '127.0.0.1',
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                    }, 2000);
+                } else {
+                    console.warn('⚠️ Webhook Discord non configuré, notifications désactivées');
+                    console.log('💡 Configurez votre webhook Discord dans discord-webhook-config.js');
+                }
+            } catch (error) {
+                console.error('❌ Erreur initialisation notifications groupées:', error);
+            }
+        }
+
+        /**
+         * Initialiser la gestion des tarifs
+         */
+        function initializeTarifsManagement() {
+            try {
+                console.log('🚀 Initialisation de la gestion des tarifs...');
+                
+                // Attendre que tarifsConfig soit disponible
+                if (window.tarifsConfig) {
+                    window.adminTarifs = new AdminTarifs();
+                    console.log('✅ Gestion des tarifs initialisée');
+                } else {
+                    console.warn('⚠️ TarifsConfig non disponible, réessai dans 1 seconde...');
+                    setTimeout(initializeTarifsManagement, 1000);
+                }
+            } catch (error) {
+                console.error('❌ Erreur initialisation gestion tarifs:', error);
             }
         }
 

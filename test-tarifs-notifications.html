@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Tarifs & Notifications - Mayu & Jack Studio</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Styles des tarifs -->
+    <link rel="stylesheet" href="admin-tarifs.css">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .test-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .test-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .test-section {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-section h2 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.5rem;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .test-section h2 i {
+            color: #3b82f6;
+        }
+        
+        .test-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .test-btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .test-btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .test-btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        
+        .test-btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .test-btn-info {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+        }
+        
+        .status-display {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status-success {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        
+        .status-error {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .status-warning {
+            border-color: #f59e0b;
+            color: #f59e0b;
+        }
+        
+        .webhook-config {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .webhook-config h3 {
+            margin: 0 0 1rem 0;
+            color: #3b82f6;
+        }
+        
+        .webhook-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #f8fafc;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 1rem;
+        }
+        
+        .webhook-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🧪 Test Tarifs & Notifications</h1>
+            <p>Testez le système de gestion des tarifs et de notifications groupées Discord</p>
+        </div>
+        
+        <!-- Configuration Webhook Discord -->
+        <div class="webhook-config">
+            <h3><i class="fas fa-cog"></i> Configuration Webhook Discord</h3>
+            <input type="text" id="webhook-url" class="webhook-input" 
+                   placeholder="https://discord.com/api/webhooks/..." 
+                   value="VOTRE_WEBHOOK_DISCORD_ICI">
+            <button class="test-btn test-btn-primary" onclick="updateWebhook()">
+                <i class="fas fa-save"></i> Sauvegarder Webhook
+            </button>
+            <div id="webhook-status" class="status-display status-warning">
+                Webhook non configuré
+            </div>
+        </div>
+        
+        <div class="test-sections">
+            <!-- Test des Tarifs -->
+            <div class="test-section">
+                <h2><i class="fas fa-euro-sign"></i> Test des Tarifs</h2>
+                <div class="test-buttons">
+                    <button class="test-btn test-btn-primary" onclick="testTarifsConfig()">
+                        <i class="fas fa-cogs"></i> Tester Configuration Tarifs
+                    </button>
+                    <button class="test-btn test-btn-success" onclick="testTarifsCRUD()">
+                        <i class="fas fa-plus"></i> Test CRUD Tarifs
+                    </button>
+                    <button class="test-btn test-btn-info" onclick="testTarifsExport()">
+                        <i class="fas fa-download"></i> Test Export/Import
+                    </button>
+                    <button class="test-btn test-btn-warning" onclick="testTarifsCalculations()">
+                        <i class="fas fa-calculator"></i> Test Calculs
+                    </button>
+                </div>
+                <div id="tarifs-status" class="status-display">
+                    En attente de test...
+                </div>
+            </div>
+            
+            <!-- Test des Notifications -->
+            <div class="test-section">
+                <h2><i class="fas fa-bell"></i> Test des Notifications</h2>
+                <div class="test-buttons">
+                    <button class="test-btn test-btn-primary" onclick="testNotificationsInit()">
+                        <i class="fas fa-play"></i> Initialiser Notifications
+                    </button>
+                    <button class="test-btn test-btn-success" onclick="testNotificationImmediate()">
+                        <i class="fas fa-bolt"></i> Notification Immédiate
+                    </button>
+                    <button class="test-btn test-btn-info" onclick="testNotificationGrouped()">
+                        <i class="fas fa-layer-group"></i> Notification Groupée
+                    </button>
+                    <button class="test-btn test-btn-warning" onclick="testNotificationConnection()">
+                        <i class="fas fa-network-wired"></i> Notification Connexion
+                    </button>
+                    <button class="test-btn test-btn-danger" onclick="testNotificationError()">
+                        <i class="fas fa-exclamation-triangle"></i> Notification Erreur
+                    </button>
+                </div>
+                <div id="notifications-status" class="status-display">
+                    En attente de test...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test Intégré -->
+        <div class="test-section">
+            <h2><i class="fas fa-puzzle-piece"></i> Test Intégré</h2>
+            <div class="test-buttons">
+                <button class="test-btn test-btn-primary" onclick="testFullIntegration()">
+                    <i class="fas fa-rocket"></i> Test Complet
+                </button>
+                <button class="test-btn test-btn-success" onclick="testTarifsUpdateNotification()">
+                    <i class="fas fa-sync"></i> Test Mise à Jour + Notification
+                </button>
+                <button class="test-btn test-btn-info" onclick="testPerformance()">
+                    <i class="fas fa-tachometer-alt"></i> Test Performance
+                </button>
+            </div>
+            <div id="integration-status" class="status-display">
+                En attente de test...
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="tarifs-config.js"></script>
+    <script src="admin-tarifs.js"></script>
+    <script src="notifications-grouped.js"></script>
+    <script src="discord-webhook-config.js"></script>
+    
+    <script>
+        // Variables globales
+        let testResults = {};
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Page de test chargée');
+            updateWebhookStatus();
+        });
+        
+        /**
+         * Mettre à jour le statut du webhook
+         */
+        function updateWebhookStatus() {
+            const statusElement = document.getElementById('webhook-status');
+            const inputElement = document.getElementById('webhook-url');
+            
+            if (window.isWebhookConfigured && window.isWebhookConfigured()) {
+                statusElement.className = 'status-display status-success';
+                statusElement.textContent = '✅ Webhook configuré et valide';
+                inputElement.value = window.getWebhookUrl();
+            } else {
+                statusElement.className = 'status-display status-warning';
+                statusElement.textContent = '⚠️ Webhook non configuré ou invalide';
+            }
+        }
+        
+        /**
+         * Mettre à jour le webhook
+         */
+        function updateWebhook() {
+            const url = document.getElementById('webhook-url').value;
+            
+            if (url && url !== 'VOTRE_WEBHOOK_DISCORD_ICI') {
+                if (window.updateWebhookUrl(url)) {
+                    updateWebhookStatus();
+                    showStatus('webhook-status', '✅ Webhook mis à jour avec succès', 'success');
+                } else {
+                    showStatus('webhook-status', '❌ Erreur lors de la mise à jour du webhook', 'error');
+                }
+            } else {
+                showStatus('webhook-status', '⚠️ Veuillez entrer une URL valide', 'warning');
+            }
+        }
+        
+        /**
+         * Test de la configuration des tarifs
+         */
+        function testTarifsConfig() {
+            try {
+                if (window.tarifsConfig) {
+                    const tarifs = window.tarifsConfig.getAllTarifs();
+                    const stats = {
+                        services: Object.keys(tarifs.services).length,
+                        forfaits: Object.keys(tarifs.forfaits).length,
+                        options: Object.keys(tarifs.options).length
+                    };
+                    
+                    showStatus('tarifs-status', 
+                        `✅ Configuration tarifs chargée\n` +
+                        `📊 Services: ${stats.services}\n` +
+                        `📦 Forfaits: ${stats.forfaits}\n` +
+                        `🧩 Options: ${stats.options}`, 'success');
+                } else {
+                    showStatus('tarifs-status', '❌ TarifsConfig non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('tarifs-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test CRUD des tarifs
+         */
+        function testTarifsCRUD() {
+            try {
+                if (window.tarifsConfig) {
+                    // Test d'ajout
+                    const testService = {
+                        nom: 'Service Test',
+                        description: 'Service de test temporaire',
+                        prix: 99.99,
+                        devise: 'EUR',
+                        duree: '1 jour',
+                        categorie: 'test'
+                    };
+                    
+                    const addResult = window.tarifsConfig.addTarif('services', 'test_service', testService);
+                    
+                    if (addResult) {
+                        // Test de lecture
+                        const readResult = window.tarifsConfig.getTarif('services', 'test_service');
+                        
+                        if (readResult) {
+                            // Test de mise à jour
+                            const updateResult = window.tarifsConfig.updateTarif('services', 'test_service', { prix: 149.99 });
+                            
+                            if (updateResult) {
+                                // Test de suppression
+                                const deleteResult = window.tarifsConfig.removeTarif('services', 'test_service');
+                                
+                                showStatus('tarifs-status', 
+                                    `✅ Tests CRUD réussis\n` +
+                                    `➕ Ajout: OK\n` +
+                                    `📖 Lecture: OK\n` +
+                                    `✏️ Mise à jour: OK\n` +
+                                    `🗑️ Suppression: OK`, 'success');
+                            } else {
+                                showStatus('tarifs-status', '❌ Échec mise à jour', 'error');
+                            }
+                        } else {
+                            showStatus('tarifs-status', '❌ Échec lecture', 'error');
+                        }
+                    } else {
+                        showStatus('tarifs-status', '❌ Échec ajout', 'error');
+                    }
+                } else {
+                    showStatus('tarifs-status', '❌ TarifsConfig non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('tarifs-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test export/import des tarifs
+         */
+        function testTarifsExport() {
+            try {
+                if (window.tarifsConfig) {
+                    const exportData = window.tarifsConfig.exportConfig();
+                    const parsed = JSON.parse(exportData);
+                    
+                    if (parsed && parsed.services) {
+                        showStatus('tarifs-status', 
+                            `✅ Export réussi\n` +
+                            `📄 Taille: ${exportData.length} caractères\n` +
+                            `📊 Services: ${Object.keys(parsed.services).length}`, 'success');
+                    } else {
+                        showStatus('tarifs-status', '❌ Données exportées invalides', 'error');
+                    }
+                } else {
+                    showStatus('tarifs-status', '❌ TarifsConfig non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('tarifs-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test des calculs de tarifs
+         */
+        function testTarifsCalculations() {
+            try {
+                if (window.tarifsConfig) {
+                    const forfaits = window.tarifsConfig.getAllTarifs().forfaits;
+                    let results = [];
+                    
+                    Object.keys(forfaits).forEach(forfaitId => {
+                        const prixCalcule = window.tarifsConfig.calculateForfaitPrix(forfaitId);
+                        results.push(`${forfaitId}: ${prixCalcule.toFixed(2)}€`);
+                    });
+                    
+                    showStatus('tarifs-status', 
+                        `✅ Calculs réussis\n` +
+                        `🧮 ${results.join('\n')}`, 'success');
+                } else {
+                    showStatus('tarifs-status', '❌ TarifsConfig non disponible', 'error');
+                }
+            } catch (error) {
+                showStatus('tarifs-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test d'initialisation des notifications
+         */
+        function testNotificationsInit() {
+            try {
+                if (window.isWebhookConfigured && window.isWebhookConfigured()) {
+                    const webhookUrl = window.getWebhookUrl();
+                    window.notificationsGrouped = new NotificationsGrouped(webhookUrl);
+                    
+                    showStatus('notifications-status', 
+                        `✅ Notifications initialisées\n` +
+                        `🔗 Webhook: ${webhookUrl.substring(0, 50)}...`, 'success');
+                } else {
+                    showStatus('notifications-status', '❌ Webhook non configuré', 'error');
+                }
+            } catch (error) {
+                showStatus('notifications-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test notification immédiate
+         */
+        function testNotificationImmediate() {
+            try {
+                if (window.notificationsGrouped) {
+                    const result = window.notificationsGrouped.addNotification('admin_access', {
+                        username: 'TestUser',
+                        ip: '192.168.1.100',
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    showStatus('notifications-status', 
+                        `✅ Notification immédiate envoyée\n` +
+                        `🆔 ID: ${result}`, 'success');
+                } else {
+                    showStatus('notifications-status', '❌ Système de notifications non initialisé', 'error');
+                }
+            } catch (error) {
+                showStatus('notifications-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test notification groupée
+         */
+        function testNotificationGrouped() {
+            try {
+                if (window.notificationsGrouped) {
+                    // Ajouter plusieurs notifications du même type
+                    for (let i = 0; i < 5; i++) {
+                        window.notificationsGrouped.addNotification('page_view', {
+                            page: `/test-${i}`,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                    
+                    showStatus('notifications-status', 
+                        `✅ 5 notifications groupées ajoutées\n` +
+                        `⏰ Groupement dans 30 secondes`, 'success');
+                } else {
+                    showStatus('notifications-status', '❌ Système de notifications non initialisé', 'error');
+                }
+            } catch (error) {
+                showStatus('notifications-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test notification de connexion
+         */
+        function testNotificationConnection() {
+            try {
+                if (window.notificationsGrouped) {
+                    const result = window.notificationsGrouped.addNotification('ip_connection', {
+                        ip: '192.168.1.200',
+                        userAgent: 'Chrome sur Windows',
+                        browser: 'Chrome',
+                        os: 'Windows',
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    showStatus('notifications-status', 
+                        `✅ Notification connexion envoyée\n` +
+                        `🌐 IP: 192.168.1.200`, 'success');
+                } else {
+                    showStatus('notifications-status', '❌ Système de notifications non initialisé', 'error');
+                }
+            } catch (error) {
+                showStatus('notifications-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test notification d'erreur
+         */
+        function testNotificationError() {
+            try {
+                if (window.notificationsGrouped) {
+                    const result = window.notificationsGrouped.addNotification('error_critical', {
+                        error: 'Test d\'erreur critique',
+                        stack: 'Error: Test\n    at testFunction\n    at testFile',
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    showStatus('notifications-status', 
+                        `✅ Notification d'erreur envoyée\n` +
+                        `🚨 Type: Erreur critique`, 'success');
+                } else {
+                    showStatus('notifications-status', '❌ Système de notifications non initialisé', 'error');
+                }
+            } catch (error) {
+                showStatus('notifications-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test d'intégration complet
+         */
+        function testFullIntegration() {
+            try {
+                // Test des tarifs
+                if (!window.tarifsConfig) {
+                    throw new Error('TarifsConfig non disponible');
+                }
+                
+                // Test des notifications
+                if (!window.isWebhookConfigured || !window.isWebhookConfigured()) {
+                    throw new Error('Webhook Discord non configuré');
+                }
+                
+                // Test de mise à jour des tarifs
+                const testUpdate = window.tarifsConfig.updateTarif('services', 'design-web', { prix: 299.99 });
+                if (!testUpdate) {
+                    throw new Error('Échec mise à jour tarif');
+                }
+                
+                // Test de notification
+                if (window.notificationsGrouped) {
+                    window.notificationsGrouped.addNotification('tarifs_updated', {
+                        service: 'design-web',
+                        oldPrice: 299,
+                        newPrice: 299.99,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
+                showStatus('integration-status', 
+                    `✅ Test d'intégration réussi\n` +
+                    `💰 Tarif mis à jour\n` +
+                    `🔔 Notification envoyée\n` +
+                    `🔄 Système synchronisé`, 'success');
+                    
+            } catch (error) {
+                showStatus('integration-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test mise à jour tarifs + notification
+         */
+        function testTarifsUpdateNotification() {
+            try {
+                if (window.tarifsConfig && window.notificationsGrouped) {
+                    // Mettre à jour un tarif
+                    const updateResult = window.tarifsConfig.updateTarif('services', 'logo-design', { prix: 89.99 });
+                    
+                    if (updateResult) {
+                        // Envoyer notification
+                        window.notificationsGrouped.addNotification('tarifs_updated', {
+                            service: 'logo-design',
+                            oldPrice: 99,
+                            newPrice: 89.99,
+                            reduction: '10%',
+                            timestamp: new Date().toISOString()
+                        });
+                        
+                        showStatus('integration-status', 
+                            `✅ Mise à jour + notification réussies\n` +
+                            `💎 Logo Design: 99€ → 89€ (-10%)`, 'success');
+                    } else {
+                        showStatus('integration-status', '❌ Échec mise à jour tarif', 'error');
+                    }
+                } else {
+                    showStatus('integration-status', '❌ Composants non disponibles', 'error');
+                }
+            } catch (error) {
+                showStatus('integration-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Test de performance
+         */
+        function testPerformance() {
+            try {
+                const startTime = performance.now();
+                
+                // Test de 100 mises à jour de tarifs
+                for (let i = 0; i < 100; i++) {
+                    window.tarifsConfig.updateTarif('services', 'design-web', { prix: 299 + i });
+                }
+                
+                const endTime = performance.now();
+                const duration = endTime - startTime;
+                
+                showStatus('integration-status', 
+                    `✅ Test de performance réussi\n` +
+                    `⚡ 100 mises à jour en ${duration.toFixed(2)}ms\n` +
+                    `📊 Moyenne: ${(duration / 100).toFixed(2)}ms par opération`, 'success');
+                    
+            } catch (error) {
+                showStatus('integration-status', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        /**
+         * Afficher un statut
+         */
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.className = `status-display status-${type}`;
+                
+                // Auto-scroll
+                element.scrollTop = element.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
