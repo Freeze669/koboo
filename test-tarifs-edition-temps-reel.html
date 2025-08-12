@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Test Édition Temps Réel des Tarifs - Koboo Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header h1 {
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        
+        .header .subtitle {
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-section h2 {
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .test-button.success {
+            background: linear-gradient(45deg, #10b981, #059669);
+        }
+        
+        .test-button.warning {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+        }
+        
+        .test-button.danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+        }
+        
+        .status {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+        
+        .status.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: #10b981;
+            color: #10b981;
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .status.info {
+            background: rgba(59, 130, 246, 0.1);
+            border-left-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.25rem 0;
+        }
+        
+        .log-entry.success { color: #10b981; }
+        .log-entry.error { color: #ef4444; }
+        .log-entry.info { color: #3b82f6; }
+        .log-entry.warning { color: #f59e0b; }
+        .log-entry.firebase { color: #f97316; }
+        .log-entry.realtime { color: #8b5cf6; }
+        
+        .demo-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .demo-section h4 {
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+        
+        .demo-section p {
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-section .highlight {
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-edit"></i> Test Édition Temps Réel des Tarifs</h1>
+            <div class="subtitle">Koboo Studio - Système d'édition en direct</div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-info-circle"></i> Instructions de Test</h2>
+            <p>Ce fichier teste le système d'édition temps réel des tarifs directement depuis le site principal.</p>
+            
+            <div class="demo-section">
+                <h4>🎯 Comment tester l'édition temps réel :</h4>
+                <ol>
+                    <li><strong>Ouvrez le site principal</strong> (<code>index.html</code>) dans un onglet</li>
+                    <li><strong>Ouvrez ce fichier de test</strong> dans un autre onglet</li>
+                    <li><strong>Cliquez sur "Tester l'Édition Temps Réel"</strong> ci-dessous</li>
+                    <li><strong>Modifiez un tarif</strong> sur le site principal</li>
+                    <li><strong>Vérifiez les changements</strong> en temps réel</li>
+                </ol>
+            </div>
+            
+            <div class="demo-section">
+                <h4>✨ Fonctionnalités disponibles :</h4>
+                <ul>
+                    <li><strong>Édition en direct</strong> : Cliquez sur n'importe quel champ pour le modifier</li>
+                    <li><strong>Sauvegarde automatique</strong> : Boutons de sauvegarde et d'annulation</li>
+                    <li><strong>Suppression</strong> : Bouton de suppression pour chaque tarif</li>
+                    <li><strong>Ajout de nouveaux tarifs</strong> : Modal d'ajout complet</li>
+                    <li><strong>Synchronisation Firebase</strong> : Changements visibles partout en temps réel</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-plug"></i> Test de Connexion</h2>
+            <p>Vérifiez que Firebase est connecté et que le système d'édition est opérationnel.</p>
+            
+            <button class="test-button success" onclick="testEditionSystem()">
+                <i class="fas fa-edit"></i> Tester l'Édition Temps Réel
+            </button>
+            
+            <div id="edition-test-status"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-broadcast-tower"></i> Démonstration Temps Réel</h2>
+            <p>Testez la synchronisation en temps réel entre différents onglets.</p>
+            
+            <div class="demo-section">
+                <h4>🔄 Test de synchronisation :</h4>
+                <p>1. Modifiez un tarif sur le site principal</p>
+                <p>2. Vérifiez que les changements apparaissent ici en temps réel</p>
+                <p>3. Testez l'ajout de nouveaux tarifs</p>
+                <p>4. Vérifiez la suppression de tarifs</p>
+            </div>
+            
+            <div id="realtime-demo-status"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2><i class="fas fa-list"></i> Log des Tests</h2>
+            <div id="test-log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // Log des tests
+        function logTest(message, type = 'info') {
+            const logContainer = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Test du système d'édition
+        async function testEditionSystem() {
+            logTest('🧪 Test du système d\'édition temps réel...', 'info');
+            
+            const statusContainer = document.getElementById('edition-test-status');
+            statusContainer.innerHTML = '';
+            
+            try {
+                // Charger Firebase SDK
+                if (typeof firebase === 'undefined') {
+                    logTest('📥 Chargement Firebase SDK...', 'info');
+                    
+                    // Charger Firebase App
+                    const firebaseAppScript = document.createElement('script');
+                    firebaseAppScript.src = 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js';
+                    await new Promise((resolve, reject) => {
+                        firebaseAppScript.onload = resolve;
+                        firebaseAppScript.onerror = reject;
+                        document.head.appendChild(firebaseAppScript);
+                    });
+                    
+                    // Charger Firebase Database
+                    const firebaseDatabaseScript = document.createElement('script');
+                    firebaseDatabaseScript.src = 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js';
+                    await new Promise((resolve, reject) => {
+                        firebaseDatabaseScript.onload = resolve;
+                        firebaseDatabaseScript.onerror = reject;
+                        document.head.appendChild(firebaseDatabaseScript);
+                    });
+                    
+                    logTest('✅ Firebase SDK chargé', 'success');
+                }
+                
+                // Charger la configuration Firebase
+                if (!window.firebaseConfig) {
+                    logTest('📥 Chargement configuration Firebase...', 'info');
+                    const firebaseConfigScript = document.createElement('script');
+                    firebaseConfigScript.src = 'firebase-config.js';
+                    await new Promise((resolve, reject) => {
+                        firebaseConfigScript.onload = resolve;
+                        firebaseConfigScript.onerror = reject;
+                        document.head.appendChild(firebaseConfigScript);
+                    });
+                }
+                
+                // Charger tarifs-config.js
+                if (!window.tarifsConfig) {
+                    logTest('📥 Chargement tarifs-config.js...', 'info');
+                    const tarifsConfigScript = document.createElement('script');
+                    tarifsConfigScript.src = 'tarifs-config.js';
+                    await new Promise((resolve, reject) => {
+                        tarifsConfigScript.onload = resolve;
+                        tarifsConfigScript.onerror = reject;
+                        document.head.appendChild(tarifsConfigScript);
+                    });
+                }
+                
+                // Initialiser Firebase
+                if (window.firebaseConfig) {
+                    const success = await window.firebaseConfig.initialize();
+                    if (success) {
+                        logTest('✅ Firebase initialisé avec succès', 'success');
+                        
+                        // Tester la connexion à la base de données
+                        await testDatabaseConnection();
+                        
+                        // Configurer l'écouteur temps réel
+                        setupRealtimeListener();
+                        
+                        statusContainer.innerHTML = `
+                            <div class="status success">
+                                <i class="fas fa-check-circle"></i> Système d'édition temps réel opérationnel ! 
+                                <br><br>
+                                <strong>Prochaines étapes :</strong>
+                                <br>1. Ouvrez index.html dans un autre onglet
+                                <br>2. Modifiez un tarif en cliquant dessus
+                                <br>3. Vérifiez les changements ici en temps réel
+                            </div>
+                        `;
+                        
+                    } else {
+                        throw new Error('Échec de l\'initialisation Firebase');
+                    }
+                } else {
+                    throw new Error('Configuration Firebase non disponible');
+                }
+                
+            } catch (error) {
+                logTest(`❌ Erreur test système d'édition: ${error.message}`, 'error');
+                statusContainer.innerHTML = `
+                    <div class="status error">
+                        <i class="fas fa-times-circle"></i> Erreur test système d'édition: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test de connexion à la base de données
+        async function testDatabaseConnection() {
+            try {
+                logTest('🔍 Test de connexion à la base de données...', 'info');
+                
+                // Tenter de lire depuis la base
+                const testData = await window.firebaseConfig.get('test/edition-system');
+                logTest('✅ Connexion à la base de données réussie', 'success');
+                
+                // Écrire des données de test
+                await window.firebaseConfig.save('test/edition-system', {
+                    timestamp: new Date().toISOString(),
+                    message: 'Test système d\'édition temps réel - Koboo Studio',
+                    status: 'connected',
+                    project: 'koboo-460e2',
+                    test: 'edition-temps-reel'
+                });
+                
+                logTest('✅ Écriture dans la base de données réussie', 'success');
+                
+            } catch (error) {
+                logTest(`❌ Erreur connexion base de données: ${error.message}`, 'error');
+            }
+        }
+
+        // Configurer l'écouteur temps réel
+        function setupRealtimeListener() {
+            if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+                logTest('🔄 Configuration de l\'écouteur temps réel...', 'info');
+                
+                // Écouter les changements des tarifs
+                window.firebaseConfig.listen('tarifs/services', (data) => {
+                    if (data) {
+                        logTest(`🔄 Services mis à jour en temps réel: ${Object.keys(data).length} services`, 'realtime');
+                        updateRealtimeStatus('Services mis à jour en temps réel !', 'success');
+                    }
+                });
+                
+                window.firebaseConfig.listen('tarifs/forfaits', (data) => {
+                    if (data) {
+                        logTest(`🔄 Forfaits mis à jour en temps réel: ${Object.keys(data).length} forfaits`, 'realtime');
+                        updateRealtimeStatus('Forfaits mis à jour en temps réel !', 'success');
+                    }
+                });
+                
+                logTest('✅ Écouteur temps réel configuré', 'success');
+            } else {
+                logTest('⚠️ Firebase non disponible pour l\'écoute temps réel', 'warning');
+            }
+        }
+
+        // Mettre à jour le statut temps réel
+        function updateRealtimeStatus(message, type = 'info') {
+            const statusContainer = document.getElementById('realtime-demo-status');
+            if (statusContainer) {
+                statusContainer.innerHTML = `
+                    <div class="status ${type}">
+                        <i class="fas fa-broadcast-tower"></i> ${message}
+                    </div>
+                `;
+                
+                // Effacer le message après 5 secondes
+                setTimeout(() => {
+                    statusContainer.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            logTest('🚀 Page de test édition temps réel chargée et prête', 'info');
+            logTest('💡 Commencez par tester le système d\'édition', 'info');
+            logTest('📖 Lisez les instructions ci-dessus pour comprendre le processus de test', 'info');
+        });
+    </script>
+</body>
+</html>
