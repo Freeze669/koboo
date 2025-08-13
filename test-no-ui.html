@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Aucun UI de Sauvegarde</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test - Aucun UI de Sauvegarde</h1>
+        <p>Cette page teste que le système de sauvegarde en temps réel ne crée AUCUN élément d'interface utilisateur sur le site principal.</p>
+        
+        <div id="status" class="status info">
+            Vérification en cours...
+        </div>
+        
+        <div id="results"></div>
+        
+        <button onclick="testBackupSystem()">Tester le Système</button>
+        <button onclick="checkForUIElements()">Vérifier les Éléments UI</button>
+        <button onclick="clearResults()">Effacer les Résultats</button>
+    </div>
+
+    <!-- Configuration du Système de Sauvegarde -->
+    <script src="backup-config.js"></script>
+    
+    <!-- Système de Sauvegarde en Temps Réel (SANS UI) -->
+    <script src="real-time-backup-system.js"></script>
+    
+    <script>
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+        
+        function testBackupSystem() {
+            updateStatus('Test du système de sauvegarde...', 'info');
+            
+            if (window.realTimeBackupSystem) {
+                addResult('✅ Système de sauvegarde détecté', 'success');
+                
+                const status = window.realTimeBackupSystem.getSystemStatus();
+                addResult(`📊 Statut: ${status.isActive ? 'Actif' : 'Inactif'}`, 'info');
+                addResult(`📈 Surveillance: ${status.monitoring ? 'Active' : 'Inactive'}`, 'info');
+                addResult(`💾 Processus: ${status.backupProcess ? 'En cours' : 'Arrêté'}`, 'info');
+                
+                updateStatus('Test terminé avec succès !', 'success');
+            } else {
+                addResult('❌ Système de sauvegarde non détecté', 'error');
+                updateStatus('Test échoué', 'error');
+            }
+        }
+        
+        function checkForUIElements() {
+            updateStatus('Vérification des éléments UI...', 'info');
+            
+            // Vérifier qu'aucun élément UI du système de sauvegarde n'est présent
+            const uiElements = [
+                'backup-status-indicator',
+                'backup-control-panel',
+                'backup-stats-display',
+                'backup-logs-container'
+            ];
+            
+            let uiFound = false;
+            
+            uiElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    addResult(`❌ Élément UI trouvé: ${id}`, 'error');
+                    uiFound = true;
+                }
+            });
+            
+            // Vérifier les éléments avec des classes spécifiques
+            const classElements = document.querySelectorAll('[class*="backup"]');
+            if (classElements.length > 0) {
+                addResult(`❌ Éléments avec classe 'backup' trouvés: ${classElements.length}`, 'error');
+                uiFound = true;
+            }
+            
+            // Vérifier les boutons de sauvegarde
+            const backupButtons = document.querySelectorAll('button[onclick*="backup"], button[onclick*="sauvegarde"]');
+            if (backupButtons.length > 0) {
+                addResult(`❌ Boutons de sauvegarde trouvés: ${backupButtons.length}`, 'error');
+                uiFound = true;
+            }
+            
+            if (!uiFound) {
+                addResult('✅ Aucun élément UI de sauvegarde trouvé sur la page', 'success');
+                updateStatus('Aucun élément UI détecté - Test réussi !', 'success');
+            } else {
+                updateStatus('Éléments UI détectés - Test échoué !', 'error');
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            updateStatus('Résultats effacés', 'info');
+        }
+        
+        // Test automatique au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                checkForUIElements();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
