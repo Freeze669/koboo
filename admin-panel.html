@@ -50,6 +50,15 @@
     <!-- Système de notifications groupées -->
     <script src="notifications-grouped.js"></script>
     
+    <!-- Configuration du Système de Sauvegarde -->
+    <script src="backup-config.js"></script>
+    
+    <!-- Système de Sauvegarde en Temps Réel -->
+    <script src="real-time-backup-system.js"></script>
+    
+    <!-- Interface Utilisateur du Système de Sauvegarde -->
+    <script src="admin-backup-ui.js"></script>
+    
     <!-- Configuration Discord -->
     <script src="discord-webhook-config.js"></script>
     
@@ -1139,6 +1148,103 @@
             gap: 0.5rem;
             margin-top: 1rem;
         }
+
+        /* Système de Sauvegarde */
+        .backup-system-section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 150;
+        }
+
+        .backup-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .backup-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .backup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .backup-btn.backup-start {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .backup-btn.backup-stats {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .backup-btn.backup-logs {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .backup-btn.backup-force {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .backup-status-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .backup-status-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .status-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-value {
+            color: #f8fafc;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .status-value.active {
+            color: #10b981;
+        }
+
+        .status-value.inactive {
+            color: #ef4444;
+        }
+
+        .status-value.monitoring {
+            color: #3b82f6;
+        }
     </style>
 </head>
 <body>
@@ -1320,6 +1426,46 @@
                 <i class="fas fa-database"></i>
                 Sauvegarde
             </button>
+        </div>
+
+        <!-- Système de Sauvegarde en Temps Réel -->
+        <div class="backup-system-section">
+            <div class="section-title">
+                <i class="fas fa-shield-alt"></i>
+                Système de Sauvegarde en Temps Réel
+            </div>
+            <div class="backup-controls">
+                <button class="backup-btn backup-start" onclick="adminBackupUI.showControlPanel()">
+                    <i class="fas fa-cogs"></i>
+                    Contrôle du Système
+                </button>
+                <button class="backup-btn backup-stats" onclick="adminBackupUI.showStatsDisplay()">
+                    <i class="fas fa-chart-bar"></i>
+                    Statistiques
+                </button>
+                <button class="backup-btn backup-logs" onclick="adminBackupUI.showLogsContainer()">
+                    <i class="fas fa-list-alt"></i>
+                    Logs du Système
+                </button>
+                <button class="backup-btn backup-force" onclick="adminBackupUI.forceBackup()">
+                    <i class="fas fa-save"></i>
+                    Forcer Sauvegarde
+                </button>
+            </div>
+            <div class="backup-status-display">
+                <div class="backup-status-item">
+                    <span class="status-label">État:</span>
+                    <span class="status-value" id="backupSystemStatus">Initialisation...</span>
+                </div>
+                <div class="backup-status-item">
+                    <span class="status-label">Surveillance:</span>
+                    <span class="status-value" id="backupMonitoringStatus">-</span>
+                </div>
+                <div class="backup-status-item">
+                    <span class="status-label">Dernière sauvegarde:</span>
+                    <span class="status-value" id="backupLastBackup">-</span>
+                </div>
+            </div>
         </div>
 
         <!-- Statut Discord -->
@@ -3245,6 +3391,40 @@
             const operatingSystem = os[Math.floor(Math.random() * os.length)];
             return `${browser} sur ${operatingSystem}`;
         }
+        
+        /**
+         * Mise à jour du statut du système de sauvegarde
+         */
+        function updateBackupSystemStatus() {
+            if (window.realTimeBackupSystem) {
+                const status = window.realTimeBackupSystem.getSystemStatus();
+                const stats = window.realTimeBackupSystem.getStats();
+                
+                // Mettre à jour l'état du système
+                const systemStatus = document.getElementById('backupSystemStatus');
+                if (systemStatus) {
+                    systemStatus.textContent = status.isActive ? 'Actif' : 'Inactif';
+                    systemStatus.className = 'status-value ' + (status.isActive ? 'active' : 'inactive');
+                }
+                
+                // Mettre à jour le statut de surveillance
+                const monitoringStatus = document.getElementById('backupMonitoringStatus');
+                if (monitoringStatus) {
+                    monitoringStatus.textContent = status.isMonitoring ? 'Active' : 'Inactive';
+                    monitoringStatus.className = 'status-value ' + (status.isMonitoring ? 'monitoring' : 'inactive');
+                }
+                
+                // Mettre à jour la dernière sauvegarde
+                const lastBackup = document.getElementById('backupLastBackup');
+                if (lastBackup) {
+                    lastBackup.textContent = stats.lastBackup ? 
+                        new Date(stats.lastBackup).toLocaleTimeString() : '-';
+                }
+            }
+        }
+        
+        // Mettre à jour le statut toutes les 2 secondes
+        setInterval(updateBackupSystemStatus, 2000);
         
         function addAutoConnection() {
             const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];

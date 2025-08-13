@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Démonstration - Système de Sauvegarde en Temps Réel</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .demo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .card-content {
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-content p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-button {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .demo-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .activity-log {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+        }
+        
+        .log-entry {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-timestamp {
+            color: #6c757d;
+            margin-right: 0.5rem;
+        }
+        
+        .log-type {
+            color: #10b981;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .log-data {
+            color: #495057;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .firebase-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .firebase-connected {
+            background: linear-gradient(45deg, #10b981, #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            animation: slideInDown 0.3s ease;
+        }
+        
+        @keyframes slideInDown {
+            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        .notification.error {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .interactive-area {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .interactive-area:hover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+        
+        .interactive-area h3 {
+            color: #495057;
+            margin-bottom: 1rem;
+        }
+        
+        .interactive-area p {
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-demo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-demo input, .form-demo textarea {
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-demo input:focus, .form-demo textarea:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+        
+        .form-demo textarea {
+            grid-column: 1 / -1;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: white;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-demo {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Statut Firebase -->
+    <div id="firebaseStatus" class="firebase-status">
+        <i class="fas fa-fire"></i> Firebase: Vérification...
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-database"></i> Système de Sauvegarde en Temps Réel</h1>
+            <p>Démonstration complète du système de surveillance et sauvegarde automatique</p>
+        </div>
+        
+        <!-- Zone interactive pour tester -->
+        <div class="interactive-area">
+            <h3><i class="fas fa-mouse-pointer"></i> Zone de Test Interactive</h3>
+            <p>Cliquez, tapez, faites défiler et naviguez pour voir le système en action !</p>
+            
+            <div class="form-demo">
+                <input type="text" placeholder="Nom d'utilisateur" id="demoName">
+                <input type="email" placeholder="Email" id="demoEmail">
+                <textarea placeholder="Message de test..." id="demoMessage"></textarea>
+            </div>
+            
+            <button class="demo-button" onclick="submitDemoForm()">
+                <i class="fas fa-paper-plane"></i>
+                Soumettre le formulaire
+            </button>
+        </div>
+        
+        <div class="demo-grid">
+            <!-- Carte de statut du système -->
+            <div class="demo-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(45deg, #10b981, #059669);">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="card-title">Statut du Système</div>
+                </div>
+                <div class="card-content">
+                    <div id="systemStatus" class="status-indicator status-inactive">
+                        <i class="fas fa-circle"></i>
+                        Système inactif
+                    </div>
+                    <p>Le système de sauvegarde surveille automatiquement toutes les activités des utilisateurs et les sauvegarde en temps réel.</p>
+                </div>
+                <button class="demo-button" onclick="toggleBackupSystem()" id="toggleButton">
+                    <i class="fas fa-play"></i>
+                    Démarrer le système
+                </button>
+            </div>
+            
+            <!-- Carte de surveillance des activités -->
+            <div class="demo-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(45deg, #3b82f6, #1d4ed8);">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="card-title">Surveillance des Activités</div>
+                </div>
+                <div class="card-content">
+                    <p>Surveille en temps réel : clics, saisies, navigation, formulaires, et bien plus encore.</p>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalActivities">0</div>
+                            <div class="stat-label">Activités</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalUsers">0</div>
+                            <div class="stat-label">Utilisateurs</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalBackups">0</div>
+                            <div class="stat-label">Sauvegardes</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="demo-button" onclick="clearStats()">
+                    <i class="fas fa-trash"></i>
+                    Réinitialiser les stats
+                </button>
+            </div>
+            
+            <!-- Carte de journal des activités -->
+            <div class="demo-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(45deg, #f59e0b, #d97706);">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="card-title">Journal des Activités</div>
+                </div>
+                <div class="card-content">
+                    <p>Regardez en temps réel toutes les activités enregistrées par le système.</p>
+                    <div class="activity-log" id="activityLog">
+                        <div class="log-entry">
+                            <span class="log-timestamp">--:--:--</span>
+                            <span class="log-type">SYSTÈME</span>
+                            <span class="log-data">En attente d'activités...</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="demo-button" onclick="clearActivityLog()">
+                    <i class="fas fa-broom"></i>
+                    Vider le journal
+                </button>
+            </div>
+            
+            <!-- Carte de test des événements -->
+            <div class="demo-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(45deg, #8b5cf6, #7c3aed);">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <div class="card-title">Test des Événements</div>
+                </div>
+                <div class="card-content">
+                    <p>Testez manuellement différents types d'événements pour vérifier le système.</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="demo-button" onclick="simulateEvent('click')" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                        <i class="fas fa-mouse-pointer"></i>
+                        Clic
+                    </button>
+                    <button class="demo-button" onclick="simulateEvent('scroll')" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                        <i class="fas fa-scroll"></i>
+                        Scroll
+                    </button>
+                    <button class="demo-button" onclick="simulateEvent('navigation')" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                        <i class="fas fa-route"></i>
+                        Navigation
+                    </button>
+                    <button class="demo-button" onclick="simulateEvent('form')" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                        <i class="fas fa-edit"></i>
+                        Formulaire
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Carte de configuration -->
+            <div class="demo-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(45deg, #06b6d4, #0891b2);">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <div class="card-title">Configuration</div>
+                </div>
+                <div class="card-content">
+                    <p>Personnalisez le comportement du système de sauvegarde selon vos besoins.</p>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #495057;">
+                            <input type="checkbox" id="enableNotifications" checked> 
+                            Notifications de sauvegarde
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; color: #495057;">
+                            <input type="checkbox" id="enableDebug" checked> 
+                            Mode débogage
+                        </label>
+                    </div>
+                </div>
+                <button class="demo-button" onclick="applyConfiguration()">
+                    <i class="fas fa-save"></i>
+                    Appliquer
+                </button>
+            </div>
+            
+            <!-- Carte de performance -->
+            <div class="demo-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(45deg, #84cc16, #65a30d);">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="card-title">Performance</div>
+                </div>
+                <div class="card-content">
+                    <p>Surveillez les performances du système de sauvegarde en temps réel.</p>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="backupDuration">0ms</div>
+                            <div class="stat-label">Durée sauvegarde</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="queueSize">0</div>
+                            <div class="stat-label">File d'attente</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="errorCount">0</div>
+                            <div class="stat-label">Erreurs</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="demo-button" onclick="showPerformanceDetails()">
+                    <i class="fas fa-chart-line"></i>
+                    Détails
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><i class="fas fa-code"></i> Développé par Mayu & Jack Studio | Système de Sauvegarde en Temps Réel v1.0.0</p>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="backup-config.js"></script>
+    <script src="real-time-backup-system.js"></script>
+    
+    <script>
+        // Variables globales
+        let backupSystem = null;
+        let isSystemActive = false;
+        let activityCounter = 0;
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Page de démonstration chargée');
+            
+            // Vérifier le statut Firebase
+            checkFirebaseStatus();
+            
+            // Configurer les écouteurs d'événements
+            setupEventListeners();
+            
+            // Initialiser l'interface
+            updateInterface();
+        });
+        
+        // Vérifier le statut Firebase
+        function checkFirebaseStatus() {
+            const statusElement = document.getElementById('firebaseStatus');
+            
+            if (window.firebaseConfig && window.firebaseConfig.isAvailable()) {
+                statusElement.innerHTML = '<i class="fas fa-fire"></i> Firebase: Connecté';
+                statusElement.classList.add('firebase-connected');
+            } else {
+                statusElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Firebase: Non connecté';
+                statusElement.classList.remove('firebase-connected');
+            }
+        }
+        
+        // Configurer les écouteurs d'événements
+        function setupEventListeners() {
+            // Écouter la configuration prête
+            document.addEventListener('backupConfigReady', function(event) {
+                console.log('✅ Configuration de sauvegarde prête:', event.detail.config);
+                showNotification('Configuration chargée avec succès', 'success');
+            });
+            
+            // Écouter les changements de tarifs
+            document.addEventListener('tarifsChanged', function(event) {
+                console.log('🔄 Tarifs mis à jour:', event.detail);
+                addActivityLog('tarifs_update', `Tarifs mis à jour via ${event.detail.source}`);
+            });
+            
+            // Écouter les connexions admin
+            document.addEventListener('adminLogin', function(event) {
+                console.log('🔐 Connexion admin:', event.detail);
+                addActivityLog('admin_login', `Connexion admin: ${event.detail.username}`);
+            });
+        }
+        
+        // Démarrer/Arrêter le système de sauvegarde
+        function toggleBackupSystem() {
+            const button = document.getElementById('toggleButton');
+            const statusElement = document.getElementById('systemStatus');
+            
+            if (!isSystemActive) {
+                // Démarrer le système
+                try {
+                    if (window.realTimeBackupSystem) {
+                        backupSystem = window.realTimeBackupSystem;
+                        isSystemActive = true;
+                        
+                        button.innerHTML = '<i class="fas fa-stop"></i> Arrêter le système';
+                        button.style.background = 'linear-gradient(45deg, #ef4444, #dc2626)';
+                        
+                        statusElement.innerHTML = '<i class="fas fa-circle"></i> Système actif';
+                        statusElement.className = 'status-indicator status-active';
+                        
+                        showNotification('Système de sauvegarde démarré', 'success');
+                        
+                        // Démarrer la surveillance des statistiques
+                        startStatsMonitoring();
+                        
+                    } else {
+                        throw new Error('Système de sauvegarde non disponible');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur démarrage système:', error);
+                    showNotification('Erreur démarrage système: ' + error.message, 'error');
+                }
+            } else {
+                // Arrêter le système
+                try {
+                    if (backupSystem && typeof backupSystem.stop === 'function') {
+                        backupSystem.stop();
+                    }
+                    
+                    isSystemActive = false;
+                    
+                    button.innerHTML = '<i class="fas fa-play"></i> Démarrer le système';
+                    button.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+                    
+                    statusElement.innerHTML = '<i class="fas fa-circle"></i> Système inactif';
+                    statusElement.className = 'status-indicator status-inactive';
+                    
+                    showNotification('Système de sauvegarde arrêté', 'success');
+                    
+                    // Arrêter la surveillance des statistiques
+                    stopStatsMonitoring();
+                    
+                } catch (error) {
+                    console.error('❌ Erreur arrêt système:', error);
+                    showNotification('Erreur arrêt système: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        // Soumettre le formulaire de démonstration
+        function submitDemoForm() {
+            const name = document.getElementById('demoName').value;
+            const email = document.getElementById('demoEmail').value;
+            const message = document.getElementById('demoMessage').value;
+            
+            if (!name || !email || !message) {
+                showNotification('Veuillez remplir tous les champs', 'error');
+                return;
+            }
+            
+            // Simuler la soumission
+            addActivityLog('form_submit', `Formulaire soumis: ${name} (${email})`);
+            
+            // Émettre un événement personnalisé
+            document.dispatchEvent(new CustomEvent('formSubmitted', {
+                detail: { name, email, message, timestamp: Date.now() }
+            }));
+            
+            // Vider le formulaire
+            document.getElementById('demoName').value = '';
+            document.getElementById('demoEmail').value = '';
+            document.getElementById('demoMessage').value = '';
+            
+            showNotification('Formulaire soumis avec succès', 'success');
+        }
+        
+        // Simuler un événement
+        function simulateEvent(type) {
+            let description = '';
+            
+            switch (type) {
+                case 'click':
+                    description = 'Clic simulé sur l\'élément de test';
+                    break;
+                case 'scroll':
+                    description = 'Défilement simulé de la page';
+                    break;
+                case 'navigation':
+                    description = 'Navigation simulée vers une nouvelle section';
+                    break;
+                case 'form':
+                    description = 'Soumission de formulaire simulée';
+                    break;
+                default:
+                    description = `Événement simulé: ${type}`;
+            }
+            
+            addActivityLog(type, description);
+            
+            // Émettre l'événement
+            document.dispatchEvent(new CustomEvent('eventSimulated', {
+                detail: { type, description, timestamp: Date.now() }
+            }));
+            
+            showNotification(`Événement ${type} simulé`, 'success');
+        }
+        
+        // Ajouter une entrée au journal d'activités
+        function addActivityLog(type, data) {
+            const logElement = document.getElementById('activityLog');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-timestamp">${timestamp}</span>
+                <span class="log-type">${type.toUpperCase()}</span>
+                <span class="log-data">${data}</span>
+            `;
+            
+            logElement.insertBefore(logEntry, logElement.firstChild);
+            
+            // Limiter le nombre d'entrées
+            if (logElement.children.length > 50) {
+                logElement.removeChild(logElement.lastChild);
+            }
+            
+            // Mettre à jour le compteur
+            activityCounter++;
+            document.getElementById('totalActivities').textContent = activityCounter;
+        }
+        
+        // Vider le journal d'activités
+        function clearActivityLog() {
+            const logElement = document.getElementById('activityLog');
+            logElement.innerHTML = `
+                <div class="log-entry">
+                    <span class="log-timestamp">--:--:--</span>
+                    <span class="log-type">SYSTÈME</span>
+                    <span class="log-data">Journal vidé...</span>
+                </div>
+            `;
+            showNotification('Journal d\'activités vidé', 'success');
+        }
+        
+        // Réinitialiser les statistiques
+        function clearStats() {
+            activityCounter = 0;
+            document.getElementById('totalActivities').textContent = '0';
+            document.getElementById('totalUsers').textContent = '0';
+            document.getElementById('totalBackups').textContent = '0';
+            document.getElementById('backupDuration').textContent = '0ms';
+            document.getElementById('queueSize').textContent = '0';
+            document.getElementById('errorCount').textContent = '0';
+            
+            showNotification('Statistiques réinitialisées', 'success');
+        }
+        
+        // Appliquer la configuration
+        function applyConfiguration() {
+            const notifications = document.getElementById('enableNotifications').checked;
+            const debug = document.getElementById('enableDebug').checked;
+            
+            // Mettre à jour la configuration
+            if (window.BackupConfig) {
+                window.BackupConfig.ui.showBackupConfirmations = notifications;
+                window.BackupConfig.debug = debug;
+            }
+            
+            showNotification('Configuration appliquée', 'success');
+        }
+        
+        // Afficher les détails de performance
+        function showPerformanceDetails() {
+            if (backupSystem && typeof backupSystem.getStats === 'function') {
+                const stats = backupSystem.getStats();
+                
+                const details = `
+                    Statut: ${stats.isActive ? 'Actif' : 'Inactif'}
+                    Sauvegardes: ${stats.totalBackups}
+                    Utilisateurs: ${stats.userCount}
+                    Sessions: ${stats.sessionCount}
+                    File d'attente: ${stats.queueSize}
+                    Erreurs: ${stats.errors}
+                    Durée moyenne: ${stats.lastBackupDuration}ms
+                `;
+                
+                alert('Détails de Performance:\n\n' + details);
+            } else {
+                showNotification('Système de sauvegarde non disponible', 'error');
+            }
+        }
+        
+        // Démarrer la surveillance des statistiques
+        function startStatsMonitoring() {
+            if (window.statsInterval) {
+                clearInterval(window.statsInterval);
+            }
+            
+            window.statsInterval = setInterval(() => {
+                if (backupSystem && typeof backupSystem.getStats === 'function') {
+                    const stats = backupSystem.getStats();
+                    
+                    document.getElementById('totalUsers').textContent = stats.userCount || 0;
+                    document.getElementById('totalBackups').textContent = stats.totalBackups || 0;
+                    document.getElementById('backupDuration').textContent = (stats.lastBackupDuration || 0) + 'ms';
+                    document.getElementById('queueSize').textContent = stats.queueSize || 0;
+                    document.getElementById('errorCount').textContent = stats.errors || 0;
+                }
+            }, 1000);
+        }
+        
+        // Arrêter la surveillance des statistiques
+        function stopStatsMonitoring() {
+            if (window.statsInterval) {
+                clearInterval(window.statsInterval);
+                window.statsInterval = null;
+            }
+        }
+        
+        // Mettre à jour l'interface
+        function updateInterface() {
+            // Vérifier périodiquement le statut Firebase
+            setInterval(checkFirebaseStatus, 10000);
+        }
+        
+        // Afficher une notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type === 'error' ? 'error' : ''}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-suppression
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOutUp 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }
+            }, 3000);
+        }
+        
+        // Exposer les fonctions globalement pour le débogage
+        window.demoBackupSystem = {
+            toggle: toggleBackupSystem,
+            simulateEvent: simulateEvent,
+            submitForm: submitDemoForm,
+            clearLog: clearActivityLog,
+            clearStats: clearStats,
+            getStats: () => backupSystem ? backupSystem.getStats() : null,
+            showNotification: showNotification
+        };
+        
+        console.log('🎮 Contrôles de démonstration disponibles via window.demoBackupSystem');
+    </script>
+</body>
+</html>

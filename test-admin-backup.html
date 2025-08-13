@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test du Système de Sauvegarde Admin</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .test-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .test-header p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+
+        .test-section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .test-section h2 {
+            color: #f8fafc;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .test-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .test-card:hover {
+            transform: translateY(-2px);
+            border-color: #60a5fa;
+            box-shadow: 0 5px 15px rgba(96, 165, 250, 0.2);
+        }
+
+        .test-card h3 {
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .test-description {
+            color: #94a3b8;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .test-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .test-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .test-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .test-btn.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .test-btn.warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .test-btn.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .status-display {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .status-value {
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .status-value.active {
+            color: #10b981;
+        }
+
+        .status-value.inactive {
+            color: #ef4444;
+        }
+
+        .status-value.monitoring {
+            color: #3b82f6;
+        }
+
+        .log-display {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.2);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #64748b;
+            margin-right: 1rem;
+        }
+
+        .log-level {
+            color: #3b82f6;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .log-message {
+            color: #f8fafc;
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .instructions h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .instructions li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🧪 Test du Système de Sauvegarde Admin</h1>
+            <p>Vérification que le système fonctionne sans afficher d'éléments UI sur le site principal</p>
+        </div>
+
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> Instructions de Test</h3>
+            <ul>
+                <li>Ce fichier teste le système de sauvegarde sans composants UI</li>
+                <li>Vérifiez que l'indicateur de statut n'apparaît PAS sur cette page</li>
+                <li>Le système doit fonctionner en arrière-plan pour collecter les activités</li>
+                <li>Utilisez les boutons de test pour simuler des activités utilisateur</li>
+                <li>Vérifiez que les données sont bien collectées et sauvegardées</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2><i class="fas fa-shield-alt"></i> Test du Système de Sauvegarde</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><i class="fas fa-play"></i> Contrôle du Système</h3>
+                    <p class="test-description">
+                        Testez les fonctions de base du système de sauvegarde en temps réel.
+                    </p>
+                    <div class="test-buttons">
+                        <button class="test-btn success" onclick="testStartSystem()">
+                            <i class="fas fa-play"></i> Démarrer
+                        </button>
+                        <button class="test-btn warning" onclick="testStopSystem()">
+                            <i class="fas fa-stop"></i> Arrêter
+                        </button>
+                        <button class="test-btn" onclick="testForceBackup()">
+                            <i class="fas fa-save"></i> Forcer Sauvegarde
+                        </button>
+                    </div>
+                    <div class="status-display">
+                        <div class="status-item">
+                            <span class="status-label">État du système:</span>
+                            <span class="status-value" id="systemStatus">Inconnu</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Surveillance:</span>
+                            <span class="status-value" id="monitoringStatus">Inconnu</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-chart-bar"></i> Statistiques</h3>
+                    <p class="test-description">
+                        Affichez les statistiques actuelles du système de sauvegarde.
+                    </p>
+                    <div class="test-buttons">
+                        <button class="test-btn" onclick="testGetStats()">
+                            <i class="fas fa-chart-bar"></i> Obtenir Stats
+                        </button>
+                        <button class="test-btn warning" onclick="testResetStats()">
+                            <i class="fas fa-redo"></i> Réinitialiser
+                        </button>
+                    </div>
+                    <div class="status-display">
+                        <div class="status-item">
+                            <span class="status-label">Sauvegardes totales:</span>
+                            <span class="status-value" id="totalBackups">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Événements surveillés:</span>
+                            <span class="status-value" id="monitoredEvents">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Dernière sauvegarde:</span>
+                            <span class="status-value" id="lastBackup">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-mouse-pointer"></i> Simulation d'Activités</h3>
+                    <p class="test-description">
+                        Simulez des activités utilisateur pour tester la surveillance.
+                    </p>
+                    <div class="test-buttons">
+                        <button class="test-btn" onclick="testSimulateClicks()">
+                            <i class="fas fa-mouse-pointer"></i> Clics
+                        </button>
+                        <button class="test-btn" onclick="testSimulateInputs()">
+                            <i class="fas fa-keyboard"></i> Saisies
+                        </button>
+                        <button class="test-btn" onclick="testSimulateScroll()">
+                            <i class="fas fa-scroll"></i> Défilement
+                        </button>
+                    </div>
+                    <div class="status-display">
+                        <div class="status-item">
+                            <span class="status-label">Activités simulées:</span>
+                            <span class="status-value" id="simulatedActivities">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2><i class="fas fa-list-alt"></i> Logs du Système</h2>
+            <div class="test-buttons" style="margin-bottom: 1rem;">
+                <button class="test-btn" onclick="testClearLogs()">
+                    <i class="fas fa-trash"></i> Vider Logs
+                </button>
+                <button class="test-btn" onclick="testExportLogs()">
+                    <i class="fas fa-download"></i> Exporter
+                </button>
+            </div>
+            <div class="log-display" id="systemLogs">
+                <div class="log-entry">
+                    <span class="log-time">[Initialisation]</span>
+                    <span class="log-level">INFO</span>
+                    <span class="log-message">Page de test chargée</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2><i class="fas fa-check-circle"></i> Vérifications</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><i class="fas fa-eye-slash"></i> UI Masquée</h3>
+                    <p class="test-description">
+                        Vérifiez qu'aucun composant UI du système de sauvegarde n'est visible sur cette page.
+                    </p>
+                    <div class="status-display">
+                        <div class="status-item">
+                            <span class="status-label">Indicateur de statut:</span>
+                            <span class="status-value" id="uiStatusIndicator">Non visible ✓</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Panel de contrôle:</span>
+                            <span class="status-value" id="uiControlPanel">Non visible ✓</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Affichage des stats:</span>
+                            <span class="status-value" id="uiStatsDisplay">Non visible ✓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-cogs"></i> Fonctionnalités</h3>
+                    <p class="test-description">
+                        Vérifiez que le système fonctionne en arrière-plan.
+                    </p>
+                    <div class="status-display">
+                        <div class="status-item">
+                            <span class="status-label">Système initialisé:</span>
+                            <span class="status-value" id="systemInitialized">Vérification...</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Surveillance active:</span>
+                            <span class="status-value" id="surveillanceActive">Vérification...</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Collecte de données:</span>
+                            <span class="status-value" id="dataCollection">Vérification...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de test -->
+    <script>
+        // Variables de test
+        let simulatedActivitiesCount = 0;
+        let systemLogs = [];
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('INFO', 'Page de test chargée');
+            addLog('INFO', 'Vérification du système de sauvegarde...');
+            
+            // Vérifier l'état initial
+            setTimeout(checkSystemStatus, 1000);
+            
+            // Mettre à jour périodiquement
+            setInterval(updateStatus, 2000);
+        });
+
+        // Fonctions de test
+        function testStartSystem() {
+            if (window.realTimeBackupSystem) {
+                window.realTimeBackupSystem.activate();
+                addLog('SUCCESS', 'Système démarré');
+                updateStatus();
+            } else {
+                addLog('ERROR', 'Système de sauvegarde non disponible');
+            }
+        }
+
+        function testStopSystem() {
+            if (window.realTimeBackupSystem) {
+                window.realTimeBackupSystem.deactivate();
+                addLog('WARNING', 'Système arrêté');
+                updateStatus();
+            } else {
+                addLog('ERROR', 'Système de sauvegarde non disponible');
+            }
+        }
+
+        function testForceBackup() {
+            if (window.realTimeBackupSystem) {
+                window.realTimeBackupSystem.forceBackup().then(() => {
+                    addLog('SUCCESS', 'Sauvegarde forcée effectuée');
+                }).catch(error => {
+                    addLog('ERROR', `Erreur lors de la sauvegarde forcée: ${error.message}`);
+                });
+            } else {
+                addLog('ERROR', 'Système de sauvegarde non disponible');
+            }
+        }
+
+        function testGetStats() {
+            if (window.realTimeBackupSystem) {
+                const stats = window.realTimeBackupSystem.getStats();
+                document.getElementById('totalBackups').textContent = stats.totalBackups;
+                document.getElementById('monitoredEvents').textContent = stats.monitoredEvents;
+                document.getElementById('lastBackup').textContent = stats.lastBackup ? 
+                    new Date(stats.lastBackup).toLocaleTimeString() : '-';
+                addLog('INFO', 'Statistiques récupérées');
+            } else {
+                addLog('ERROR', 'Système de sauvegarde non disponible');
+            }
+        }
+
+        function testResetStats() {
+            if (window.realTimeBackupSystem) {
+                window.realTimeBackupSystem.resetStats();
+                addLog('INFO', 'Statistiques réinitialisées');
+                testGetStats();
+            } else {
+                addLog('ERROR', 'Système de sauvegarde non disponible');
+            }
+        }
+
+        function testSimulateClicks() {
+            // Simuler des clics
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const event = new MouseEvent('click', {
+                        clientX: Math.random() * window.innerWidth,
+                        clientY: Math.random() * window.innerHeight
+                    });
+                    document.dispatchEvent(event);
+                }, i * 100);
+            }
+            simulatedActivitiesCount += 5;
+            document.getElementById('simulatedActivities').textContent = simulatedActivitiesCount;
+            addLog('INFO', '5 clics simulés');
+        }
+
+        function testSimulateInputs() {
+            // Simuler des saisies
+            const testInput = document.createElement('input');
+            testInput.type = 'text';
+            testInput.value = 'Test de saisie';
+            document.body.appendChild(testInput);
+            
+            testInput.focus();
+            testInput.dispatchEvent(new Event('input'));
+            testInput.dispatchEvent(new Event('change'));
+            
+            setTimeout(() => {
+                document.body.removeChild(testInput);
+            }, 100);
+            
+            simulatedActivitiesCount += 2;
+            document.getElementById('simulatedActivities').textContent = simulatedActivitiesCount;
+            addLog('INFO', 'Saisies simulées');
+        }
+
+        function testSimulateScroll() {
+            // Simuler du défilement
+            window.scrollTo(0, Math.random() * 100);
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 500);
+            
+            simulatedActivitiesCount += 1;
+            document.getElementById('simulatedActivities').textContent = simulatedActivitiesCount;
+            addLog('INFO', 'Défilement simulé');
+        }
+
+        function testClearLogs() {
+            systemLogs = [];
+            document.getElementById('systemLogs').innerHTML = `
+                <div class="log-entry">
+                    <span class="log-time">[${new Date().toLocaleTimeString()}]</span>
+                    <span class="log-level">INFO</span>
+                    <span class="log-message">Logs vidés</span>
+                </div>
+            `;
+            addLog('INFO', 'Logs vidés');
+        }
+
+        function testExportLogs() {
+            const logs = systemLogs.map(log => 
+                `[${log.time}] ${log.level}: ${log.message}`
+            ).join('\n');
+            
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup-test-logs-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addLog('INFO', 'Logs exportés');
+        }
+
+        // Fonctions utilitaires
+        function addLog(level, message) {
+            const time = new Date().toLocaleTimeString();
+            const logEntry = { time, level, message };
+            systemLogs.push(logEntry);
+            
+            const logsContainer = document.getElementById('systemLogs');
+            const logElement = document.createElement('div');
+            logElement.className = 'log-entry';
+            logElement.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span class="log-level">${level}</span>
+                <span class="log-message">${message}</span>
+            `;
+            
+            logsContainer.appendChild(logElement);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        function checkSystemStatus() {
+            // Vérifier que l'UI n'est pas visible
+            const statusIndicator = document.getElementById('backup-status-indicator');
+            const controlPanel = document.getElementById('backup-control-panel');
+            const statsDisplay = document.getElementById('backup-stats-display');
+            
+            document.getElementById('uiStatusIndicator').textContent = 
+                statusIndicator ? 'Visible ✗' : 'Non visible ✓';
+            document.getElementById('uiControlPanel').textContent = 
+                controlPanel ? 'Visible ✗' : 'Non visible ✓';
+            document.getElementById('uiStatsDisplay').textContent = 
+                statsDisplay ? 'Visible ✗' : 'Non visible ✓';
+            
+            // Vérifier l'état du système
+            if (window.realTimeBackupSystem) {
+                document.getElementById('systemInitialized').textContent = 'Oui ✓';
+                document.getElementById('systemInitialized').className = 'status-value active';
+                
+                const status = window.realTimeBackupSystem.getSystemStatus();
+                document.getElementById('surveillanceActive').textContent = 
+                    status.isMonitoring ? 'Oui ✓' : 'Non ✗';
+                document.getElementById('surveillanceActive').className = 
+                    status.isMonitoring ? 'status-value active' : 'status-value inactive';
+                
+                document.getElementById('dataCollection').textContent = 'Active ✓';
+                document.getElementById('dataCollection').className = 'status-value active';
+                
+                addLog('SUCCESS', 'Système de sauvegarde vérifié et fonctionnel');
+            } else {
+                document.getElementById('systemInitialized').textContent = 'Non ✗';
+                document.getElementById('systemInitialized').className = 'status-value inactive';
+                document.getElementById('surveillanceActive').textContent = 'Non ✗';
+                document.getElementById('surveillanceActive').className = 'status-value inactive';
+                document.getElementById('dataCollection').textContent = 'Inactive ✗';
+                document.getElementById('dataCollection').className = 'status-value inactive';
+                
+                addLog('ERROR', 'Système de sauvegarde non disponible');
+            }
+        }
+
+        function updateStatus() {
+            if (window.realTimeBackupSystem) {
+                const status = window.realTimeBackupSystem.getSystemStatus();
+                const stats = window.realTimeBackupSystem.getStats();
+                
+                // Mettre à jour l'état du système
+                const systemStatus = document.getElementById('systemStatus');
+                systemStatus.textContent = status.isActive ? 'Actif' : 'Inactif';
+                systemStatus.className = 'status-value ' + (status.isActive ? 'active' : 'inactive');
+                
+                // Mettre à jour le statut de surveillance
+                const monitoringStatus = document.getElementById('monitoringStatus');
+                monitoringStatus.textContent = status.isMonitoring ? 'Active' : 'Inactive';
+                monitoringStatus.className = 'status-value ' + (status.isMonitoring ? 'monitoring' : 'inactive');
+                
+                // Mettre à jour les statistiques
+                document.getElementById('totalBackups').textContent = stats.totalBackups;
+                document.getElementById('monitoredEvents').textContent = stats.monitoredEvents;
+                document.getElementById('lastBackup').textContent = stats.lastBackup ? 
+                    new Date(stats.lastBackup).toLocaleTimeString() : '-';
+            }
+        }
+    </script>
+
+    <!-- Configuration du Système de Sauvegarde -->
+    <script src="backup-config.js"></script>
+    
+    <!-- Système de Sauvegarde en Temps Réel -->
+    <script src="real-time-backup-system.js"></script>
+</body>
+</html>
