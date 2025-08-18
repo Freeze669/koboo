@@ -4,8 +4,16 @@
  */
 
 const DISCORD_CONFIG = {
-    // URL du webhook Discord (remplacer par votre URL)
-    webhookUrl: 'VOTRE_WEBHOOK_DISCORD_ICI',
+    // URL du webhook Discord (récupérée depuis le localStorage ou valeur par défaut)
+    get webhookUrl() {
+        return localStorage.getItem('discord_webhook_url') || 'VOTRE_WEBHOOK_DISCORD_ICI';
+    },
+    
+    set webhookUrl(value) {
+        if (value && value !== 'VOTRE_WEBHOOK_DISCORD_ICI') {
+            localStorage.setItem('discord_webhook_url', value);
+        }
+    },
     
     // Configuration des notifications
     notifications: {
@@ -21,7 +29,8 @@ const DISCORD_CONFIG = {
             'service_request',
             'error_critical',
             'security_alert',
-            'tarifs_updated'
+            'tarifs_updated',
+            'discord_server_update'
         ],
         
         // Types d'événements de connexion (groupés par IP)
@@ -57,7 +66,8 @@ const DISCORD_CONFIG = {
             'returning_visitor': 0xffff88, // Jaune
             'error_critical': 0xff0000,  // Rouge
             'security_alert': 0xff0088,  // Rose
-            'tarifs_updated': 0x10b981   // Vert émeraude
+            'tarifs_updated': 0x10b981,   // Vert émeraude
+            'discord_server_update': 0x007bff // Bleu
         },
         
         // Icônes par type d'événement
@@ -73,7 +83,8 @@ const DISCORD_CONFIG = {
             'returning_visitor': '🔄',
             'error_critical': '🚨',
             'security_alert': '⚠️',
-            'tarifs_updated': '💎'
+            'tarifs_updated': '💎',
+            'discord_server_update': '🔄'
         },
         
         // Titres par type d'événement
@@ -89,7 +100,8 @@ const DISCORD_CONFIG = {
             'returning_visitor': 'Visiteur de Retour',
             'error_critical': 'Erreur Critique',
             'security_alert': 'Alerte de Sécurité',
-            'tarifs_updated': 'Tarifs Mis à Jour'
+            'tarifs_updated': 'Tarifs Mis à Jour',
+            'discord_server_update': 'Mise à Jour du Serveur Discord'
         }
     },
     

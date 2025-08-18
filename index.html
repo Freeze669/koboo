@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <link rel="stylesheet" href="admin-styles.css">
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    
     <!-- Styles pour l'affichage des tarifs -->
     <style>
         /* Styles pour l'affichage des tarifs */
@@ -1213,7 +1217,8 @@
         // Initialiser l'affichage des tarifs
         setupTarifsDisplayEventListeners();
         
-
+        // Initialiser Firebase et la synchronisation temps réel
+        initializeFirebaseRealtimeSync();
         
         // Charger les scripts d'affichage des tarifs
         loadTarifsDisplayScripts();
@@ -1275,6 +1280,590 @@
                 realtimeIndicator.classList.add('show');
             }, 2000);
         }
+        
+        // Fonction d'initialisation Firebase temps réel
+        async function initializeFirebaseRealtimeSync() {
+            try {
+                console.log('🚀 Initialisation de la synchronisation Firebase temps réel...');
+                
+                // Attendre que Firebase soit disponible
+                await waitForFirebase();
+                
+                // Initialiser Firebase
+                if (window.firebaseConfig && window.firebaseConfig.initialize) {
+                    const success = await window.firebaseConfig.initialize();
+                    if (success) {
+                        console.log('✅ Firebase initialisé avec succès');
+                        
+                        // Démarrer la synchronisation temps réel
+                        startRealtimeSync();
+                        
+                        // Créer l'indicateur de synchronisation Firebase
+                        createFirebaseSyncIndicator();
+                        
+                    } else {
+                        console.warn('⚠️ Firebase non disponible, utilisation du mode local');
+                    }
+                } else {
+                    console.warn('⚠️ Configuration Firebase non trouvée');
+                }
+            } catch (error) {
+                console.error('❌ Erreur initialisation Firebase temps réel:', error);
+            }
+        }
+        
+        // Attendre que Firebase soit disponible
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                if (typeof firebase !== 'undefined') {
+                    resolve();
+                } else {
+                    const checkFirebase = () => {
+                        if (typeof firebase !== 'undefined') {
+                            resolve();
+                        } else {
+                            setTimeout(checkFirebase, 100);
+                        }
+                    };
+                    checkFirebase();
+                }
+            });
+        }
+        
+        // Démarrer la synchronisation temps réel
+        function startRealtimeSync() {
+            console.log('🔄 Démarrage de la synchronisation temps réel...');
+            
+            // Synchroniser les tarifs
+            syncTarifsRealtime();
+            
+            // Synchroniser les services
+            syncServicesRealtime();
+            
+            // Synchroniser les forfaits
+            syncForfaitsRealtime();
+            
+            // Synchroniser le contenu
+            syncContenuRealtime();
+            
+            // Synchroniser la configuration
+            syncConfigurationRealtime();
+        }
+        
+        // Synchroniser les tarifs en temps réel
+        function syncTarifsRealtime() {
+            if (window.firebaseConfig && window.firebaseConfig.listen) {
+                const tarifsRef = window.firebaseConfig.listen('/tarifs', (data) => {
+                    if (data) {
+                        console.log('🔄 Tarifs mis à jour en temps réel:', data);
+                        
+                        // Mettre à jour la configuration locale
+                        if (window.tarifsConfig) {
+                            window.tarifsConfig.updateTarifsFromFirebase(data);
+                        }
+                        
+                        // Déclencher l'événement de mise à jour
+                        triggerTarifsUpdate(data);
+                        
+                        // Mettre à jour l'affichage
+                        updateTarifsDisplayRealtime(data);
+                    }
+                });
+                
+                console.log('✅ Écouteur tarifs Firebase configuré');
+            }
+        }
+        
+        // Synchroniser les services en temps réel
+        function syncServicesRealtime() {
+            if (window.firebaseConfig && window.firebaseConfig.listen) {
+                const servicesRef = window.firebaseConfig.listen('/services', (data) => {
+                    if (data) {
+                        console.log('🔄 Services mis à jour en temps réel:', data);
+                        
+                        // Mettre à jour la configuration locale
+                        if (window.tarifsConfig) {
+                            window.tarifsConfig.updateServicesFromFirebase(data);
+                        }
+                        
+                        // Déclencher l'événement de mise à jour
+                        triggerServicesUpdate(data);
+                    }
+                });
+                
+                console.log('✅ Écouteur services Firebase configuré');
+            }
+        }
+        
+        // Synchroniser les forfaits en temps réel
+        function syncForfaitsRealtime() {
+            if (window.firebaseConfig && window.firebaseConfig.listen) {
+                const forfaitsRef = window.firebaseConfig.listen('/forfaits', (data) => {
+                    if (data) {
+                        console.log('🔄 Forfaits mis à jour en temps réel:', data);
+                        
+                        // Mettre à jour la configuration locale
+                        if (window.tarifsConfig) {
+                            window.tarifsConfig.updateForfaitsFromFirebase(data);
+                        }
+                        
+                        // Déclencher l'événement de mise à jour
+                        triggerForfaitsUpdate(data);
+                    }
+                });
+                
+                console.log('✅ Écouteur forfaits Firebase configuré');
+            }
+        }
+        
+        // Synchroniser le contenu en temps réel
+        function syncContenuRealtime() {
+            if (window.firebaseConfig && window.firebaseConfig.listen) {
+                const contenuRef = window.firebaseConfig.listen('/contenu', (data) => {
+                    if (data) {
+                        console.log('🔄 Contenu mis à jour en temps réel:', data);
+                        
+                        // Déclencher l'événement de mise à jour du contenu
+                        triggerContenuUpdate(data);
+                        
+                        // Mettre à jour l'affichage du contenu
+                        updateContenuDisplayRealtime(data);
+                    }
+                });
+                
+                console.log('✅ Écouteur contenu Firebase configuré');
+            }
+        }
+        
+        // Synchroniser la configuration en temps réel
+        function syncConfigurationRealtime() {
+            if (window.firebaseConfig && window.firebaseConfig.listen) {
+                const configRef = window.firebaseConfig.listen('/configuration', (data) => {
+                    if (data) {
+                        console.log('🔄 Configuration mise à jour en temps réel:', data);
+                        
+                        // Déclencher l'événement de mise à jour de la configuration
+                        triggerConfigurationUpdate(data);
+                        
+                        // Appliquer la nouvelle configuration
+                        applyConfigurationRealtime(data);
+                    }
+                });
+                
+                console.log('✅ Écouteur configuration Firebase configuré');
+            }
+        }
+        
+        // Déclencher la mise à jour des tarifs
+        function triggerTarifsUpdate(tarifs) {
+            const event = new CustomEvent('tarifsChanged', {
+                detail: {
+                    tarifs: tarifs,
+                    timestamp: Date.now(),
+                    source: 'firebase-realtime'
+                }
+            });
+            document.dispatchEvent(event);
+        }
+        
+        // Déclencher la mise à jour des services
+        function triggerServicesUpdate(services) {
+            const event = new CustomEvent('servicesChanged', {
+                detail: {
+                    services: services,
+                    timestamp: Date.now(),
+                    source: 'firebase-realtime'
+                }
+            });
+            document.dispatchEvent(event);
+        }
+        
+        // Déclencher la mise à jour des forfaits
+        function triggerForfaitsUpdate(forfaits) {
+            const event = new CustomEvent('forfaitsChanged', {
+                detail: {
+                    forfaits: forfaits,
+                    timestamp: Date.now(),
+                    source: 'firebase-realtime'
+                }
+            });
+            document.dispatchEvent(event);
+        }
+        
+        // Déclencher la mise à jour du contenu
+        function triggerContenuUpdate(contenu) {
+            const event = new CustomEvent('contenuChanged', {
+                detail: {
+                    contenu: contenu,
+                    timestamp: Date.now(),
+                    source: 'firebase-realtime'
+                }
+            });
+            document.dispatchEvent(event);
+        }
+        
+        // Déclencher la mise à jour de la configuration
+        function triggerConfigurationUpdate(config) {
+            const event = new CustomEvent('configurationChanged', {
+                detail: {
+                    configuration: config,
+                    timestamp: Date.now(),
+                    source: 'firebase-realtime'
+                }
+            });
+            document.dispatchEvent(event);
+        }
+        
+        // Mettre à jour l'affichage des tarifs en temps réel
+        function updateTarifsDisplayRealtime(tarifs) {
+            // Mettre à jour l'affichage si la fonction existe
+            if (typeof renderTarifsDisplay === 'function') {
+                renderTarifsDisplay();
+            }
+            
+            // Mettre à jour avec animation si disponible
+            if (typeof updateTarifsDisplayWithAnimation === 'function') {
+                updateTarifsDisplayWithAnimation(tarifs);
+            }
+        }
+        
+        // Mettre à jour l'affichage du contenu en temps réel
+        function updateContenuDisplayRealtime(contenu) {
+            // Mettre à jour le titre de la page
+            if (contenu.titre) {
+                document.title = contenu.titre;
+            }
+            
+            // Mettre à jour la description
+            if (contenu.description) {
+                const metaDescription = document.querySelector('meta[name="description"]');
+                if (metaDescription) {
+                    metaDescription.setAttribute('content', contenu.description);
+                }
+            }
+            
+            // Mettre à jour le contenu principal
+            if (contenu.contenuPrincipal) {
+                const mainContent = document.querySelector('main') || document.querySelector('.main-content');
+                if (mainContent) {
+                    mainContent.innerHTML = contenu.contenuPrincipal;
+                }
+            }
+        }
+        
+        // Appliquer la nouvelle configuration en temps réel
+        function applyConfigurationRealtime(config) {
+            // Mettre à jour le thème
+            if (config.theme) {
+                document.documentElement.setAttribute('data-theme', config.theme);
+            }
+            
+            // Mettre à jour les couleurs
+            if (config.couleurs) {
+                updateColorsRealtime(config.couleurs);
+            }
+            
+            // Mettre à jour les animations
+            if (config.animations !== undefined) {
+                updateAnimationsRealtime(config.animations);
+            }
+        }
+        
+        // Mettre à jour les couleurs en temps réel
+        function updateColorsRealtime(couleurs) {
+            const root = document.documentElement;
+            
+            Object.entries(couleurs).forEach(([property, value]) => {
+                root.style.setProperty(`--${property}`, value);
+            });
+        }
+        
+        // Mettre à jour les animations en temps réel
+        function updateAnimationsRealtime(animations) {
+            if (animations) {
+                document.body.classList.add('animations-enabled');
+            } else {
+                document.body.classList.remove('animations-enabled');
+            }
+        }
+        
+        // Créer l'indicateur de synchronisation Firebase
+        function createFirebaseSyncIndicator() {
+            // Supprimer l'ancien indicateur s'il existe
+            const oldIndicator = document.querySelector('.firebase-sync-indicator');
+            if (oldIndicator) {
+                oldIndicator.remove();
+            }
+            
+            // Créer le nouvel indicateur
+            const indicator = document.createElement('div');
+            indicator.className = 'firebase-sync-indicator';
+            indicator.innerHTML = `
+                <div class="sync-status">
+                    <i class="fas fa-sync-alt fa-spin"></i>
+                    <span>Synchronisation Firebase Active</span>
+                </div>
+                <div class="sync-info">
+                    <small>Modifications en temps réel</small>
+                </div>
+            `;
+            
+            // Ajouter les styles
+            const styles = document.createElement('style');
+            styles.textContent = `
+                .firebase-sync-indicator {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                    color: white;
+                    padding: 0.75rem 1rem;
+                    border-radius: 12px;
+                    font-size: 0.85rem;
+                    z-index: 10000;
+                    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    transition: all 0.3s ease;
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                
+                .firebase-sync-indicator .show {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                
+                .firebase-sync-indicator .sync-status {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.25rem;
+                }
+                
+                .firebase-sync-indicator .sync-status i {
+                    color: #60a5fa;
+                }
+                
+                .firebase-sync-indicator .sync-info small {
+                    opacity: 0.8;
+                    font-size: 0.75rem;
+                }
+                
+                .firebase-sync-indicator:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+                }
+                
+                @keyframes syncPulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.7; }
+                }
+                
+                .firebase-sync-indicator .sync-status i {
+                    animation: syncPulse 2s infinite;
+                }
+            `;
+            
+            document.head.appendChild(styles);
+            document.body.appendChild(indicator);
+            
+            // Afficher l'indicateur avec animation
+            setTimeout(() => {
+                indicator.classList.add('show');
+            }, 1000);
+        }
+        
+        // Fonctions utilitaires Firebase pour la gestion des tarifs
+        window.firebaseTarifsUtils = {
+            // Ajouter un nouveau service
+            async addService(serviceData) {
+                try {
+                    if (window.firebaseConfig && window.firebaseConfig.save) {
+                        const serviceId = generateId();
+                        const newService = {
+                            id: serviceId,
+                            ...serviceData,
+                            createdAt: Date.now(),
+                            updatedAt: Date.now()
+                        };
+                        
+                        // Sauvegarder dans Firebase
+                        await window.firebaseConfig.save(`/services/${serviceId}`, newService);
+                        
+                        console.log('✅ Nouveau service ajouté:', newService);
+                        return serviceId;
+                    } else {
+                        throw new Error('Firebase non disponible');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur ajout service:', error);
+                    throw error;
+                }
+            },
+            
+            // Mettre à jour un service
+            async updateService(serviceId, updates) {
+                try {
+                    if (window.firebaseConfig && window.firebaseConfig.update) {
+                        const updateData = {
+                            ...updates,
+                            updatedAt: Date.now()
+                        };
+                        
+                        await window.firebaseConfig.update(`/services/${serviceId}`, updateData);
+                        
+                        console.log('✅ Service mis à jour:', serviceId);
+                        return true;
+                    } else {
+                        throw new Error('Firebase non disponible');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur mise à jour service:', error);
+                    throw error;
+                }
+            },
+            
+            // Supprimer un service
+            async deleteService(serviceId) {
+                try {
+                    if (window.firebaseConfig && window.firebaseConfig.delete) {
+                        await window.firebaseConfig.delete(`/services/${serviceId}`);
+                        
+                        console.log('✅ Service supprimé:', serviceId);
+                        return true;
+                    } else {
+                        throw new Error('Firebase non disponible');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur suppression service:', error);
+                    throw error;
+                }
+            },
+            
+            // Ajouter un nouveau forfait
+            async addForfait(forfaitData) {
+                try {
+                    if (window.firebaseConfig && window.firebaseConfig.save) {
+                        const forfaitId = generateId();
+                        const newForfait = {
+                            id: forfaitId,
+                            ...forfaitData,
+                            createdAt: Date.now(),
+                            updatedAt: Date.now()
+                        };
+                        
+                        // Sauvegarder dans Firebase
+                        await window.firebaseConfig.save(`/forfaits/${forfaitId}`, newForfait);
+                        
+                        console.log('✅ Nouveau forfait ajouté:', newForfait);
+                        return forfaitId;
+                    } else {
+                        throw new Error('Firebase non disponible');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur ajout forfait:', error);
+                    throw error;
+                }
+            },
+            
+            // Mettre à jour un forfait
+            async updateForfait(forfaitId, updates) {
+                try {
+                    if (window.firebaseConfig && window.firebaseConfig.update) {
+                        const updateData = {
+                            ...updates,
+                            updatedAt: Date.now()
+                        };
+                        
+                        await window.firebaseConfig.update(`/forfaits/${forfaitId}`, updateData);
+                        
+                        console.log('✅ Forfait mis à jour:', forfaitId);
+                        return true;
+                    } else {
+                        throw new Error('Firebase non disponible');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur mise à jour forfait:', error);
+                    throw error;
+                }
+            },
+            
+            // Supprimer un forfait
+            async deleteForfait(forfaitId) {
+                try {
+                    if (window.firebaseConfig && window.firebaseConfig.delete) {
+                        await window.firebaseConfig.delete(`/forfaits/${forfaitId}`);
+                        
+                        console.log('✅ Forfait supprimé:', forfaitId);
+                        return true;
+                    } else {
+                        throw new Error('Firebase non disponible');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur suppression forfait:', error);
+                    throw error;
+                }
+            },
+            
+            // Obtenir tous les tarifs depuis Firebase
+            async getAllTarifs() {
+                try {
+                    if (window.firebaseConfig && window.firebaseConfig.get) {
+                        const [services, forfaits] = await Promise.all([
+                            window.firebaseConfig.get('/services') || {},
+                            window.firebaseConfig.get('/forfaits') || {}
+                        ]);
+                        
+                        return { services, forfaits };
+                    } else {
+                        throw new Error('Firebase non disponible');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur récupération tarifs:', error);
+                    return { services: {}, forfaits: {} };
+                }
+            },
+            
+            // Sauvegarder tous les tarifs
+            async saveAllTarifs(tarifs) {
+                try {
+                    if (window.firebaseConfig && window.firebaseConfig.save) {
+                        await Promise.all([
+                            window.firebaseConfig.save('/services', tarifs.services || {}),
+                            window.firebaseConfig.save('/forfaits', tarifs.forfaits || {})
+                        ]);
+                        
+                        console.log('✅ Tous les tarifs sauvegardés');
+                        return true;
+                    } else {
+                        throw new Error('Firebase non disponible');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur sauvegarde tarifs:', error);
+                    throw error;
+                }
+            }
+        };
+        
+        // Fonction utilitaire pour générer des IDs uniques
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+        
+        // Exposer les fonctions Firebase globalement
+        window.firebaseRealtimeSync = {
+            initialize: initializeFirebaseRealtimeSync,
+            startSync: startRealtimeSync,
+            addService: window.firebaseTarifsUtils.addService,
+            updateService: window.firebaseTarifsUtils.updateService,
+            deleteService: window.firebaseTarifsUtils.deleteService,
+            addForfait: window.firebaseTarifsUtils.addForfait,
+            updateForfait: window.firebaseTarifsUtils.updateForfait,
+            deleteForfait: window.firebaseTarifsUtils.deleteForfait,
+            getAllTarifs: window.firebaseTarifsUtils.getAllTarifs,
+            saveAllTarifs: window.firebaseTarifsUtils.saveAllTarifs
+        };
         
 
     </script>

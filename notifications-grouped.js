@@ -18,7 +18,8 @@ class NotificationsGrouped {
             'payment_received',
             'service_request',
             'error_critical',
-            'security_alert'
+            'security_alert',
+            'discord_server_update'
         ];
         
         // Configuration des notifications de connexion
@@ -37,6 +38,46 @@ class NotificationsGrouped {
      */
     init() {
         this.startGroupingTimer();
+        
+        // Écouter les changements de webhook depuis le panel admin
+        this.setupWebhookListener();
+    }
+    
+    /**
+     * Configurer l'écouteur pour les changements de webhook
+     */
+    setupWebhookListener() {
+        // Vérifier périodiquement les changements de webhook
+        setInterval(() => {
+            const newWebhookUrl = this.getCurrentWebhookUrl();
+            if (newWebhookUrl !== this.webhookUrl) {
+                this.updateWebhookUrl(newWebhookUrl);
+            }
+        }, 5000); // Vérifier toutes les 5 secondes
+    }
+    
+    /**
+     * Obtenir l'URL du webhook actuelle
+     */
+    getCurrentWebhookUrl() {
+        // Priorité: localStorage > configuration Discord > valeur par défaut
+        return localStorage.getItem('discord_webhook_url') || 
+               (window.DISCORD_CONFIG ? window.DISCORD_CONFIG.webhookUrl : 'VOTRE_WEBHOOK_DISCORD_ICI');
+    }
+    
+    /**
+     * Mettre à jour l'URL du webhook
+     */
+    updateWebhookUrl(newWebhookUrl) {
+        if (newWebhookUrl && newWebhookUrl !== 'VOTRE_WEBHOOK_DISCORD_ICI') {
+            const oldWebhook = this.webhookUrl;
+            this.webhookUrl = newWebhookUrl;
+            
+            console.log(`🔄 Webhook Discord mis à jour: ${oldWebhook} → ${newWebhookUrl}`);
+            
+            // Envoyer une notification de confirmation
+            this.sendWebhookUpdateNotification(oldWebhook, newWebhookUrl);
+        }
     }
     
     /**
@@ -254,6 +295,10 @@ class NotificationsGrouped {
                 return `Nouveau visiteur: ${notification.data.ip || 'Unknown'}`;
             case 'returning_visitor':
                 return `Visiteur de retour: ${notification.data.ip || 'Unknown'}`;
+            case 'security_alert':
+                return `Alerte de sécurité: ${notification.data.message || 'Unknown'}`;
+            case 'discord_server_update':
+                return `Nouveau serveur Discord: ${notification.data.serverName || 'Unknown'} - ${notification.data.inviteLink || 'Unknown'}`;
             default:
                 return JSON.stringify(notification.data);
         }
@@ -294,7 +339,8 @@ class NotificationsGrouped {
             'new_visitor': 0x88ff88,     // Vert clair
             'returning_visitor': 0xffff88, // Jaune
             'error_critical': 0xff0000,  // Rouge
-            'security_alert': 0xff0088   // Rose
+            'security_alert': 0xff0088,   // Rose
+            'discord_server_update': 0x0088ff // Bleu
         };
         return colors[type] || 0x888888;
     }
@@ -314,7 +360,8 @@ class NotificationsGrouped {
             'new_visitor': '👤',
             'returning_visitor': '🔄',
             'error_critical': '🚨',
-            'security_alert': '⚠️'
+            'security_alert': '⚠️',
+            'discord_server_update': '🔄'
         };
         return icons[type] || '📢';
     }
@@ -334,7 +381,8 @@ class NotificationsGrouped {
             'new_visitor': 'Nouveau Visiteur',
             'returning_visitor': 'Visiteur de Retour',
             'error_critical': 'Erreur Critique',
-            'security_alert': 'Alerte de Sécurité'
+            'security_alert': 'Alerte de Sécurité',
+            'discord_server_update': 'Mise à jour Serveur Discord'
         };
         return titles[type] || 'Notification';
     }
@@ -393,6 +441,88 @@ class NotificationsGrouped {
             connectionCount: this.notifications.filter(n => n.isConnection).length,
             normalCount: this.notifications.filter(n => !n.isImportant && !n.isConnection).length
         };
+    }
+    
+    /**
+     * Envoyer une notification de mise à jour du serveur Discord
+     */
+    sendDiscordServerUpdate(serverName, inviteLink, additionalInfo = {}) {
+        const notificationData = {
+            serverName: serverName,
+            inviteLink: inviteLink,
+            ...additionalInfo
+        };
+        
+        return this.addNotification('discord_server_update', notificationData, 'high');
+    }
+    
+    /**
+     * Envoyer une notification de nouveau serveur Discord avec le lien fourni
+     */
+    sendNewDiscordServerNotification() {
+        const serverInfo = {
+            serverName: 'Mayu & Jack Studio - Nouveau Serveur',
+            inviteLink: 'https://discord.gg/5ps8dkfnBk',
+            description: 'Nouveau serveur Discord officiel',
+            features: ['Support technique', 'Communauté active', 'Actualités en temps réel'],
+            timestamp: new Date().toISOString()
+        };
+        
+        return this.sendDiscordServerUpdate(
+            serverInfo.serverName,
+            serverInfo.inviteLink,
+            serverInfo
+        );
+    }
+    
+    /**
+     * Envoyer une notification de mise à jour du webhook
+     */
+    async sendWebhookUpdateNotification(oldWebhook, newWebhook) {
+        try {
+            // Créer un embed de confirmation
+            const embed = {
+                title: '🔧 Configuration Webhook Mise à Jour',
+                description: 'Le webhook Discord a été modifié avec succès depuis le panel admin.',
+                color: 0x00ff00,
+                fields: [
+                    {
+                        name: '📡 Ancien Webhook',
+                        value: oldWebhook ? `\`${oldWebhook.substring(0, 50)}...\`` : 'Aucun',
+                        inline: false
+                    },
+                    {
+                        name: '🆕 Nouveau Webhook',
+                        value: `\`${newWebhook.substring(0, 50)}...\``,
+                        inline: false
+                    },
+                    {
+                        name: '⏰ Heure de Mise à Jour',
+                        value: new Date().toLocaleString('fr-FR'),
+                        inline: true
+                    },
+                    {
+                        name: '🔐 Source',
+                        value: 'Panel Admin Koboo Studio',
+                        inline: true
+                    }
+                ],
+                footer: {
+                    text: 'Système de Logs Discord - Mise à jour automatique'
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            // Envoyer la notification
+            await this.sendDiscordWebhook({
+                embeds: [embed]
+            });
+            
+            console.log('✅ Notification de mise à jour webhook envoyée');
+            
+        } catch (error) {
+            console.error('❌ Erreur envoi notification mise à jour webhook:', error);
+        }
     }
 }
 

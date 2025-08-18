@@ -8,7 +8,7 @@ class AnimationOptimizer {
         this.isOptimizing = true;
         this.animationFrames = new Map();
         this.optimizationLevel = 'high'; // high, medium, low, emergency
-        this.targetFPS = 90;
+        this.targetFPS = 80;
         this.currentFPS = 0;
         this.animationQuality = 1.0; // 0.0 à 1.0
         this.smoothAnimations = true;

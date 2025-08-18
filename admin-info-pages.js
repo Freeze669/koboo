@@ -418,10 +418,65 @@ class AdminInfoPages {
      */
     createConfigPage() {
         const config = this.getCachedData('systemConfig');
+        const webhookConfig = this.getWebhookConfig();
         
         return `
             <div class="config-overview">
                 <h3>⚙️ Configuration du Système</h3>
+                
+                <!-- Section Webhook Discord -->
+                <div class="config-section-webhook">
+                    <h4>📡 Configuration Webhook Discord</h4>
+                    <div class="webhook-config-container">
+                        <div class="webhook-status">
+                            <span class="status-label">Statut:</span>
+                            <span class="status-value ${webhookConfig.isValid ? 'valid' : 'invalid'}">
+                                ${webhookConfig.isValid ? '✅ Connecté' : '❌ Non connecté'}
+                            </span>
+                        </div>
+                        
+                        <div class="webhook-url-input">
+                            <label for="webhookUrl">URL du Webhook Discord:</label>
+                            <div class="input-group">
+                                <input type="text" id="webhookUrl" 
+                                       value="${webhookConfig.url}" 
+                                       placeholder="https://discord.com/api/webhooks/VOTRE_ID/VOTRE_TOKEN"
+                                       class="webhook-input" />
+                                <button onclick="testWebhookConnection()" class="test-btn">
+                                    <i class="fas fa-plug"></i> Tester
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="webhook-actions">
+                            <button onclick="saveWebhookConfig()" class="save-btn">
+                                <i class="fas fa-save"></i> Sauvegarder
+                            </button>
+                            <button onclick="resetWebhookConfig()" class="reset-btn">
+                                <i class="fas fa-undo"></i> Réinitialiser
+                            </button>
+                            <button onclick="sendTestNotification()" class="test-notif-btn">
+                                <i class="fas fa-bell"></i> Test Notification
+                            </button>
+                        </div>
+                        
+                        <div class="webhook-info">
+                            <div class="info-item">
+                                <span class="info-label">Dernière mise à jour:</span>
+                                <span class="info-value">${webhookConfig.lastUpdate}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Notifications envoyées:</span>
+                                <span class="info-value">${webhookConfig.notificationsSent}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Erreurs de connexion:</span>
+                                <span class="info-value">${webhookConfig.connectionErrors}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="config-grid">
                     <div class="config-section">
                         <h4>🔐 Sécurité</h4>
@@ -459,6 +514,184 @@ class AdminInfoPages {
                         </div>
                     </div>
                 </div>
+                
+                <!-- Styles CSS pour la configuration webhook -->
+                <style>
+                    .config-section-webhook {
+                        background: linear-gradient(135deg, #1e293b, #334155);
+                        border-radius: 15px;
+                        padding: 25px;
+                        margin: 20px 0;
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                    }
+                    
+                    .webhook-config-container {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 20px;
+                    }
+                    
+                    .webhook-status {
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        padding: 15px;
+                        background: rgba(255, 255, 255, 0.05);
+                        border-radius: 10px;
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                    }
+                    
+                    .status-label {
+                        font-weight: 600;
+                        color: #94a3b8;
+                    }
+                    
+                    .status-value.valid {
+                        color: #10b981;
+                        font-weight: bold;
+                    }
+                    
+                    .status-value.invalid {
+                        color: #ef4444;
+                        font-weight: bold;
+                    }
+                    
+                    .webhook-url-input {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                    }
+                    
+                    .webhook-url-input label {
+                        font-weight: 600;
+                        color: #e2e8f0;
+                        font-size: 0.9rem;
+                    }
+                    
+                    .input-group {
+                        display: flex;
+                        gap: 10px;
+                    }
+                    
+                    .webhook-input {
+                        flex: 1;
+                        padding: 12px 16px;
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                        border-radius: 8px;
+                        background: rgba(255, 255, 255, 0.05);
+                        color: #e2e8f0;
+                        font-size: 0.9rem;
+                        transition: all 0.3s ease;
+                    }
+                    
+                    .webhook-input:focus {
+                        outline: none;
+                        border-color: #3b82f6;
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                    }
+                    
+                    .webhook-actions {
+                        display: flex;
+                        gap: 15px;
+                        flex-wrap: wrap;
+                    }
+                    
+                    .test-btn, .save-btn, .reset-btn, .test-notif-btn {
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-size: 0.9rem;
+                    }
+                    
+                    .test-btn {
+                        background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+                        color: white;
+                    }
+                    
+                    .test-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+                    }
+                    
+                    .save-btn {
+                        background: linear-gradient(45deg, #10b981, #059669);
+                        color: white;
+                    }
+                    
+                    .save-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+                    }
+                    
+                    .reset-btn {
+                        background: linear-gradient(45deg, #f59e0b, #d97706);
+                        color: white;
+                    }
+                    
+                    .reset-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+                    }
+                    
+                    .test-notif-btn {
+                        background: linear-gradient(45deg, #8b5cf6, #7c3aed);
+                        color: white;
+                    }
+                    
+                    .test-notif-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+                    }
+                    
+                    .webhook-info {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                        gap: 15px;
+                        padding: 20px;
+                        background: rgba(255, 255, 255, 0.03);
+                        border-radius: 10px;
+                        border: 1px solid rgba(255, 255, 255, 0.05);
+                    }
+                    
+                    .info-item {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                    }
+                    
+                    .info-label {
+                        font-size: 0.8rem;
+                        color: #94a3b8;
+                        font-weight: 500;
+                    }
+                    
+                    .info-value {
+                        font-size: 1rem;
+                        color: #e2e8f0;
+                        font-weight: 600;
+                    }
+                    
+                    @media (max-width: 768px) {
+                        .webhook-actions {
+                            flex-direction: column;
+                        }
+                        
+                        .input-group {
+                            flex-direction: column;
+                        }
+                        
+                        .webhook-info {
+                            grid-template-columns: 1fr;
+                        }
+                    }
+                </style>
             </div>
         `;
     }
@@ -659,6 +892,60 @@ class AdminInfoPages {
             }
         };
     }
+    
+    /**
+     * Obtenir la configuration du webhook Discord
+     */
+    getWebhookConfig() {
+        // Récupérer depuis le localStorage ou la configuration Discord
+        const storedWebhook = localStorage.getItem('discord_webhook_url');
+        const webhookStats = JSON.parse(localStorage.getItem('discord_webhook_stats') || '{}');
+        
+        // Vérifier si le webhook est valide
+        const isValid = this.validateWebhookUrl(storedWebhook || '');
+        
+        return {
+            url: storedWebhook || 'VOTRE_WEBHOOK_DISCORD_ICI',
+            isValid: isValid,
+            lastUpdate: webhookStats.lastUpdate || 'Jamais',
+            notificationsSent: webhookStats.notificationsSent || 0,
+            connectionErrors: webhookStats.connectionErrors || 0
+        };
+    }
+    
+    /**
+     * Valider l'URL du webhook Discord
+     */
+    validateWebhookUrl(url) {
+        if (!url || url === 'VOTRE_WEBHOOK_DISCORD_ICI') {
+            return false;
+        }
+        
+        // Vérifier le format Discord webhook
+        const discordWebhookRegex = /^https:\/\/discord\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]+$/;
+        return discordWebhookRegex.test(url);
+    }
+    
+    /**
+     * Mettre à jour les statistiques du webhook
+     */
+    updateWebhookStats(type, value = 1) {
+        const stats = JSON.parse(localStorage.getItem('discord_webhook_stats') || '{}');
+        
+        switch (type) {
+            case 'notification_sent':
+                stats.notificationsSent = (stats.notificationsSent || 0) + value;
+                break;
+            case 'connection_error':
+                stats.connectionErrors = (stats.connectionErrors || 0) + value;
+                break;
+            case 'last_update':
+                stats.lastUpdate = new Date().toLocaleString('fr-FR');
+                break;
+        }
+        
+        localStorage.setItem('discord_webhook_stats', JSON.stringify(stats));
+    }
 
     /**
      * Obtenir l'icône d'une activité
@@ -730,3 +1017,345 @@ const adminInfoPages = new AdminInfoPages();
 // Exposer globalement
 window.AdminInfoPages = AdminInfoPages;
 window.adminInfoPages = adminInfoPages;
+
+// ========================================
+// FONCTIONS DE GESTION DU WEBHOOK DISCORD
+// ========================================
+
+/**
+ * Tester la connexion du webhook Discord
+ */
+async function testWebhookConnection() {
+    const webhookUrl = document.getElementById('webhookUrl').value;
+    
+    if (!webhookUrl || webhookUrl === 'VOTRE_WEBHOOK_DISCORD_ICI') {
+        showWebhookMessage('⚠️ Veuillez entrer une URL de webhook valide', 'warning');
+        return;
+    }
+    
+    try {
+        // Afficher l'état de test
+        const testBtn = document.querySelector('.test-btn');
+        const originalText = testBtn.innerHTML;
+        testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Test...';
+        testBtn.disabled = true;
+        
+        // Envoyer une requête de test
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                content: '🧪 **Test de connexion webhook**\n\n✅ Le webhook Discord est fonctionnel !\n\n📡 Configuration testée avec succès.\n🕐 ' + new Date().toLocaleString('fr-FR')
+            })
+        });
+        
+        if (response.ok) {
+            showWebhookMessage('✅ Connexion webhook testée avec succès !', 'success');
+            
+            // Mettre à jour les statistiques
+            if (window.adminInfoPages) {
+                window.adminInfoPages.updateWebhookStats('last_update');
+            }
+            
+            // Mettre à jour l'affichage
+            setTimeout(() => {
+                if (window.adminInfoPages) {
+                    window.adminInfoPages.showPage('config');
+                }
+            }, 1000);
+            
+        } else {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        
+    } catch (error) {
+        console.error('❌ Erreur test webhook:', error);
+        showWebhookMessage(`❌ Erreur de connexion: ${error.message}`, 'error');
+        
+        // Mettre à jour les statistiques d'erreur
+        if (window.adminInfoPages) {
+            window.adminInfoPages.updateWebhookStats('connection_error');
+        }
+        
+    } finally {
+        // Restaurer le bouton
+        const testBtn = document.querySelector('.test-btn');
+        testBtn.innerHTML = originalText;
+        testBtn.disabled = false;
+    }
+}
+
+/**
+ * Sauvegarder la configuration du webhook
+ */
+async function saveWebhookConfig() {
+    const webhookUrl = document.getElementById('webhookUrl').value;
+    
+    if (!webhookUrl || webhookUrl === 'VOTRE_WEBHOOK_DISCORD_ICI') {
+        showWebhookMessage('⚠️ Veuillez entrer une URL de webhook valide', 'warning');
+        return;
+    }
+    
+    try {
+        // Valider l'URL
+        if (!window.adminInfoPages || !window.adminInfoPages.validateWebhookUrl(webhookUrl)) {
+            showWebhookMessage('❌ Format d\'URL de webhook invalide', 'error');
+            return;
+        }
+        
+        // Sauvegarder dans le localStorage
+        localStorage.setItem('discord_webhook_url', webhookUrl);
+        
+        // Mettre à jour la configuration Discord
+        if (window.DISCORD_CONFIG) {
+            window.DISCORD_CONFIG.webhookUrl = webhookUrl;
+        }
+        
+        // Mettre à jour les statistiques
+        if (window.adminInfoPages) {
+            window.adminInfoPages.updateWebhookStats('last_update');
+        }
+        
+        showWebhookMessage('✅ Configuration webhook sauvegardée avec succès !', 'success');
+        
+        // Mettre à jour l'affichage
+        setTimeout(() => {
+            if (window.adminInfoPages) {
+                window.adminInfoPages.showPage('config');
+            }
+        }, 1000);
+        
+    } catch (error) {
+        console.error('❌ Erreur sauvegarde webhook:', error);
+        showWebhookMessage(`❌ Erreur de sauvegarde: ${error.message}`, 'error');
+    }
+}
+
+/**
+ * Réinitialiser la configuration du webhook
+ */
+function resetWebhookConfig() {
+    if (confirm('⚠️ Êtes-vous sûr de vouloir réinitialiser la configuration du webhook ?')) {
+        try {
+            // Supprimer du localStorage
+            localStorage.removeItem('discord_webhook_url');
+            localStorage.removeItem('discord_webhook_stats');
+            
+            // Réinitialiser l'input
+            document.getElementById('webhookUrl').value = 'VOTRE_WEBHOOK_DISCORD_ICI';
+            
+            // Mettre à jour l'affichage
+            if (window.adminInfoPages) {
+                window.adminInfoPages.showPage('config');
+            }
+            
+            showWebhookMessage('🔄 Configuration webhook réinitialisée', 'info');
+            
+        } catch (error) {
+            console.error('❌ Erreur réinitialisation webhook:', error);
+            showWebhookMessage(`❌ Erreur de réinitialisation: ${error.message}`, 'error');
+        }
+    }
+}
+
+/**
+ * Envoyer une notification de test
+ */
+async function sendTestNotification() {
+    const webhookUrl = document.getElementById('webhookUrl').value;
+    
+    if (!webhookUrl || webhookUrl === 'VOTRE_WEBHOOK_DISCORD_ICI') {
+        showWebhookMessage('⚠️ Veuillez d\'abord configurer et sauvegarder le webhook', 'warning');
+        return;
+    }
+    
+    try {
+        // Afficher l'état d'envoi
+        const testNotifBtn = document.querySelector('.test-notif-btn');
+        const originalText = testNotifBtn.innerHTML;
+        testNotifBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
+        testNotifBtn.disabled = true;
+        
+        // Créer une notification de test avec embed
+        const testEmbed = {
+            title: '🧪 Notification de Test',
+            description: 'Ceci est une notification de test pour vérifier le bon fonctionnement du webhook Discord.',
+            color: 0x00ff00,
+            fields: [
+                {
+                    name: '📅 Date',
+                    value: new Date().toLocaleString('fr-FR'),
+                    inline: true
+                },
+                {
+                    name: '🔧 Source',
+                    value: 'Panel Admin Koboo Studio',
+                    inline: true
+                },
+                {
+                    name: '✅ Statut',
+                    value: 'Test réussi',
+                    inline: true
+                }
+            ],
+            footer: {
+                text: 'Koboo Studio - Système de Logs Discord'
+            },
+            timestamp: new Date().toISOString()
+        };
+        
+        // Envoyer la notification
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                embeds: [testEmbed]
+            })
+        });
+        
+        if (response.ok) {
+            showWebhookMessage('✅ Notification de test envoyée avec succès !', 'success');
+            
+            // Mettre à jour les statistiques
+            if (window.adminInfoPages) {
+                window.adminInfoPages.updateWebhookStats('notification_sent');
+            }
+            
+            // Mettre à jour l'affichage
+            setTimeout(() => {
+                if (window.adminInfoPages) {
+                    window.adminInfoPages.showPage('config');
+                }
+            }, 1000);
+            
+        } else {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        
+    } catch (error) {
+        console.error('❌ Erreur envoi notification test:', error);
+        showWebhookMessage(`❌ Erreur d'envoi: ${error.message}`, 'error');
+        
+        // Mettre à jour les statistiques d'erreur
+        if (window.adminInfoPages) {
+            window.adminInfoPages.updateWebhookStats('connection_error');
+        }
+        
+    } finally {
+        // Restaurer le bouton
+        const testNotifBtn = document.querySelector('.test-notif-btn');
+        testNotifBtn.innerHTML = originalText;
+        testNotifBtn.disabled = false;
+    }
+}
+
+/**
+ * Afficher un message de statut webhook
+ */
+function showWebhookMessage(message, type = 'info') {
+    // Supprimer l'ancien message s'il existe
+    const oldMessage = document.querySelector('.webhook-message');
+    if (oldMessage) {
+        oldMessage.remove();
+    }
+    
+    // Créer le nouveau message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `webhook-message ${type}`;
+    messageDiv.innerHTML = `
+        <div class="message-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button onclick="this.parentElement.remove()" class="message-close">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Ajouter les styles
+    if (!document.querySelector('#webhook-message-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'webhook-message-styles';
+        styles.textContent = `
+            .webhook-message {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                animation: slideInRight 0.3s ease;
+                max-width: 400px;
+            }
+            
+            .webhook-message.success {
+                background: linear-gradient(45deg, #10b981, #059669);
+            }
+            
+            .webhook-message.error {
+                background: linear-gradient(45deg, #ef4444, #dc2626);
+            }
+            
+            .webhook-message.warning {
+                background: linear-gradient(45deg, #f59e0b, #d97706);
+            }
+            
+            .webhook-message.info {
+                background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            }
+            
+            .webhook-message .message-content {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 1;
+            }
+            
+            .webhook-message .message-close {
+                background: none;
+                border: none;
+                color: white;
+                cursor: pointer;
+                padding: 5px;
+                border-radius: 5px;
+                transition: background 0.3s ease;
+            }
+            
+            .webhook-message .message-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(styles);
+    }
+    
+    // Ajouter le message à la page
+    document.body.appendChild(messageDiv);
+    
+    // Auto-suppression après 5 secondes
+    setTimeout(() => {
+        if (messageDiv.parentElement) {
+            messageDiv.remove();
+        }
+    }, 5000);
+}
